@@ -13,34 +13,3 @@ proxy:
     container-image: bf-app
     container-network: biobuddy_bb-net
     container-env-file: /opt/shinyproxy/env.txt
-
-    container-volumes: ["/Users/cbaker/Documents/git-chris/biobuddy/app:/home/app"]
-
-  # authentication: openid
-  # openid:
-  #   auth-url: https://bio-buddy-dev.us.auth0.com/authorize
-  #   token-url: https://bio-buddy-dev.us.auth0.com/oauth/token
-  #   jwks-url: https://bio-buddy-dev.us.auth0.com/.well-known/jwks.json
-  #   client-id: eTj3RDnPyQKrWWKtBQka1twJkTtlZbWL
-  #   client-secret: de8_oxw2Ues1FO-3nj-aYgXMtgLifCDCc7uSClO2QfGzg2V3Npb0yucZXGh9Ve19
-
-  # api-security:
-  #   disable-no-sniff-header: true
-  #   disable-xss-protection-header: true
-  #   disable-hsts-header: true
-  # docker:
-  #   url: http://localhost:2375
-  #   port-range-start: 20000
-# logging:
-#   file:
-#     shinyproxy.log
-#
-# logging:
-#   requestdump: true
-#   level:
-#     root: TRACE
-
-# server:
-#   forward-headers-strategy: native
-# server:
-#   frame-options: sameorigin
