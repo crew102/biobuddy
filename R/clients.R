@@ -1,16 +1,3 @@
-#' @import httr
-#' @import jsonlite
-#' @import dplyr
-#' @import tidyr
-#' @import lubridate
-#' @import xml2
-#' @import stringr
-#' @import tibble
-#' @import glue
-#'
-#' @import TheOpenAIR
-#' @import pbapply
-
 ## PetFinder API
 
 auth_pf <- function() {
@@ -179,11 +166,11 @@ parallel_fetch_pf_bios <- function(urls) {
 ## OpenAI
 
 fetch_one_gbt_bio <- function(input, prompt_df, model = "gpt-4-1106-preview") {
-  openai_api_key(Sys.getenv("OPENAI_API_KEY"))
+  TheOpenAIR::openai_api_key(Sys.getenv("OPENAI_API_KEY"))
   prompt_df[nrow(prompt_df), "content"] <- input
   try({
-    x <- chat_completion(prompt_df, n = 1,  model = model)
-    messages_content(x)
+    x <- TheOpenAIR::chat_completion(prompt_df, n = 1,  model = model)
+    TheOpenAIR::messages_content(x)
   })
 }
 

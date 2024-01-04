@@ -1,6 +1,3 @@
-#' @import shiny
-#' @import argonDash
-#'
 # taken from argonR with some minor changes
 dog_card <- function(.x, card_b) {
   tags$div(
