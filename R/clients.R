@@ -159,6 +159,23 @@ fetch_pf_bios <- function(urls) {
   }, USE.NAMES = FALSE)
 }
 
+# Parallel
+
+parallel_fetch_pf_bios <- function(urls) {
+  # Download
+  reqs <- lapply(urls, httr2::request)
+  resps <- httr2::req_perform_parallel(reqs, on_error = "continue")
+  # Parse (not in parallel)
+  sapply(resps, function(x) {
+    try({
+      bod <- httr2::resp_body_html(resp = x)
+      bio <- xml_find_all(bod, "//div[@data-test='Pet_Story_Section']")
+      bio_txt <- xml_text(bio)
+      if (is.null(bio_txt) || length(bio_txt) == 0) NA else bio_txt
+    })
+  })
+}
+
 ## OpenAI
 
 fetch_one_gbt_bio <- function(input, prompt_df, model = "gpt-4-1106-preview") {
