@@ -65,7 +65,9 @@ fetch_pf_pages <- function(token,
                            pages = 1,
                            limit = 100,
 
-                           size = NULL) {
+                           size = NULL,
+                           gender = NULL,
+                           age = NULL) {
 
   query <- list(
     animal_id = animal_id,
@@ -79,6 +81,9 @@ fetch_pf_pages <- function(token,
     after_date = fdate(after_date),
     limit = limit,
     size = size,
+    gender = gender,
+    age = age,
+
     page = 1
   )
 
