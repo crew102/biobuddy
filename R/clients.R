@@ -131,8 +131,52 @@ fetch_pf_pages <- function(token,
   }
 }
 
-## Scraping PF outside of API
+one_org_request <- function(token, query) {
+  response <- GET(
+    "https://api.petfinder.com/v2/organizations",
+    auth_pf_headers(token),
+    query = query
+  )
+  stop_for_status(response)
+  cnt <- content(response, "text", encoding = "utf-8", flatten = TRUE)
+  fromJSON(cnt)
+}
 
+
+fetch_all_orgs <- function(token) {
+
+  query <- list(limit = 100, page = 1)
+  one_res <- one_org_request(token = token, query = query)
+
+  to_pull_pages <- one_res$pagination$total_pages
+
+  out_animals <- list()
+  suppressWarnings(out_animals[1] <- one_res)
+
+  pb <- startpb(0, to_pull_pages)
+  on.exit(closepb(pb))
+  for (i in 2:to_pull_pages) {
+    query$page <- i
+    another_res <- one_org_request(token, query)
+    suppressWarnings(out_animals[i] <- another_res)
+    setpb(pb, i)
+  }
+
+  unested <- lapply(out_animals, function(x) {
+    x %>%
+      select(1:social_media) %>%
+      select(-hours, -url) %>%
+      unnest_wider(where(is.data.frame), names_sep = "_") %>%
+      ungroup()
+  })
+  do.call(rbind, unested) %>%
+    select(!matches("address(1|2)")) %>%
+    select(-adoption_url) %>%
+    select(!matches("pinterest")) %>%
+    rename_all(~gsub("address_|social_media_", "", .))
+}
+
+## Scraping PF outside of API (needed for full bios)
 fetch_one_pf_bio <- function(url) {
   one_full_page <- GET(url)
   if (http_error(one_full_page)) {
