@@ -177,15 +177,17 @@ fetch_all_orgs <- function(token) {
 }
 
 ## Scraping PF outside of API (needed for full bios)
+
+# Sequential
+
 fetch_one_pf_bio <- function(url) {
   one_full_page <- GET(url)
   if (http_error(one_full_page)) {
-    print('errored')
     try(return(http_status(one_full_page)$reason))
   }
   cnt <- content(one_full_page)
-  zz <- xml_find_all(cnt, "//div[@data-test='Pet_Story_Section']")
-  xml_text(zz)
+  bio <- xml_find_all(cnt, "//div[@data-test='Pet_Story_Section']")
+  xml_text(bio)
 }
 
 fetch_pf_bios <- function(urls) {
@@ -210,6 +212,18 @@ parallel_fetch_pf_bios <- function(urls) {
       if (is.null(bio_txt) || length(bio_txt) == 0) NA else bio_txt
     })
   })
+}
+
+# Process raw
+
+clean_raw_bios <- function(bios) {
+  bios <- gsub("Meet [A-z]*", "", bios)
+  bios <- gsub(" {2,}", " ", bios)
+  bios <- gsub("\n", " ", bios)
+  bios <- gsub(" {2,}", " ", bios)
+  bios <- gsub("^ ", "", bios)
+  bios <- gsub("^ +!|^! ", "", bios)
+  ifelse(nchar(bios) < 300, NA, bios)
 }
 
 ## OpenAI
