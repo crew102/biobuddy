@@ -9,3 +9,17 @@
 .card-body {
   text-align: start !important;
 }
+
+.pr-4, .px-4 {
+  padding: 1.5rem !important;
+}
+
+.navbar-brand {
+  color: #fff !important;
+}
+
+.nav-pills .nav-link {
+  margin-bottom: .75rem;
+  margin-top: .75rem;
+  border-radius: .375rem;
+}
