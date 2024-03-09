@@ -28,24 +28,61 @@ gen_dogs_tab <- function(org_id) {
 }
 
 # c("GA553", "NH177", "VA321", "VA68")
-one_tab <- gen_dogs_tab("NH177")
+cards_tab_1 <- argonTabItem(tabName = "cards-tab-1",  gen_dogs_tab("NH177"))
+cards_tab_standin <- argonTabItem(tabName = "cards-tab-2", gen_dogs_tab("VA321"))
 
-cards_tab <- argonTabItem(tabName = "cards-tab-1", one_tab)
+sidebar <- argonDashSidebar(
+  vertical = TRUE,
+  skin = "light",
+  background = "white",
+  size = "md",
+  side = "left",
+  id = "my_sidebar",
+  brand_url = "http://www.google.com",
+  brand_logo = "https://demos.creative-tim.com/argon-design-system/assets/img/brand/blue.png",
+  argonSidebarHeader(title = "Main Menu"),
+  argonSidebarMenu(
+    argonSidebarItem(
+      tabName = "cards-tab-1",
+      icon = argonIcon(name = "tv-2", color = "info"),
+      "Profiles"
+    ),
+    argonSidebarItem(
+      tabName = "cards-tab-2",
+      icon = argonIcon(name = "planet", color = "warning"),
+      "standin"
+    ),
+    argonSidebarItem(
+      tabName = "tabs",
+      icon = argonIcon(name = "planet", color = "warning"),
+      "Tabs"
+    )
+  ),
+  argonSidebarDivider(),
+  argonSidebarHeader(title = "Other Items")
+)
 
 shinyApp(
 
   ui = argonDashPage(
+    sidebar = sidebar,
     body = argonDashBody(
       tags$head(includeCSS("www/biobuddy.css")),
       tags$head(includeScript("www/biobuddy.js")),
       tags$head(includeScript("https://kit.fontawesome.com/42822e2abc.js")),
-      argonTabItems(cards_tab)
+      argonTabItems(cards_tab_1, cards_tab_standin)
     ),
     footer = footer
   ),
 
-  server = function(input, output) {
+  server = function(input, output, session) {
 
+    observeEvent(input$controller, {
+      session$sendCustomMessage(
+        type = "update-tabs",
+        message = input$controller
+      )
+    })
   }
 
 )

@@ -108,8 +108,90 @@ inner_body <- function(.x) {
 '))
 }
 
+# Almost verbatim from argonDash, with a bugfix: "collapse navbar-collapse my--4"
+# to "collapse navbar-collapse my-4"
+argonDashSidebar <- function(
+    ..., dropdownMenus = NULL, id, brand_url = NULL,
+    brand_logo = NULL, vertical = TRUE, side = c("left", "right"),
+    size = c("s", "md", "lg"), skin = c("light", "dark"), background = "white") {
+  side <- match.arg(side)
+  size <- match.arg(size)
+  skin <- match.arg(skin)
+  sidebarCl <- "navbar sidenav"
+  if (vertical) {
+    sidebarCl <- paste0(sidebarCl, " navbar-vertical")
+  } else {
+    sidebarCl <- paste0(sidebarCl, " navbar-horizontal")
+  }
+  if (!is.null(side)) {
+    sidebarCl <- paste0(sidebarCl, " fixed-", side)
+  }
+  if (!is.null(size)) {
+    sidebarCl <- paste0(sidebarCl, " navbar-collapse-m")
+  }
+  if (!is.null(skin)) {
+    sidebarCl <- paste0(sidebarCl, " navbar-", skin)
+  }
+  if (!is.null(background)) {
+    sidebarCl <- paste0(sidebarCl, " bg-", background)
+  }
+  items <- list(...)
+  if (!vertical) {
+    for (i in seq_along(items)) {
+      if (items[[i]]$attribs[["class"]] == "nav-wrapper") {
+        items[[i]]$children[[1]]$attribs$class <- "nav"
+        items[[i]]$children[[1]]$attribs[["aria-orientation"]] <- "horizontal"
+      }
+    }
+  }
+  shiny::tags$nav(class = sidebarCl, id = id, shiny::tags$div(
+    class = "container-fluid",
+    shiny::tags$button(
+      `aria-control` = id, `aria-expanded` = "false",
+      `aria-label` = "Toggle navigation", class = "navbar-toggler collapsed",
+      `data-target` = "#sidenav-collapse-main", `data-toggle` = "collapse",
+      type = "button", shiny::tags$span(class = "navbar-toggler-icon")
+    ),
+    shiny::a(
+      class = "navbar-brand pt-0 my-0", href = brand_url,
+      target = "_blank", shiny::img(
+        class = "navbar-brand-img",
+        src = brand_logo
+      )
+    ), shiny::tags$ul(
+      class = "nav align-items-center d-md-none",
+      dropdownMenus
+    ), shiny::tags$div(
+      class = "collapse navbar-collapse my-4",
+      id = "sidenav-collapse-main", shiny::tags$div(
+        class = "navbar-collapse-header d-md-none",
+        shiny::fluidRow(
+          shiny::tags$div(
+            class = "col-6 collapse-brand",
+            shiny::a(
+              href = brand_url, target = "_blank",
+              shiny::img(class = "navbar-brand-img", src = brand_logo)
+            )
+          ),
+          shiny::tags$div(
+            class = "col-6 collapse-close",
+            shiny::tags$button(
+              `aria-control` = id, `aria-expanded` = "true",
+              `aria-label` = "Toggle sidenav", class = "navbar-toggler",
+              `data-target` = "#sidenav-collapse-main",
+              `data-toggle` = "collapse", type = "button",
+              shiny::tags$span(), shiny::tags$span()
+            )
+          )
+        )
+      ),
+      items
+    )
+  ))
+}
 
 
+## stand ins
 
 footer <- argonDashFooter(
   copyrights = "@biobuddy, 2024",
