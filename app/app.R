@@ -35,7 +35,6 @@ cards_tab <- argonTabItem(tabName = "cards-tab-1", one_tab)
 shinyApp(
 
   ui = argonDashPage(
-    header = navbar,
     body = argonDashBody(
       tags$head(includeCSS("www/biobuddy.css")),
       tags$head(includeScript("www/biobuddy.js")),
