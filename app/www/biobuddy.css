@@ -23,3 +23,15 @@
   margin-top: .75rem;
   border-radius: .375rem;
 }
+
+.nav-wrapper {
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
+
+#sidenav-collapse-main {
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}

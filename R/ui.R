@@ -109,9 +109,8 @@ inner_body <- function(.x) {
 }
 
 # Almost verbatim from argonDash, with a bugfix: "collapse navbar-collapse my--4"
-# to "collapse navbar-collapse my-4"
-argonDashSidebar <- function(
-    ..., dropdownMenus = NULL, id, brand_url = NULL,
+# to "collapse navbar-collapse my-4" and positioning of logo to be non-flex
+argonDashSidebar <- function(..., dropdownMenus = NULL, id, brand_url = NULL,
     brand_logo = NULL, vertical = TRUE, side = c("left", "right"),
     size = c("s", "md", "lg"), skin = c("light", "dark"), background = "white") {
   side <- match.arg(side)
@@ -153,7 +152,7 @@ argonDashSidebar <- function(
       type = "button", shiny::tags$span(class = "navbar-toggler-icon")
     ),
     shiny::a(
-      class = "navbar-brand pt-0 my-0", href = brand_url,
+      class = "navbar-brand  ml-auto", href = brand_url,
       target = "_blank", shiny::img(
         class = "navbar-brand-img",
         src = brand_logo
@@ -190,6 +189,28 @@ argonDashSidebar <- function(
   ))
 }
 
+argonSidebarItem <- function (..., tabName = NULL, icon = NULL) {
+  shiny::tags$a(
+    # adding action-button class so shiny will respond on the server side
+    class = "nav-link mt-1 mb-1 mx-2 shadow action-button",
+    id = paste0("tab-", tabName),
+    href = paste0("#shiny-tab-", tabName),
+    `data-toggle` = "tab", `data-value` = tabName, icon,
+    ...
+  )
+}
+
+argonSidebarMenu <- function(id, ...) {
+  shiny::tags$div(
+    class = "nav-wrapper my-4",
+    shiny::tags$div(
+      class = "nav flex-column nav-pills",
+      `aria-orientation` = "vertical",
+      id = id,
+      ...
+    )
+  )
+}
 
 ## stand ins
 

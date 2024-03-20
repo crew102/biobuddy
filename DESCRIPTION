@@ -24,4 +24,10 @@ Imports:
     pbmcapply,
     TheOpenAIR,
     shiny,
-    argonDash
+    argonR,
+    argonDash,
+    shinyjs,
+    here,
+    readr,
+    markdown,
+    bslib
