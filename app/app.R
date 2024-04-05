@@ -7,8 +7,15 @@ library(dplyr)
 library(markdown)
 library(here)
 library(shinyjs)
+library(waiter)
+library(cropcircles)
+library(magick)
+library(glue)
+library(bsplus)
+library(shinyWidgets)
 
 devtools::load_all()
+
 options(shiny.port = 3838, shiny.host = "0.0.0.0")
 
 dogs <- read_csv(here("cache/lorem-ipsum-bios.csv"))
@@ -19,45 +26,57 @@ gen_dogs_tab <- function(org_id) {
   three_pups <- dogs %>% filter(organization_id == org_id) %>% slice(1:3)
 
   lapply(three_pups$name, function(x) {
-    this_pup <- three_pups %>% filter(name == x)
-    card_b <- inner_body(this_pup)
-    dog_card(
-      .x = this_pup,
-      card_b = card_b
-    )
-  })
-}
-
-gen_dogs_tab_realtime <- function(org_id) {
-
-  three_pups <- dogs %>% filter(organization_id == org_id) %>% slice(1:3)
-
-  lapply(three_pups$name, function(x) {
-    this_pup <- three_pups %>% filter(name == x)
-    card_b <- inner_body(this_pup)
-    dog_card(
-      .x = this_pup,
-      card_b = card_b
-    )
+    p <- three_pups %>% filter(name == x)
+    card_b <- with(p, inner_body(name, raw_bio, interview_rr, pupper_rr, sectioned_rr))
+    with(p, dog_card(name, url, primary_photo_cropped_full, breeds_primary, card_b))
   })
 }
 
 # c("GA553", "NH177", "VA321", "VA68")
-cards_tab_1 <- argonTabItem(tabName = "cards_tab_1",  gen_dogs_tab("NH177"))
+precomputed_tab <- argonTabItem(
+  tabName = "precomputed_tab",  gen_dogs_tab("NH177")
+)
 
-cards_tab_standin <- argonTabItem(
-  tabName = "cards_tab_2",
-  textInput("some_input", "Dog name"),
-  actionButton("submit", "Do it"),
-  htmlOutput("some_output")
+on_demand_tab <- argonTabItem(
+  tabName = "on_demand_tab",
+  bslib::card(
+  fluidRow(
+  column(width = 6,
+    HTML('
+
+        <div class="form-group">
+           <label class="form-control-label" for="basic-url">Dog\'s name</label>
+              <a href="#" title="Dog\'s name as it appears on PetFinder"
+                data-toggle="tooltip" data-content="Choose a favorite" data-placement="right">
+                <i class="fas fa-circle-info" role="presentation"></i>
+              </a>
+           <div class="input-group mb-3">
+              <input type="text" class="form-control shiny-input-container"
+              placeholder="Fido" id="dog_name">
+              <div class="input-group-append" style="margin-left: 1px">
+                 <button class="btn btn-outline-primary action-button"
+                 type="button" id="search_dog_button">Search</button>
+              </div>
+           </div>
+        </div>
+
+    ')
+  )
+  ),
+  fluidRow(
+    column(width = 6,
+      htmlOutput("some_output")
+    )
+  )
+  )
 )
 
 sidebar <- argonDashSidebar(
   vertical = TRUE,
   skin = "light",
   background = "white",
-  size = "md",
-  side = "left",
+  size = "s",
+  side = NULL,
   id = "my_sidebar",
   brand_url = "http://www.google.com",
   brand_logo = "bb-logo.svg",
@@ -65,12 +84,12 @@ sidebar <- argonDashSidebar(
   argonSidebarMenu(
     id = "sidebar-menu",
     argonSidebarItem(
-      tabName = "cards_tab_1",
+      tabName = "precomputed_tab",
       icon = argonIcon(name = "tv-2", color = "info"),
       "Precomputed"
     ),
     argonSidebarItem(
-      tabName = "cards_tab_2",
+      tabName = "on_demand_tab",
       icon = argonIcon(name = "planet", color = "warning"),
       "On demand"
     )
@@ -83,10 +102,11 @@ shinyApp(
     useShinyjs(),
     sidebar = sidebar,
     body = argonDashBody(
+      use_bs_tooltip(),
       tags$head(includeCSS("www/biobuddy.css")),
       tags$head(includeScript("www/biobuddy.js")),
       tags$head(includeScript("https://kit.fontawesome.com/42822e2abc.js")),
-      argonTabItems(cards_tab_1, cards_tab_standin)
+      argonTabItems(precomputed_tab, on_demand_tab)
     ),
     footer = footer
   ),
@@ -94,18 +114,38 @@ shinyApp(
   server = function(input, output, session) {
 
     # temp solution to programmatically hiding sidebar
-    observeEvent(input$`tab-cards_tab_1`, {
+    observeEvent(input$`tab-precomputed_tab`, {
       shinyjs::runjs("document.querySelectorAll('.navbar-toggler')[0].click()")
     })
-    observeEvent(input$`tab-cards_tab_2`, {
+    observeEvent(input$`tab-on_demand_tab`, {
       shinyjs::runjs("document.querySelectorAll('.navbar-toggler')[0].click()")
     })
 
-    observeEvent(input$submit, {
+    observeEvent(input$search_dog_button, {
+
       output$some_output <- renderUI({
-        gen_dogs_tab("VA321")
+
+        one_page <- fetch_pf_pages(
+          auth_pf(),
+          organization = "DC22"
+        )
+        one_page <- one_page$animals %>%
+          filter(!is.na(primary_photo_cropped_full)) %>%
+          filter(nchar(description) > 50)
+
+        pickerInput(
+          inputId = "Id084",
+          label = "Dog",
+          choices = one_page$name,
+          multiple = FALSE,
+          autocomplete = TRUE,
+          options = list(
+            `live-search` = TRUE)
+        )
+
       })
     })
+
   }
 
 )

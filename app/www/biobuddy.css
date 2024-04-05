@@ -35,3 +35,7 @@
   margin-top: 0.5rem !important;
   margin-bottom: 0.5rem !important;
 }
+
+#button-addon2 {
+  border-width: 1px !important;
+}

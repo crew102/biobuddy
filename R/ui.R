@@ -1,5 +1,5 @@
 # Source code pulled from argonR with some minor changes
-dog_card <- function(.x, card_b) {
+dog_card <- function(name, profile_url, img_url, breed, card_b) {
   tags$div(
     tags$br(),
     tags$br(),
@@ -10,12 +10,9 @@ dog_card <- function(.x, card_b) {
         tags$div(
           class = "col",
           tags$div(class = "card-profile-image",
-            tags$a(
-              href = .x["url"],
-              img(src = .x["primary_photo_cropped_full"], class = "rounded-circle")
-              # use after image processing:
-              # img(src = paste0(.x["name"], ".png"), class = "rounded-circle")
-            )
+            img(src = img_url, class = "rounded-circle")
+            # use after image processing:
+            # img(src = paste0(name, ".png"), class = "rounded-circle")
           )
         )
       ),
@@ -27,12 +24,12 @@ dog_card <- function(.x, card_b) {
           tags$div(
             class = "text-center mt-5 pt-5",
             tags$a(
-              href = .x["url"],
-              .x["name"]
+              href = profile_url,
+              name
             ),
             tags$div(
               class = "h5 font-weight-300",
-              .x["breeds_primary"]
+              breed
             )
           )
         )
@@ -52,13 +49,13 @@ dog_card <- function(.x, card_b) {
   )
 }
 
-inner_body <- function(.x) {
+inner_body <- function(name, raw_bio, interview_rr, pupper_rr, sectioned_rr) {
 
   HTML(glue('
     <ul class="nav nav-pills">
 
       <li class="nav-item">
-        <a class="nav-link active" href="#tabs-icons-text-0-{.x[\"name\"]}"
+        <a class="nav-link active" href="#tabs-icons-text-0-{name}"
            data-toggle="tab" style="margin-right: .75rem">Original</a>
       </li>
 
@@ -66,15 +63,15 @@ inner_body <- function(.x) {
         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
            role="button" aria-expanded="false">Rewrites</a>
         <div class="dropdown-menu">
-          <a class="dropdown-item" href="#tabs-icons-text-1-{.x[\"name\"]}" data-toggle="tab">
+          <a class="dropdown-item" href="#tabs-icons-text-1-{name}" data-toggle="tab">
             <i style="margin-right: 0.5rem!important;" class="fa-solid fa-clipboard-question"></i>
             Interview
           </a>
-          <a class="dropdown-item" href="#tabs-icons-text-2-{.x[\"name\"]}" data-toggle="tab">
+          <a class="dropdown-item" href="#tabs-icons-text-2-{name}" data-toggle="tab">
             <i style="margin-right: 0.5rem!important;" class="fa fa-paw" aria-hidden="true"></i>
             Pup perspective
           </a>
-          <a class="dropdown-item" href="#tabs-icons-text-3-{.x[\"name\"]}" data-toggle="tab">
+          <a class="dropdown-item" href="#tabs-icons-text-3-{name}" data-toggle="tab">
             <i class="ni ni-calendar-grid-58 mr-2"></i>
             Sectioned
           </a>
@@ -84,28 +81,27 @@ inner_body <- function(.x) {
 
     <div class="card shadow">
       <div class="card-body">
-        <div class="tab-content" id="{.x[\"name\"]}-tcont">
-          <div class="tab-pane fade show active" id="tabs-icons-text-0-{.x[\"name\"]}"
-                role="tabpanel" aria-labelledby="tabs-icons-text-0-tab-{.x[\"name\"]}">
-            <p>{.x[[\"raw_bio\"]]}</p>
+        <div class="tab-content" id="{name}-tcont">
+          <div class="tab-pane fade show active" id="tabs-icons-text-0-{name}"
+                role="tabpanel" aria-labelledby="tabs-icons-text-0-tab-{name}">
+            <p>{raw_bio}</p>
           </div>
-          <div class="tab-pane fade" id="tabs-icons-text-1-{.x[\"name\"]}"
-                role="tabpanel" aria-labelledby="tabs-icons-text-1-tab-{.x[\"name\"]}">
-            {shiny::includeMarkdown(.x[[\"interview_rr\"]])}
+          <div class="tab-pane fade" id="tabs-icons-text-1-{name}"
+                role="tabpanel" aria-labelledby="tabs-icons-text-1-tab-{name}">
+            {shiny::includeMarkdown(interview_rr)}
           </div>
-          <div class="tab-pane fade" id="tabs-icons-text-2-{.x[\"name\"]}"
-                role="tabpanel" aria-labelledby="tabs-icons-text-2-tab-{.x[\"name\"]}">
-            {shiny::includeMarkdown(.x[[\"pupper_rr\"]])}
+          <div class="tab-pane fade" id="tabs-icons-text-2-{name}"
+                role="tabpanel" aria-labelledby="tabs-icons-text-2-tab-{name}">
+            {shiny::includeMarkdown(pupper_rr)}
           </div>
-          <div class="tab-pane fade" id="tabs-icons-text-3-{.x[\"name\"]}"
-                role="tabpanel" aria-labelledby="tabs-icons-text-3-tab-{.x[\"name\"]}">
-            {shiny::includeMarkdown(.x[[\"sectioned_rr\"]])}
+          <div class="tab-pane fade" id="tabs-icons-text-3-{name}"
+                role="tabpanel" aria-labelledby="tabs-icons-text-3-tab-{name}">
+            {shiny::includeMarkdown(sectioned_rr)}
           </div>
         </div>
       </div>
     </div>
-
-'))
+  '))
 }
 
 # Almost verbatim from argonDash, with a bugfix: "collapse navbar-collapse my--4"
@@ -126,7 +122,7 @@ argonDashSidebar <- function(..., dropdownMenus = NULL, id, brand_url = NULL,
     sidebarCl <- paste0(sidebarCl, " fixed-", side)
   }
   if (!is.null(size)) {
-    sidebarCl <- paste0(sidebarCl, " navbar-collapse-m")
+    sidebarCl <- paste0(sidebarCl, " navbar-collapse-s")
   }
   if (!is.null(skin)) {
     sidebarCl <- paste0(sidebarCl, " navbar-", skin)
