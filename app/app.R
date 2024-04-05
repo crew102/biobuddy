@@ -16,6 +16,8 @@ library(shinyWidgets)
 
 devtools::load_all()
 
+source(here("app/ui.R"))
+
 options(shiny.port = 3838, shiny.host = "0.0.0.0")
 
 dogs <- read_csv(here("cache/lorem-ipsum-bios.csv"))
