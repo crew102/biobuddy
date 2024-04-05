@@ -5,3 +5,8 @@
 services/shiny-proxy/env.txt
 notes.md
 .idea
+man
+.Rapp.history
+app/www/*.png
+dev/
+_dev.R

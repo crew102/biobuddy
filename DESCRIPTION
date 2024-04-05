@@ -30,4 +30,8 @@ Imports:
     here,
     readr,
     markdown,
-    bslib
+    bslib,
+    devtools,
+    waiter,
+    reticulate,
+    shinyWidgets
