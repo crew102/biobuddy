@@ -223,6 +223,8 @@ clean_raw_bios <- function(bios) {
   bios <- gsub(" {2,}", " ", bios)
   bios <- gsub("^ ", "", bios)
   bios <- gsub("^ +!|^! ", "", bios)
+  bios <- gsub("^[0-9]* ", "", bios)
+  bios <- gsub(" ,", ",", bios)
   ifelse(nchar(bios) < 300, NA, bios)
 }
 
