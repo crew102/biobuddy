@@ -20,57 +20,29 @@ source(here("app/ui.R"))
 
 options(shiny.port = 3838, shiny.host = "0.0.0.0")
 
-dogs <- read_csv(here("cache/lorem-ipsum-bios.csv"))
-dogs <- dogs %>% mutate(name = gsub("[^A-z]", "", name))
+### org id will be passed in as input when sign in. we'll have precomputed
+### the data in lorem-ipsum-bios.csv in batch process.
+org_id <- "GA553"
+dogs <- read_csv(here("app/data/lorem-ipsum-bios.csv")) %>%
+  filter(organization_id == org_id)
 
-gen_dogs_tab <- function(org_id) {
 
-  three_pups <- dogs %>% filter(organization_id == org_id) %>% slice(1:3)
-
-  lapply(three_pups$id, function(x) {
-    p <- three_pups %>% filter(id == x)
+# precomputed tab
+long_stays <- dogs %>% filter(is_oldest_five) %>% slice(1:3)
+precomputed_tab_ui <- lapply(long_stays$id, function(x) {
+    p <- long_stays %>% filter(id == x)
     card_b <- with(p, inner_body(id, raw_bio, interview_rr, pupper_rr, sectioned_rr))
-    with(p, dog_card(id, name, url, primary_photo_cropped_full, breeds_primary, card_b))
-  })
-}
+    with(p, dog_card(id, name, url, breeds_primary, card_b))
+})
+precomputed_tab <- argonTabItem("precomputed_tab", precomputed_tab_ui)
 
-# c("GA553", "NH177", "VA321", "VA68")
-precomputed_tab <- argonTabItem(
-  tabName = "precomputed_tab",  gen_dogs_tab("NH177")
-)
-
+# on demand
+x <- dogs %>% slice(1)
+card_b <- with(x, inner_body2(name, raw_bio, 'hi there'))
+z <- with(x, dog_card(id, name, url, breeds_primary, card_b))
 on_demand_tab <- argonTabItem(
   tabName = "on_demand_tab",
-  bslib::card(
-  fluidRow(
-  column(width = 6,
-    HTML('
-
-        <div class="form-group">
-           <label class="form-control-label" for="basic-url">Dog\'s name</label>
-              <a href="#" title="Dog\'s name as it appears on PetFinder"
-                data-toggle="tooltip" data-content="Choose a favorite" data-placement="right">
-                <i class="fas fa-circle-info" role="presentation"></i>
-              </a>
-           <div class="input-group mb-3">
-              <input type="text" class="form-control shiny-input-container"
-              placeholder="Fido" id="dog_name">
-              <div class="input-group-append" style="margin-left: 1px">
-                 <button class="btn btn-outline-primary action-button"
-                 type="button" id="search_dog_button">Search</button>
-              </div>
-           </div>
-        </div>
-
-    ')
-  )
-  ),
-  fluidRow(
-    column(width = 6,
-      htmlOutput("some_output")
-    )
-  )
-  )
+  z
 )
 
 sidebar <- argonDashSidebar(
@@ -127,23 +99,36 @@ shinyApp(
 
       output$some_output <- renderUI({
 
-        one_page <- fetch_pf_pages(
-          auth_pf(),
-          organization = "DC22"
-        )
-        one_page <- one_page$animals %>%
-          filter(!is.na(primary_photo_cropped_full)) %>%
-          filter(nchar(description) > 50)
+        # one_page <- fetch_pf_pages(
+        #   auth_pf(),
+        #   organization = "DC22"
+        # )
+        # one_page <- one_page$animals %>%
+        #   filter(!is.na(primary_photo_cropped_full)) %>%
+        #   filter(nchar(description) > 50)
 
+      tags$div(
+        fluidRow(
         pickerInput(
           inputId = "Id084",
           label = "Dog",
-          choices = one_page$id,
+          choices = dogs$name,
           multiple = FALSE,
           autocomplete = TRUE,
-          options = list(
-            `live-search` = TRUE)
+          options = list(`live-search` = TRUE)
         )
+        # ),
+        # fluidRow(
+        #   awesomeRadio(
+        #     inputId = "style",
+        #     label = "Style",
+        #     choices = c("Interview", "Pup perspective", "Sectioned"),
+        #     selected = "Interview",
+        #     inline = TRUE,
+        #     status = "success"
+        #   )
+        )
+      )
 
       })
     })

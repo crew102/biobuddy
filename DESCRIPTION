@@ -33,4 +33,6 @@ Imports:
     devtools,
     waiter,
     reticulate,
-    shinyWidgets
+    shinyWidgets,
+    cropcircles,
+    magick

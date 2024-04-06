@@ -1,0 +1,11 @@
+[
+    {
+        "role": "system",
+        "content": " i will provide you with a list of pet adoption bios. please remove all text from the following pet bios that are not specific to the pet in question. return the updated bios in a list of strings."
+    },
+    {
+        "role": "user",
+        "content": ""
+    }
+]
+
