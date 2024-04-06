@@ -1,5 +1,5 @@
 # Source code pulled from argonR with some minor changes
-dog_card <- function(name, profile_url, img_url, breed, card_b) {
+dog_card <- function(id, name, profile_url, img_url, breed, card_b) {
   tags$div(
     tags$br(),
     tags$br(),
@@ -12,11 +12,11 @@ dog_card <- function(name, profile_url, img_url, breed, card_b) {
           tags$div(class = "card-profile-image",
             img(src = img_url, class = "rounded-circle")
             # use after image processing:
-            # img(src = paste0(name, ".png"), class = "rounded-circle")
+            # img(src = paste0(id, ".png"), class = "rounded-circle")
           )
         )
       ),
-      # name/breed/original bio
+      # id/breed/original bio
       tags$div(
         class = "row",
         tags$div(
@@ -49,13 +49,13 @@ dog_card <- function(name, profile_url, img_url, breed, card_b) {
   )
 }
 
-inner_body <- function(name, raw_bio, interview_rr, pupper_rr, sectioned_rr) {
+inner_body <- function(id, raw_bio, interview_rr, pupper_rr, sectioned_rr) {
 
   HTML(glue('
     <ul class="nav nav-pills">
 
       <li class="nav-item">
-        <a class="nav-link active" href="#tabs-icons-text-0-{name}"
+        <a class="nav-link active" href="#tabs-icons-text-0-{id}"
            data-toggle="tab" style="margin-right: .75rem">Original</a>
       </li>
 
@@ -63,15 +63,15 @@ inner_body <- function(name, raw_bio, interview_rr, pupper_rr, sectioned_rr) {
         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
            role="button" aria-expanded="false">Rewrites</a>
         <div class="dropdown-menu">
-          <a class="dropdown-item" href="#tabs-icons-text-1-{name}" data-toggle="tab">
+          <a class="dropdown-item" href="#tabs-icons-text-1-{id}" data-toggle="tab">
             <i style="margin-right: 0.5rem!important;" class="fa-solid fa-clipboard-question"></i>
             Interview
           </a>
-          <a class="dropdown-item" href="#tabs-icons-text-2-{name}" data-toggle="tab">
+          <a class="dropdown-item" href="#tabs-icons-text-2-{id}" data-toggle="tab">
             <i style="margin-right: 0.5rem!important;" class="fa fa-paw" aria-hidden="true"></i>
             Pup perspective
           </a>
-          <a class="dropdown-item" href="#tabs-icons-text-3-{name}" data-toggle="tab">
+          <a class="dropdown-item" href="#tabs-icons-text-3-{id}" data-toggle="tab">
             <i class="ni ni-calendar-grid-58 mr-2"></i>
             Sectioned
           </a>
@@ -81,21 +81,21 @@ inner_body <- function(name, raw_bio, interview_rr, pupper_rr, sectioned_rr) {
 
     <div class="card shadow">
       <div class="card-body">
-        <div class="tab-content" id="{name}-tcont">
-          <div class="tab-pane fade show active" id="tabs-icons-text-0-{name}"
-                role="tabpanel" aria-labelledby="tabs-icons-text-0-tab-{name}">
+        <div class="tab-content" id="{id}-tcont">
+          <div class="tab-pane fade show active" id="tabs-icons-text-0-{id}"
+                role="tabpanel" aria-labelledby="tabs-icons-text-0-tab-{id}">
             <p>{raw_bio}</p>
           </div>
-          <div class="tab-pane fade" id="tabs-icons-text-1-{name}"
-                role="tabpanel" aria-labelledby="tabs-icons-text-1-tab-{name}">
+          <div class="tab-pane fade" id="tabs-icons-text-1-{id}"
+                role="tabpanel" aria-labelledby="tabs-icons-text-1-tab-{id}">
             {shiny::includeMarkdown(interview_rr)}
           </div>
-          <div class="tab-pane fade" id="tabs-icons-text-2-{name}"
-                role="tabpanel" aria-labelledby="tabs-icons-text-2-tab-{name}">
+          <div class="tab-pane fade" id="tabs-icons-text-2-{id}"
+                role="tabpanel" aria-labelledby="tabs-icons-text-2-tab-{id}">
             {shiny::includeMarkdown(pupper_rr)}
           </div>
-          <div class="tab-pane fade" id="tabs-icons-text-3-{name}"
-                role="tabpanel" aria-labelledby="tabs-icons-text-3-tab-{name}">
+          <div class="tab-pane fade" id="tabs-icons-text-3-{id}"
+                role="tabpanel" aria-labelledby="tabs-icons-text-3-tab-{id}">
             {shiny::includeMarkdown(sectioned_rr)}
           </div>
         </div>

@@ -27,10 +27,10 @@ gen_dogs_tab <- function(org_id) {
 
   three_pups <- dogs %>% filter(organization_id == org_id) %>% slice(1:3)
 
-  lapply(three_pups$name, function(x) {
-    p <- three_pups %>% filter(name == x)
-    card_b <- with(p, inner_body(name, raw_bio, interview_rr, pupper_rr, sectioned_rr))
-    with(p, dog_card(name, url, primary_photo_cropped_full, breeds_primary, card_b))
+  lapply(three_pups$id, function(x) {
+    p <- three_pups %>% filter(id == x)
+    card_b <- with(p, inner_body(id, raw_bio, interview_rr, pupper_rr, sectioned_rr))
+    with(p, dog_card(id, name, url, primary_photo_cropped_full, breeds_primary, card_b))
   })
 }
 
@@ -138,7 +138,7 @@ shinyApp(
         pickerInput(
           inputId = "Id084",
           label = "Dog",
-          choices = one_page$name,
+          choices = one_page$id,
           multiple = FALSE,
           autocomplete = TRUE,
           options = list(
