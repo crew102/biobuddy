@@ -214,31 +214,25 @@ parallel_fetch_pf_bios <- function(urls) {
   })
 }
 
-# Process raw
-
-clean_raw_bios <- function(bios) {
-  bios <- gsub("Meet [A-z]*", "", bios)
-  bios <- gsub(" {2,}", " ", bios)
-  bios <- gsub("\n", " ", bios)
-  bios <- gsub(" {2,}", " ", bios)
-  bios <- gsub("^ ", "", bios)
-  bios <- gsub("^ +!|^! ", "", bios)
-  bios <- gsub("^[0-9]* ", "", bios)
-  bios <- gsub(" ,", ",", bios)
-  ifelse(nchar(bios) < 300, NA, bios)
-}
-
 ## OpenAI
 
-fetch_one_gbt_bio <- function(input, prompt_df, model = "gpt-4-1106-preview") {
-  TheOpenAIR::openai_api_key(Sys.getenv("OPENAI_API_KEY"))
-  prompt_df[nrow(prompt_df), "content"] <- input
-  try({
-    x <- TheOpenAIR::chat_completion(prompt_df, n = 1,  model = model)
-    TheOpenAIR::messages_content(x)
+parallel_request_rewrites <- function(prompt_df, raw_bios,
+                                      model = "gpt-3.5-turbo-0125") {
+  reqs <- lapply(raw_bios, function(x) {
+    prompt_df[nrow(prompt_df), "content"] <- x
+    payload <- list(model = model, messages = prompt_df)
+    httr2::request("https://api.openai.com/v1/chat/completions") %>%
+      httr2::req_headers(
+        Authorization = paste0("Bearer ", Sys.getenv("OPENAI_API_KEY"))
+      ) %>%
+      httr2::req_body_json(payload)
   })
-}
 
-fetch_gbt_bios <- function(inputs, prompt_df, model = "gpt-4-1106-preview") {
-  pbsapply(inputs, function(x) fetch_one_gbt_bio(x, prompt_df, model))
+  resps <- httr2::req_perform_parallel(reqs, on_error = "continue")
+
+  vapply(resps, function(x) {
+    if (httr2::resp_is_error(x)) return(httr2::resp_status_desc(req))
+    out <- httr2::resp_body_json(x)
+    out$choices[[1]]$message$content
+  }, character(1))
 }

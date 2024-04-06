@@ -22,7 +22,6 @@ Imports:
     glue,
     pbapply,
     pbmcapply,
-    TheOpenAIR,
     shiny,
     argonR,
     argonDash,
