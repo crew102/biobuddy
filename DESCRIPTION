@@ -35,4 +35,5 @@ Imports:
     reticulate,
     shinyWidgets,
     cropcircles,
-    magick
+    magick,
+    magrittr

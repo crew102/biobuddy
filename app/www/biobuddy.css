@@ -39,3 +39,19 @@
 #button-addon2 {
   border-width: 1px !important;
 }
+
+#in_dog_name {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.form-group.shiny-input-container {
+  width: auto;
+  margin-bottom: 1rem;
+}
+
+.btn.dropdown-toggle.btn-light {
+  background-color: #5e72e4;
+}
+

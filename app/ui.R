@@ -14,7 +14,7 @@ dog_card <- function(id, name, profile_url, breed, card_b) {
           )
         )
       ),
-      # id/breed/original bio
+      # name/breed
       tags$div(
         class = "row",
         tags$div(
@@ -47,13 +47,15 @@ dog_card <- function(id, name, profile_url, breed, card_b) {
   )
 }
 
-inner_body <- function(id, raw_bio, interview_rr, pupper_rr, sectioned_rr) {
+inner_body <- function(id, raw_bio,
+                       interview_rr, pupper_rr, sectioned_rr,
+                       tab_num = 1) {
 
   HTML(glue('
     <ul class="nav nav-pills">
 
       <li class="nav-item">
-        <a class="nav-link active" href="#tabs-icons-text-0-{id}"
+        <a class="nav-link active" href="#tabs-icons-text-0-{id}-{tab_num}"
            data-toggle="tab" style="margin-right: .75rem">Original</a>
       </li>
 
@@ -61,15 +63,15 @@ inner_body <- function(id, raw_bio, interview_rr, pupper_rr, sectioned_rr) {
         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
            role="button">Rewrites</a>
         <div class="dropdown-menu">
-          <a class="dropdown-item" href="#tabs-icons-text-1-{id}" data-toggle="tab">
+          <a class="dropdown-item" href="#tabs-icons-text-1-{id}-{tab_num}" data-toggle="tab">
             <i style="margin-right: 0.5rem!important;" class="fa-solid fa-clipboard-question"></i>
             Interview
           </a>
-          <a class="dropdown-item" href="#tabs-icons-text-2-{id}" data-toggle="tab">
+          <a class="dropdown-item" href="#tabs-icons-text-2-{id}-{tab_num}" data-toggle="tab">
             <i style="margin-right: 0.5rem!important;" class="fa fa-paw"></i>
             Pup perspective
           </a>
-          <a class="dropdown-item" href="#tabs-icons-text-3-{id}" data-toggle="tab">
+          <a class="dropdown-item" href="#tabs-icons-text-3-{id}-{tab_num}" data-toggle="tab">
             <i class="ni ni-calendar-grid-58 mr-2"></i>
             Sectioned
           </a>
@@ -79,107 +81,22 @@ inner_body <- function(id, raw_bio, interview_rr, pupper_rr, sectioned_rr) {
 
     <div class="card shadow">
       <div class="card-body">
-        <div class="tab-content" id="{id}-tcont">
-          <div class="tab-pane fade show active" id="tabs-icons-text-0-{id}"
+        <div class="tab-content" id="{id}-{tab_num}-tcont">
+          <div class="tab-pane fade show active" id="tabs-icons-text-0-{id}-{tab_num}"
                 role="tabpanel">
             <p>{raw_bio}</p>
           </div>
-          <div class="tab-pane fade" id="tabs-icons-text-1-{id}"
+          <div class="tab-pane fade" id="tabs-icons-text-1-{id}-{tab_num}"
                 role="tabpanel">
             {shiny::includeMarkdown(interview_rr)}
           </div>
-          <div class="tab-pane fade" id="tabs-icons-text-2-{id}"
+          <div class="tab-pane fade" id="tabs-icons-text-2-{id}-{tab_num}"
                 role="tabpanel">
             {shiny::includeMarkdown(pupper_rr)}
           </div>
-          <div class="tab-pane fade" id="tabs-icons-text-3-{id}"
+          <div class="tab-pane fade" id="tabs-icons-text-3-{id}-{tab_num}"
                 role="tabpanel">
             {shiny::includeMarkdown(sectioned_rr)}
-          </div>
-        </div>
-      </div>
-    </div>
-  '))
-}
-
-# Source code pulled from argonR with some minor changes
-dog_card2 <- function(name, profile_url, img_url, breed, card_b) {
-  tags$div(
-    tags$br(),
-    tags$br(),
-    tags$div(
-      class = "card card-profile shadow px-4",
-      # image
-      tags$div(class = "row",
-               tags$div(
-                 class = "col",
-                 tags$div(class = "card-profile-image",
-                          img(src = img_url, class = "rounded-circle")
-                          # use after image processing:
-                          # img(src = paste0(name, ".png"), class = "rounded-circle")
-                 )
-               )
-      ),
-      # name/breed/original bio
-      tags$div(
-        class = "row",
-        tags$div(
-          class = "col mt-5",
-          tags$div(
-            class = "text-center mt-5 pt-5",
-            tags$a(
-              href = profile_url,
-              name
-            ),
-            tags$div(
-              class = "h5 font-weight-300",
-              breed
-            )
-          )
-        )
-      ),
-      # card body
-      tags$div(
-        class = "mt-2 py-2 border-top text-center",
-        tags$div(
-          class = "row justify-content-center",
-          tags$div(
-            class = "col-lg-9",
-            card_b
-          )
-        )
-      )
-    )
-  )
-}
-
-inner_body2 <- function(name, raw_bio, customer_rr) {
-
-  HTML(glue('
-    <ul class="nav nav-pills">
-
-      <li class="nav-item">
-        <a class="nav-link active" href="#tabs-og-{name}"
-           data-toggle="tab" style="margin-right: .75rem">Original</a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link" href="#tabs-rw-{name}"
-           data-toggle="tab" style="margin-right: .75rem">Rewrite</a>
-      </li>
-
-    </ul>
-
-    <div class="card shadow">
-      <div class="card-body">
-        <div class="tab-content" id="{name}-og-tcont">
-          <div class="tab-pane fade show active" id="tabs-og-{name}"
-                role="tabpanel"">
-            <p>{raw_bio}</p>
-          </div>
-          <div class="tab-pane fade" id="tabs-rw-{name}"
-                role="tabpanel">
-            {shiny::includeMarkdown(customer_rr)}
           </div>
         </div>
       </div>

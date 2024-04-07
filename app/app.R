@@ -13,6 +13,7 @@ library(magick)
 library(glue)
 library(bsplus)
 library(shinyWidgets)
+library(magrittr)
 
 devtools::load_all()
 
@@ -28,7 +29,7 @@ dogs <- read_csv(here("app/data/lorem-ipsum-bios.csv")) %>%
 
 
 # precomputed tab
-long_stays <- dogs %>% filter(is_oldest_five) %>% slice(1:3)
+long_stays <- dogs %>% filter(is_oldest_five) %>% slice(1:5)
 precomputed_tab_ui <- lapply(long_stays$id, function(x) {
     p <- long_stays %>% filter(id == x)
     card_b <- with(p, inner_body(id, raw_bio, interview_rr, pupper_rr, sectioned_rr))
@@ -36,13 +37,57 @@ precomputed_tab_ui <- lapply(long_stays$id, function(x) {
 })
 precomputed_tab <- argonTabItem("precomputed_tab", precomputed_tab_ui)
 
-# on demand
-x <- dogs %>% slice(1)
-card_b <- with(x, inner_body2(name, raw_bio, 'hi there'))
-z <- with(x, dog_card(id, name, url, breeds_primary, card_b))
+first_dog <- long_stays %>% slice(1)
+
 on_demand_tab <- argonTabItem(
   tabName = "on_demand_tab",
-  z
+    tags$div(
+      tags$br(),
+      tags$br(),
+      tags$div(
+        class = "card card-profile shadow px-4",
+        # image
+        tags$div(class = "row",
+           tags$div(class = "col",
+              tags$div(class = "card-profile-image", uiOutput("out_img"))
+           )
+        ),
+        # name/breed
+        tags$div(
+          class = "row",
+          tags$div(
+            class = "col mt-5",
+            tags$div(
+              class = "text-center mt-5 pt-5",
+              pickerInput(
+                inputId = "in_dog_name",
+                choices = dogs$name,
+                selected = first_dog$name[1],
+                multiple = FALSE,
+                autocomplete = TRUE,
+                options = list(`live-search` = TRUE),
+                width = "fit"
+              ),
+              tags$div(
+                class = "h5 font-weight-300",
+                uiOutput("out_breed")
+              )
+            )
+          )
+        ),
+        # card body
+        tags$div(
+          class = "mt-2 py-2 border-top text-center",
+          tags$div(
+            class = "row justify-content-center",
+            tags$div(
+              class = "col-lg-9",
+              uiOutput("out_card_b")
+            )
+          )
+        )
+      )
+    )
 )
 
 sidebar <- argonDashSidebar(
@@ -95,44 +140,24 @@ shinyApp(
       shinyjs::runjs("document.querySelectorAll('.navbar-toggler')[0].click()")
     })
 
-    observeEvent(input$search_dog_button, {
+    chosen_dog <- reactive({
+      dogs %>%
+        filter(name == input$in_dog_name)
+    })
 
-      output$some_output <- renderUI({
+    output$out_img <- renderUI({
+      chosen_dog() %$%
+        img(src = paste0(".bio-images/", id, ".png"), class = "rounded-circle")
+    })
 
-        # one_page <- fetch_pf_pages(
-        #   auth_pf(),
-        #   organization = "DC22"
-        # )
-        # one_page <- one_page$animals %>%
-        #   filter(!is.na(primary_photo_cropped_full)) %>%
-        #   filter(nchar(description) > 50)
+    output$out_breed <- renderUI({
+      chosen_dog() %>% pull(breeds_primary)
+    })
 
-      tags$div(
-        fluidRow(
-        pickerInput(
-          inputId = "Id084",
-          label = "Dog",
-          choices = dogs$name,
-          multiple = FALSE,
-          autocomplete = TRUE,
-          options = list(`live-search` = TRUE)
-        )
-        # ),
-        # fluidRow(
-        #   awesomeRadio(
-        #     inputId = "style",
-        #     label = "Style",
-        #     choices = c("Interview", "Pup perspective", "Sectioned"),
-        #     selected = "Interview",
-        #     inline = TRUE,
-        #     status = "success"
-        #   )
-        )
-      )
-
-      })
+    output$out_card_b <- renderUI({
+      chosen_dog() %$%
+        inner_body(id, raw_bio, interview_rr, pupper_rr, sectioned_rr, tab_num = 2)
     })
 
   }
-
 )
