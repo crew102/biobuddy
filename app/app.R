@@ -21,26 +21,26 @@ source(here("app/ui.R"))
 
 options(shiny.port = 3838, shiny.host = "0.0.0.0")
 
-### org id will be passed in as input when sign in. we'll have precomputed
+### org id will be passed in as input when sign in. we'll have showcase
 ### the data in lorem-ipsum-bios.csv in batch process.
 org_id <- "GA553"
 dogs <- read_csv(here("app/data/lorem-ipsum-bios.csv")) %>%
   filter(organization_id == org_id)
 
 
-# precomputed tab
+# showcase tab
 long_stays <- dogs %>% filter(is_oldest_five) %>% slice(1:5)
-precomputed_tab_ui <- lapply(long_stays$id, function(x) {
+showcase_tab_ui <- lapply(long_stays$id, function(x) {
     p <- long_stays %>% filter(id == x)
     card_b <- with(p, inner_body(id, raw_bio, interview_rr, pupper_rr, sectioned_rr))
     with(p, dog_card(id, name, url, breeds_primary, card_b))
 })
-precomputed_tab <- argonTabItem("precomputed_tab", precomputed_tab_ui)
+showcase_tab <- argonTabItem("showcase_tab", showcase_tab_ui)
 
 first_dog <- long_stays %>% slice(1)
 
-on_demand_tab <- argonTabItem(
-  tabName = "on_demand_tab",
+customize_tab <- argonTabItem(
+  tabName = "customize_tab",
     tags$div(
       tags$br(),
       tags$br(),
@@ -68,6 +68,7 @@ on_demand_tab <- argonTabItem(
                 options = list(`live-search` = TRUE),
                 width = "fit"
               ),
+
               tags$div(
                 class = "h5 font-weight-300",
                 uiOutput("out_breed")
@@ -87,6 +88,9 @@ on_demand_tab <- argonTabItem(
           )
         )
       )
+      # ,
+
+      # htmlTemplate("modal.html", sliderValue = 50)
     )
 )
 
@@ -103,14 +107,14 @@ sidebar <- argonDashSidebar(
   argonSidebarMenu(
     id = "sidebar-menu",
     argonSidebarItem(
-      tabName = "precomputed_tab",
+      tabName = "showcase_tab",
       icon = argonIcon(name = "tv-2", color = "info"),
-      "Precomputed"
+      "Showcase"
     ),
     argonSidebarItem(
-      tabName = "on_demand_tab",
+      tabName = "customize_tab",
       icon = argonIcon(name = "planet", color = "warning"),
-      "On demand"
+      "Customize"
     )
   )
 )
@@ -125,7 +129,7 @@ shinyApp(
       tags$head(includeCSS("www/biobuddy.css")),
       tags$head(includeScript("www/biobuddy.js")),
       tags$head(includeScript("https://kit.fontawesome.com/42822e2abc.js")),
-      argonTabItems(precomputed_tab, on_demand_tab)
+      argonTabItems(showcase_tab, customize_tab)
     ),
     footer = footer
   ),
@@ -133,10 +137,10 @@ shinyApp(
   server = function(input, output, session) {
 
     # temp solution to programmatically hiding sidebar
-    observeEvent(input$`tab-precomputed_tab`, {
+    observeEvent(input$`tab-showcase_tab`, {
       shinyjs::runjs("document.querySelectorAll('.navbar-toggler')[0].click()")
     })
-    observeEvent(input$`tab-on_demand_tab`, {
+    observeEvent(input$`tab-customize_tab`, {
       shinyjs::runjs("document.querySelectorAll('.navbar-toggler')[0].click()")
     })
 
