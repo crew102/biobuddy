@@ -68,7 +68,6 @@ customize_tab <- argonTabItem(
                 options = list(`live-search` = TRUE),
                 width = "fit"
               ),
-
               tags$div(
                 class = "h5 font-weight-300",
                 uiOutput("out_breed")
@@ -86,12 +85,20 @@ customize_tab <- argonTabItem(
               uiOutput("out_card_b")
             )
           )
-        )
-      )
-      # ,
+        ),
 
-      # htmlTemplate("modal.html", sliderValue = 50)
+      )
     )
+)
+
+promote_tab <- argonTabItem(
+  tabName = "promote_tab",
+  tags$div()
+)
+
+account_tab <- argonTabItem(
+  tabName = "account_tab",
+  tags$div()
 )
 
 sidebar <- argonDashSidebar(
@@ -115,6 +122,17 @@ sidebar <- argonDashSidebar(
       tabName = "customize_tab",
       icon = argonIcon(name = "planet", color = "warning"),
       "Customize"
+    ),
+    argonSidebarItem(
+      tabName = "promote_tab",
+      icon = argonIcon(name = "tv-2", color = "info"),
+      "Promote"
+    ),
+    argonDropNavDivider(),
+    argonSidebarItem(
+      tabName = "account_tab",
+      icon = argonIcon(name = "planet", color = "warning"),
+      "Account"
     )
   )
 )
