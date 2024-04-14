@@ -85,7 +85,7 @@ customize_tab <- argonTabItem(
               uiOutput("out_card_b")
             )
           )
-        ),
+        )
 
       )
     )
@@ -177,8 +177,14 @@ shinyApp(
     })
 
     output$out_card_b <- renderUI({
-      chosen_dog() %$%
-        inner_body(id, raw_bio, interview_rr, pupper_rr, sectioned_rr, tab_num = 2)
+      tags$div(
+        chosen_dog() %$%
+          inner_body(
+            id, raw_bio,
+            interview_rr, pupper_rr, sectioned_rr,
+            tab_num = 2, limit_growth = TRUE
+        )
+      )
     })
 
   }

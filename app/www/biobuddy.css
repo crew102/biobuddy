@@ -41,14 +41,14 @@
 }
 
 #in_dog_name {
-  display: block;
+  display: inline-block;
   margin-left: auto;
   margin-right: auto;
 }
 
 .form-group.shiny-input-container {
   width: auto;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .btn.dropdown-toggle.btn-light {

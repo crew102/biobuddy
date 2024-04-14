@@ -1,5 +1,6 @@
 # Source code pulled from argonR with some minor changes
 dog_card <- function(id, name, profile_url, breed, card_b) {
+
   tags$div(
     tags$br(),
     tags$br(),
@@ -49,7 +50,14 @@ dog_card <- function(id, name, profile_url, breed, card_b) {
 
 inner_body <- function(id, raw_bio,
                        interview_rr, pupper_rr, sectioned_rr,
-                       tab_num = 1) {
+                       tab_num = 1,
+                       limit_growth = FALSE) {
+
+  if (limit_growth) {
+    style <- 'style="overflow-y: scroll; height:auto; max-height: 50vh;"'
+  } else {
+    style <- ''
+  }
 
   HTML(glue('
     <ul class="nav nav-pills">
@@ -81,7 +89,7 @@ inner_body <- function(id, raw_bio,
 
     <div class="card shadow">
       <div class="card-body">
-        <div class="tab-content" id="{id}-{tab_num}-tcont">
+        <div class="tab-content" id="{id}-{tab_num}-tcont" {style}>
           <div class="tab-pane fade show active" id="tabs-icons-text-0-{id}-{tab_num}"
                 role="tabpanel">
             <p>{raw_bio}</p>
