@@ -21,6 +21,37 @@ source(here("app/ui.R"))
 
 options(shiny.port = 3838, shiny.host = "0.0.0.0")
 
+sidebar <- argonDashSidebar(
+  vertical = TRUE,
+  skin = "light",
+  background = "white",
+  size = "md",
+  side = "left",
+  id = "my_sidebar",
+  brand_url = "http://www.google.com",
+  brand_logo = "bb-logo.svg",
+  argonSidebarHeader(title = "Bios"),
+  argonSidebarMenu(
+    id = "sidebar-menu",
+    argonSidebarItem(
+      tabName = "showcase_tab",
+      icon = argonIcon(name = "tv-2", color = "info"),
+      "Showcase"
+    ),
+    argonSidebarItem(
+      tabName = "customize_tab",
+      icon = argonIcon(name = "planet", color = "warning"),
+      "Customize"
+    ),
+    argonDropNavDivider(),
+    argonSidebarItem(
+      tabName = "account_tab",
+      icon = argonIcon(name = "planet", color = "warning"),
+      "Account"
+    )
+  )
+)
+
 ### org id will be passed in as input when sign in. we'll have showcase
 ### the data in lorem-ipsum-bios.csv in batch process.
 org_id <- "GA553"
@@ -91,50 +122,9 @@ customize_tab <- argonTabItem(
     )
 )
 
-promote_tab <- argonTabItem(
-  tabName = "promote_tab",
-  tags$div()
-)
-
 account_tab <- argonTabItem(
   tabName = "account_tab",
   tags$div()
-)
-
-sidebar <- argonDashSidebar(
-  vertical = TRUE,
-  skin = "light",
-  background = "white",
-  size = "s",
-  side = NULL,
-  id = "my_sidebar",
-  brand_url = "http://www.google.com",
-  brand_logo = "bb-logo.svg",
-  argonSidebarHeader(title = "Bios"),
-  argonSidebarMenu(
-    id = "sidebar-menu",
-    argonSidebarItem(
-      tabName = "showcase_tab",
-      icon = argonIcon(name = "tv-2", color = "info"),
-      "Showcase"
-    ),
-    argonSidebarItem(
-      tabName = "customize_tab",
-      icon = argonIcon(name = "planet", color = "warning"),
-      "Customize"
-    ),
-    argonSidebarItem(
-      tabName = "promote_tab",
-      icon = argonIcon(name = "tv-2", color = "info"),
-      "Promote"
-    ),
-    argonDropNavDivider(),
-    argonSidebarItem(
-      tabName = "account_tab",
-      icon = argonIcon(name = "planet", color = "warning"),
-      "Account"
-    )
-  )
 )
 
 shinyApp(
