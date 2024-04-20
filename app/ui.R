@@ -51,12 +51,29 @@ dog_card <- function(id, name, profile_url, breed, card_b) {
 inner_body <- function(id, raw_bio,
                        interview_rr, pupper_rr, sectioned_rr,
                        tab_num = 1,
-                       limit_growth = FALSE) {
+                       limit_growth = FALSE,
+                       customize = FALSE) {
 
   if (limit_growth) {
     style <- 'style="overflow-y: scroll; height:auto; max-height: 50vh;"'
   } else {
     style <- ''
+  }
+
+  if (customize) {
+    cust <-
+      # '<div style="display:flex">
+      #   <a href="#"
+      #   class="badge badge-pill badge-default"
+      #   data-toggle="modal"
+      #   data-target="#modal-form">Customize</a>
+      # </div>'
+
+    '<div style="display:flex">
+        <a href="#" id="show" class="badge badge-pill badge-default action-button">Customize</a>
+    </div>'
+  } else {
+    cust <- ''
   }
 
   HTML(glue('
@@ -86,6 +103,8 @@ inner_body <- function(id, raw_bio,
         </div>
       </li>
     </ul>
+
+    {cust}
 
     <div class="card shadow">
       <div class="card-body">

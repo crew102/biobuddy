@@ -58,7 +58,6 @@ org_id <- "GA553"
 dogs <- read_csv(here("app/data/lorem-ipsum-bios.csv")) %>%
   filter(organization_id == org_id)
 
-
 # showcase tab
 long_stays <- dogs %>% filter(is_oldest_five) %>% slice(1:5)
 showcase_tab_ui <- lapply(long_stays$id, function(x) {
@@ -127,55 +126,96 @@ account_tab <- argonTabItem(
   tags$div()
 )
 
-shinyApp(
-
-  ui = argonDashPage(
-    useShinyjs(),
-    sidebar = sidebar,
-    body = argonDashBody(
-      use_bs_tooltip(),
-      tags$head(includeCSS("www/biobuddy.css")),
-      tags$head(includeScript("www/biobuddy.js")),
-      tags$head(includeScript("https://kit.fontawesome.com/42822e2abc.js")),
-      argonTabItems(showcase_tab, customize_tab)
-    ),
-    footer = footer
+ui <- argonDashPage(
+  useShinyjs(),
+  sidebar = sidebar,
+  body = argonDashBody(
+    use_bs_tooltip(),
+    tags$head(includeCSS("www/biobuddy.css")),
+    tags$head(includeScript("www/biobuddy.js")),
+    tags$head(includeScript("https://kit.fontawesome.com/42822e2abc.js")),
+    argonTabItems(showcase_tab, customize_tab)
   ),
-
-  server = function(input, output, session) {
-
-    # temp solution to programmatically hiding sidebar
-    observeEvent(input$`tab-showcase_tab`, {
-      shinyjs::runjs("document.querySelectorAll('.navbar-toggler')[0].click()")
-    })
-    observeEvent(input$`tab-customize_tab`, {
-      shinyjs::runjs("document.querySelectorAll('.navbar-toggler')[0].click()")
-    })
-
-    chosen_dog <- reactive({
-      dogs %>%
-        filter(name == input$in_dog_name)
-    })
-
-    output$out_img <- renderUI({
-      chosen_dog() %$%
-        img(src = paste0(".bio-images/", id, ".png"), class = "rounded-circle")
-    })
-
-    output$out_breed <- renderUI({
-      chosen_dog() %>% pull(breeds_primary)
-    })
-
-    output$out_card_b <- renderUI({
-      tags$div(
-        chosen_dog() %$%
-          inner_body(
-            id, raw_bio,
-            interview_rr, pupper_rr, sectioned_rr,
-            tab_num = 2, limit_growth = TRUE
-        )
-      )
-    })
-
-  }
+  footer = footer
 )
+
+server <- function(input, output, session) {
+
+  # temp solution to programmatically hiding sidebar
+  observeEvent(input$`tab-showcase_tab`, {
+    shinyjs::runjs("document.querySelectorAll('.navbar-toggler')[0].click()")
+  })
+  observeEvent(input$`tab-customize_tab`, {
+    shinyjs::runjs("document.querySelectorAll('.navbar-toggler')[0].click()")
+  })
+
+  chosen_dog <- reactive({
+    dogs %>%
+      filter(name == input$in_dog_name)
+  })
+
+  output$out_img <- renderUI({
+    chosen_dog() %$%
+      img(src = paste0(".bio-images/", id, ".png"), class = "rounded-circle")
+  })
+
+  output$out_breed <- renderUI({
+    chosen_dog() %>% pull(breeds_primary)
+  })
+
+  output$out_card_b <- renderUI({
+    tags$div(
+      chosen_dog() %$%
+        inner_body(
+          id, raw_bio,
+          interview_rr, pupper_rr, sectioned_rr,
+          tab_num = 2, limit_growth = FALSE, customize = TRUE
+        )
+    )
+  })
+
+  observeEvent(input$show, {
+    showModal(modalDialog(
+      title = "Important message",
+      tags$div(
+        awesomeRadio(
+          inputId = "jump_off_prof",
+          label = "Base off of",
+          choices = c("Original", "Interview", "Pup perspective", "Sectioned"),
+          selected = "Original",
+          inline = TRUE,
+          status = "success"
+        ),
+        awesomeRadio(
+          inputId = "length_input",
+          label = "Length",
+          choices = c("No change", "SHorter", "Longer"),
+          selected = "No change",
+          inline = TRUE,
+          status = "success"
+        ),
+        awesomeRadio(
+          inputId = "emotive_input",
+          label = "Emotional tone",
+          choices = c("No change", "Less emotive", "More"),
+          selected = "No change",
+          inline = TRUE,
+          status = "success"
+        ),
+        awesomeRadio(
+          inputId = "humor_input",
+          label = "Humour",
+          choices = c("No change", "Less humour", "Drier", "More sarcastic"),
+          selected = "No change",
+          inline = TRUE,
+          status = "success"
+        ),
+        textInput("arbit_input", "Arbit instructions", ""),
+        actionButton("run_cust", "Fetch it")
+      )
+    ))
+  })
+
+}
+
+shinyApp(ui, server)
