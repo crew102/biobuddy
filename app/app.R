@@ -185,8 +185,8 @@ server <- function(input, output, session) {
       tags$div(class = "p-4 bg-secondary",
         awesomeRadio(
           inputId = "length_input",
-          label = "Length",
-          choices = c("No change", "SHorter", "Longer"),
+          label = "Length change",
+          choices = c("No change", "Shorter", "Longer"),
           selected = "No change",
           inline = TRUE,
           status = "success"
@@ -194,7 +194,7 @@ server <- function(input, output, session) {
         awesomeRadio(
           inputId = "emotive_input",
           label = "Emotional tone",
-          choices = c("No change", "Less emotive", "More"),
+          choices = c("No change", "Less emotive", "More emotive"),
           selected = "No change",
           inline = TRUE,
           status = "success"
@@ -207,11 +207,27 @@ server <- function(input, output, session) {
           inline = TRUE,
           status = "success"
         ),
-        textInput("arbit_input", "Arbit instructions", ""),
-        actionButton("run_cust", "Fetch it")
+        textInput(
+          "arbit_input", "Additional instructions", "",
+          placeholder = "Write it in Spanish"
+        )
+      ),
+      tags$br(),
+      tags$div(
+        style = "display: flex;",
+        HTML('
+          <button type="button" class="btn btn-outline-default btn-sm" data-dismiss="modal"
+            data-bs-dismiss="modal">
+            Dismiss
+          </button>
+          <button id="run_cust" type="button" class="btn btn-warning action-button">
+            <i class="fa-regular fa-pen-to-square" role="presentation" aria-label="pencil icon"></i>
+            Write it
+          </button>
+        ')
       )
     ))
-  })
+  }, ignoreInit = TRUE)
 
 }
 
