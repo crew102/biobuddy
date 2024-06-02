@@ -55,3 +55,56 @@
   background-color: #5e72e4;
 }
 
+.bg-gradient-warning {
+  background-image:linear-gradient(310deg, #fb6340, #fbb140)
+}
+
+.bg-gradient-primary2 {
+  background-image: linear-gradient(310deg, rgb(17, 113, 239), rgb(17, 205, 239));
+  color: #fff;
+  padding: .875em;
+  margin-bottom: 1em;
+}
+
+#tab-precomputed_tab, #tab-on_demand_tab {
+  max-width: 150px;
+}
+
+.radio-success input[type="radio"]:checked+label::after {
+  background-color: #5e72e4 !important;
+  border-color: #5e72e4 !important;
+}
+
+.radio-success input[type="radio"]:checked+label::before {
+  background-color: #5e72e4 !important;
+  border-color: #5e72e4 !important;
+}
+
+.control-label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #525f7f;
+}
+
+.awesome-radio label {
+  font-weight: 300 !important;
+}
+
+.modal-header {
+  padding-bottom: .5rem !important;
+}
+
+/*
+#run_cust {
+  background-color: #fb6340;
+}
+
+
+button[data-dismiss="modal"] {
+  color: #172b4d;
+  border-color: #172b4d;
+  background-color: transparent;
+  background-image: none;
+  border-width: 1px;
+}
+*/
