@@ -72,6 +72,7 @@ first_dog <- long_stays %>% slice(1)
 customize_tab <- argonTabItem(
   tabName = "customize_tab",
     tags$div(
+      hidden(textInput("biotype", "", "raw_bio")),
       tags$br(),
       tags$br(),
       tags$div(
@@ -175,17 +176,13 @@ server <- function(input, output, session) {
   })
 
   observeEvent(input$show, {
+
     showModal(modalDialog(
-      title = "Important message",
-      tags$div(
-        awesomeRadio(
-          inputId = "jump_off_prof",
-          label = "Base off of",
-          choices = c("Original", "Interview", "Pup perspective", "Sectioned"),
-          selected = "Original",
-          inline = TRUE,
-          status = "success"
-        ),
+      easyClose = TRUE,
+      footer = NULL,
+
+      title = paste0("Customizing ", input$biotype),
+      tags$div(class = "p-4 bg-secondary",
         awesomeRadio(
           inputId = "length_input",
           label = "Length",

@@ -62,16 +62,10 @@ inner_body <- function(id, raw_bio,
 
   if (customize) {
     cust <-
-      # '<div style="display:flex">
-      #   <a href="#"
-      #   class="badge badge-pill badge-default"
-      #   data-toggle="modal"
-      #   data-target="#modal-form">Customize</a>
-      # </div>'
-
-    '<div style="display:flex">
-        <a href="#" id="show" class="badge badge-pill badge-default action-button">Customize</a>
-    </div>'
+      '<div style="display:flex">
+          <a href="#" id="show" class="bg-gradient-primary2 badge badge-pill
+          badge-default action-button" onclick="setBioType()">Customize</a>
+      </div>'
   } else {
     cust <- ''
   }
@@ -102,27 +96,27 @@ inner_body <- function(id, raw_bio,
           </a>
         </div>
       </li>
-    </ul>
 
-    {cust}
+    </ul>
 
     <div class="card shadow">
       <div class="card-body">
+          {cust}
         <div class="tab-content" id="{id}-{tab_num}-tcont" {style}>
           <div class="tab-pane fade show active" id="tabs-icons-text-0-{id}-{tab_num}"
-                role="tabpanel">
+               role="tabpanel" biotype="raw_bio">
             <p>{raw_bio}</p>
           </div>
           <div class="tab-pane fade" id="tabs-icons-text-1-{id}-{tab_num}"
-                role="tabpanel">
+                role="tabpanel" biotype="interview_rr">
             {shiny::includeMarkdown(interview_rr)}
           </div>
           <div class="tab-pane fade" id="tabs-icons-text-2-{id}-{tab_num}"
-                role="tabpanel">
+                role="tabpanel" biotype="pupper_rr">
             {shiny::includeMarkdown(pupper_rr)}
           </div>
           <div class="tab-pane fade" id="tabs-icons-text-3-{id}-{tab_num}"
-                role="tabpanel">
+                role="tabpanel" biotype="sectioned_rr">
             {shiny::includeMarkdown(sectioned_rr)}
           </div>
         </div>
