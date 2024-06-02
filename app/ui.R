@@ -49,7 +49,7 @@ dog_card <- function(id, name, profile_url, breed, card_b) {
 }
 
 inner_body <- function(id, raw_bio,
-                       interview_rr, pupper_rr, sectioned_rr,
+                       interview_rw, pupper_rw, sectioned_rw,
                        tab_num = 1,
                        limit_growth = FALSE,
                        customize = FALSE) {
@@ -108,16 +108,16 @@ inner_body <- function(id, raw_bio,
             <p>{raw_bio}</p>
           </div>
           <div class="tab-pane fade" id="tabs-icons-text-1-{id}-{tab_num}"
-                role="tabpanel" biotype="interview_rr">
-            {shiny::includeMarkdown(interview_rr)}
+                role="tabpanel" biotype="interview_rw">
+            {shiny::includeMarkdown(interview_rw)}
           </div>
           <div class="tab-pane fade" id="tabs-icons-text-2-{id}-{tab_num}"
-                role="tabpanel" biotype="pupper_rr">
-            {shiny::includeMarkdown(pupper_rr)}
+                role="tabpanel" biotype="pupper_rw">
+            {shiny::includeMarkdown(pupper_rw)}
           </div>
           <div class="tab-pane fade" id="tabs-icons-text-3-{id}-{tab_num}"
-                role="tabpanel" biotype="sectioned_rr">
-            {shiny::includeMarkdown(sectioned_rr)}
+                role="tabpanel" biotype="sectioned_rw">
+            {shiny::includeMarkdown(sectioned_rw)}
           </div>
         </div>
       </div>

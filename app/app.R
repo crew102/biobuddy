@@ -62,7 +62,7 @@ dogs <- read_csv(here("app/data/lorem-ipsum-bios.csv")) %>%
 long_stays <- dogs %>% filter(is_oldest_five) %>% slice(1:5)
 showcase_tab_ui <- lapply(long_stays$id, function(x) {
     p <- long_stays %>% filter(id == x)
-    card_b <- with(p, inner_body(id, raw_bio, interview_rr, pupper_rr, sectioned_rr))
+    card_b <- with(p, inner_body(id, raw_bio, interview_rw, pupper_rw, sectioned_rw))
     with(p, dog_card(id, name, url, breeds_primary, card_b))
 })
 showcase_tab <- argonTabItem("showcase_tab", showcase_tab_ui)
@@ -169,7 +169,7 @@ server <- function(input, output, session) {
       chosen_dog() %$%
         inner_body(
           id, raw_bio,
-          interview_rr, pupper_rr, sectioned_rr,
+          interview_rw, pupper_rw, sectioned_rw,
           tab_num = 2, limit_growth = FALSE, customize = TRUE
         )
     )
