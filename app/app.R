@@ -179,34 +179,32 @@ server <- function(input, output, session) {
 
     showModal(modalDialog(
       easyClose = TRUE,
+      title = "Customize settings",
       footer = NULL,
-
-      title = paste0("Customizing ", input$biotype),
       tags$div(class = "p-4 bg-secondary",
-        awesomeRadio(
+        pickerInput(
           inputId = "length_input",
-          label = "Length change",
+          label = "Length",
           choices = c("No change", "Shorter", "Longer"),
           selected = "No change",
-          inline = TRUE,
-          status = "success"
+          width = "fit"
         ),
-        awesomeRadio(
+        pickerInput(
           inputId = "emotive_input",
           label = "Emotional tone",
           choices = c("No change", "Less emotive", "More emotive"),
           selected = "No change",
-          inline = TRUE,
-          status = "success"
+          width = "fit"
         ),
-        awesomeRadio(
+        pickerInput(
           inputId = "humor_input",
           label = "Humour",
           choices = c("No change", "Less humour", "Drier", "More sarcastic"),
           selected = "No change",
-          inline = TRUE,
-          status = "success"
+          width = "fit"
         ),
+        # TODO: Include info button with more suggestions like "include the
+        # fact that the dog wags his tail when you walk in a room."
         textInput(
           "arbit_input", "Additional instructions", "",
           placeholder = "Write it in Spanish"
@@ -220,7 +218,7 @@ server <- function(input, output, session) {
             data-bs-dismiss="modal">
             Dismiss
           </button>
-          <button id="run_cust" type="button" class="btn btn-warning action-button">
+          <button id="run_cust" type="button" class="btn action-button customize">
             <i class="fa-regular fa-pen-to-square" role="presentation" aria-label="pencil icon"></i>
             Write it
           </button>

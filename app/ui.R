@@ -63,7 +63,7 @@ inner_body <- function(id, raw_bio,
   if (customize) {
     cust <-
       '<div style="display:flex">
-          <a href="#" id="show" class="bg-gradient-primary2 badge badge-pill
+          <a href="#" id="show" class="customize customize-pill badge badge-pill
           badge-default action-button" onclick="setBioType()">Customize</a>
       </div>'
   } else {

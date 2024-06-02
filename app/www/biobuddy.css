@@ -56,12 +56,15 @@
 }
 
 .bg-gradient-warning {
-  background-image:linear-gradient(310deg, #fb6340, #fbb140)
+  background-image: linear-gradient(310deg, #fb6340, #fbb140)
 }
 
-.bg-gradient-primary2 {
+.customize {
   background-image: linear-gradient(310deg, rgb(17, 113, 239), rgb(17, 205, 239));
   color: #fff;
+}
+
+.customize-pill {
   padding: .875em;
   margin-bottom: 1em;
 }
@@ -81,17 +84,32 @@
 }
 
 .control-label {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #525f7f;
+  display: block !important;
+  font-weight: 600;
+}
+
+.modal-body .btn.dropdown-toggle.btn-light {
+  background-color: #fff;
+  color: rgb(82, 95, 127);
+  font-weight: 400;
+  font-size: .875rem
+}
+
+.modal-body .form-group.shiny-input-container {
+  margin-bottom: 1.2rem;
 }
 
 .awesome-radio label {
   font-weight: 300 !important;
 }
 
+.modal-title {
+  font-size: 1rem !important;
+  font-weight: 800;
+}
+
 .modal-header {
-  padding-bottom: .5rem !important;
+  padding-bottom: 0rem !important;
 }
 
 /*
