@@ -227,7 +227,7 @@ server <- function(input, output, session) {
         ')
       )
     ))
-  }, ignoreInit = TRUE)
+  }, ignoreNULL = TRUE)
 
 }
 
