@@ -236,3 +236,16 @@ parallel_request_rewrites <- function(prompt_df, raw_bios,
     out$choices[[1]]$message$content
   }, character(1))
 }
+
+generic_openai_request <- function(prompt_df, model = "gpt-3.5-turbo-0125") {
+  payload <- list(model = model, messages = prompt_df)
+  req <- httr2::request("https://api.openai.com/v1/chat/completions") %>%
+    httr2::req_headers(
+      Authorization = paste0("Bearer ", Sys.getenv("OPENAI_API_KEY"))
+    ) %>%
+    httr2::req_body_json(payload)
+
+  resp <- httr2::req_perform(req)
+  if (httr2::resp_is_error(resp)) return(httr2::resp_status_desc(resp))
+  httr2::resp_body_json(resp)
+}

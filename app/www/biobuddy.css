@@ -112,6 +112,11 @@
   padding-bottom: 0rem !important;
 }
 
+.bounce1, .bounce2, .bounce3 {
+  color: #5e72e4 !important;
+  background-color: #5e72e4 !important;
+}
+
 /*
 #run_cust {
   background-color: #fb6340;

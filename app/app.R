@@ -113,7 +113,8 @@ customize_tab <- argonTabItem(
             class = "row justify-content-center",
             tags$div(
               class = "col-lg-9",
-              uiOutput("out_card_b")
+              uiOutput("out_card_b"),
+              uiOutput("customize_rewrite_card")
             )
           )
         )
@@ -151,6 +152,12 @@ server <- function(input, output, session) {
   })
 
   chosen_dog <- reactive({
+    # Not terribly clever, but choosing to just clear the customized card
+    # whenever new dog is chosen.
+    output$customize_rewrite_card <- renderUI({
+      shiny::tags$div()
+    })
+
     dogs %>%
       filter(name == input$in_dog_name)
   })
@@ -178,6 +185,7 @@ server <- function(input, output, session) {
   observeEvent(input$show, {
 
     showModal(modalDialog(
+      id = "settings_modal",
       easyClose = TRUE,
       title = "Customize settings",
       footer = NULL,
@@ -226,6 +234,62 @@ server <- function(input, output, session) {
       )
     ))
   }, ignoreNULL = TRUE)
+
+  observeEvent(input$run_cust, {
+
+    bio_to_rewrite <- chosen_dog() %>% pull(one_of(input$biotype))
+
+    w <- Waiter$new(
+      id = "settings_modal",
+      html = tagList(spin_three_bounce()),
+      color = transparent(),
+      hide_on_error = TRUE
+    )
+    w$show()
+
+    # Create prompt input to send to API
+    prompt_file <- here(glue("app/prompts/customize.json"))
+    prompt_df <- read_json(prompt_file, TRUE)
+    null_if_nada <- function(input) {
+      if (input == "" || input == "No change") NULL else input
+    }
+    changes <- c(
+      "* Length:" = input$length_input,
+      "* Emotional tone:" = input$emotive_input,
+      "* Humour:" = input$humor_input,
+      "* Additional instructions:" = input$arbit_input
+    )
+    changes_2 <- ifelse(changes == "" | changes == "No change", NA, changes)
+    changes_2 <- changes_2[!is.na(changes_2)]
+    # TODO: logic to have different prompt if no change indicated
+    changes_2 <- paste(names(changes_2), changes_2)
+    changes_2 <- paste0(changes_2, collapse = "\n")
+    prompt_df$content[1] <- paste(
+      prompt_df$content[1],
+      "However, I would like you to make the following changes:\n",
+      changes_2
+    )
+    prompt_df$content[2] <- bio_to_rewrite
+
+    out <- generic_openai_request(prompt_df, "gpt-3.5-turbo-0125")
+    # TODO: handle case where out is a string (error from API) and not response
+    customize_rewrite_txt <- out$choices[[1]]$message$content
+    output$customize_rewrite_card <- renderUI({
+      HTML(glue('
+        <br>
+        <div class="card shadow">
+          <div class="card-body">
+            <h4 class="card-title">Customized version</h5>
+            <p>{shiny::includeMarkdown(customize_rewrite_txt)}</p>
+          </div>
+        </div>
+    '))
+    })
+
+    removeModal()
+    w$hide()
+
+  })
 
 }
 

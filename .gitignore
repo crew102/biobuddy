@@ -11,3 +11,5 @@ app/www/*.png
 dev/
 _dev.R
 app/www/.bio-images/
+temp-dir/
+TODO.md
