@@ -36,4 +36,5 @@ Imports:
     shinyWidgets,
     cropcircles,
     magick,
-    magrittr
+    magrittr,
+    htmltools

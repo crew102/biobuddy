@@ -229,6 +229,97 @@ argonSidebarMenu <- function(id, ...) {
   )
 }
 
+# Taken from argonDash with Waiter dependency added
+addDeps <- function(x) {
+  dashboardDeps <- list(
+    # argonDash custom js
+    htmltools::htmlDependency(
+      name = "argonDash",
+      version = as.character(utils::packageVersion("argonDash")),
+      src = c(file = system.file("argonDash-0.1.0", package = "argonDash")),
+      script = "argonDash.js"
+    ),
+    htmltools::htmlDependency(
+      name = "bootstrap",
+      version = "4.1.3",
+      src = c(file = system.file("bootstrap-4.1.3", package = "argonDash")),
+      script = "bootstrap.bundle.min.js"
+    ),
+    htmltools::htmlDependency(
+      name = "googlefonts",
+      version = as.character(utils::packageVersion("argonDash")),
+      src = c(href = "https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"),
+      stylesheet = ""
+    ),
+    htmltools::htmlDependency(
+      name = "nucleo",
+      version = as.character(utils::packageVersion("argonDash")),
+      src = c(file = system.file("nucleo-0.1.0", package = "argonDash")),
+      stylesheet = "nucleo.css"
+    ),
+    htmltools::htmlDependency(
+      name = "fontawesome",
+      version = "5.3.1",
+      src = c(file = system.file("fontawesome-5.3.1", package = "argonDash")),
+      stylesheet = "all.min.css"
+    ),
+    htmltools::htmlDependency(
+      name = "argon",
+      version = "1.0.0",
+      src = c(file = system.file("argon-1.0.0", package = "argonDash")),
+      stylesheet = "argon.min.css",
+      script = "argon.min.js"
+    ),
+    htmltools::htmlDependency(
+      name = "waiter",
+      version = utils::packageVersion("waiter"),
+      src = "packer",
+      package = "waiter",
+      script = "waiter.js"
+    )
+
+  )
+  argonDash:::appendDependencies(x, dashboardDeps)
+}
+
+# Same as argonDash, except I need to redefine it here so that addDeps uses
+# my version
+argonDashPage <- function(title = NULL, description = NULL, author = NULL,
+                          navbar = NULL, sidebar = NULL, header = NULL,
+                          body = NULL, footer = NULL){
+
+  shiny::tags$html(
+    # Head
+    shiny::tags$head(
+      shiny::tags$meta(charset = "utf-8"),
+      shiny::tags$meta(
+        name = "viewport",
+        content = "width=device-width, initial-scale=1, shrink-to-fit=no"
+      ),
+      shiny::tags$meta(name = "description", content = description),
+      shiny::tags$meta(name = "author", content = author),
+      shiny::tags$title(title)
+    ),
+    # Body
+    addDeps(
+      shiny::tags$body(
+        sidebar,
+        shiny::tags$div(
+          class = "main-content",
+          navbar,
+          header,
+          # page content
+          shiny::tags$div(
+            class = "container-fluid mt--1",
+            body,
+            footer
+          )
+        )
+      )
+    )
+  )
+}
+
 ## stand ins
 
 footer <- argonDashFooter(
