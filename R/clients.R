@@ -231,7 +231,7 @@ parallel_request_rewrites <- function(prompt_df, raw_bios,
   resps <- httr2::req_perform_parallel(reqs, on_error = "continue")
 
   vapply(resps, function(x) {
-    if (httr2::resp_is_error(x)) return(httr2::resp_status_desc(req))
+    if (httr2::resp_is_error(x)) return(httr2::resp_status_desc(x))
     out <- httr2::resp_body_json(x)
     out$choices[[1]]$message$content
   }, character(1))
