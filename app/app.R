@@ -66,6 +66,14 @@ showcase_tab_ui <- lapply(long_stays$id, function(x) {
     with(p, dog_card(id, name, url, breeds_primary, card_b))
 })
 showcase_tab <- argonTabItem("showcase_tab", showcase_tab_ui)
+showcase_tab <- tagAppendChildren(
+  showcase_tab,
+  tags$br(),
+  tags$div(
+    style = "display: flex; justify-content: flex-end;",
+    actionButton("view_more", "More")
+  )
+)
 
 first_dog <- long_stays %>% slice(1)
 
@@ -156,13 +164,18 @@ server <- function(input, output, session) {
     runjs("document.querySelectorAll('.navbar-toggler')[0].click()")
   })
 
+  observeEvent(input$view_more, {
+    shinyjs::runjs("setTabToCustomize();")
+    # UI elements rendered server-side don't show up unless this hack is done:
+    outputOptions(output, "out_img", suspendWhenHidden = FALSE)
+  })
+
   chosen_dog <- reactive({
     # Not terribly clever, but choosing to just clear the customized card
     # whenever new dog is chosen.
     output$customize_rewrite_card <- renderUI({
       shiny::tags$div()
     })
-
     dogs %>%
       filter(name == input$in_dog_name)
   })
