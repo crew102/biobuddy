@@ -213,7 +213,14 @@ server <- function(input, output, session) {
         # TODO: Include info button with more suggestions like "include the
         # fact that the dog wags his tail when you walk in a room."
         textInput(
-          "arbit_input", "Additional instructions", "",
+          "arbit_input",
+          label = info_icon(
+            "arbit_input_info",
+            "Additional instructions",
+            "Convey additional instructions just like you would to a human, e.g.,
+            'Make the first sentence grab the reader's attention and also don't be so sappy'"
+          ),
+          value = "",
           placeholder = "Write it in Spanish"
         )
       ),
