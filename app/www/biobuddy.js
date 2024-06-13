@@ -3,3 +3,7 @@ function setBioType() {
   val = h.attributes.biotype.value;
   Shiny.setInputValue('biotype', val);
 }
+
+function tooltipsOn() {
+  $('[data-toggle=\"tooltip\"]').tooltip({ container: 'body' });
+}

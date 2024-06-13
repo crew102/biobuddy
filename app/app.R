@@ -72,7 +72,6 @@ first_dog <- long_stays %>% slice(1)
 customize_tab <- argonTabItem(
   tabName = "customize_tab",
     tags$div(
-      hidden(textInput("biotype", "", "raw_bio")),
       tags$br(),
       tags$br(),
       tags$div(
@@ -118,8 +117,8 @@ customize_tab <- argonTabItem(
             )
           )
         )
-
-      )
+      ),
+      tags$div(hidden(textInput("biotype", "", "raw_bio")))
     )
 )
 
@@ -145,10 +144,10 @@ server <- function(input, output, session) {
 
   # temp solution to programmatically hiding sidebar
   observeEvent(input$`tab-showcase_tab`, {
-    shinyjs::runjs("document.querySelectorAll('.navbar-toggler')[0].click()")
+    runjs("document.querySelectorAll('.navbar-toggler')[0].click()")
   })
   observeEvent(input$`tab-customize_tab`, {
-    shinyjs::runjs("document.querySelectorAll('.navbar-toggler')[0].click()")
+    runjs("document.querySelectorAll('.navbar-toggler')[0].click()")
   })
 
   chosen_dog <- reactive({
@@ -233,6 +232,7 @@ server <- function(input, output, session) {
         ')
       )
     ))
+    shinyjs::runjs("tooltipsOn();")
   }, ignoreNULL = TRUE)
 
   observeEvent(input$run_cust, {
