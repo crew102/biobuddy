@@ -117,6 +117,10 @@
   background-color: #5e72e4 !important;
 }
 
+.dropdown-header {
+  color: #32325d !important;
+}
+
 #arbit_input {
   border-bottom-color: rgb(173, 181, 189);
   border-top-color: rgb(173, 181, 189);
@@ -124,6 +128,14 @@
   border-right-color: rgb(173, 181, 189);
   box-shadow: 0 4px 6px rgba(50,50,93,.11),0 1px 3px rgba(0,0,0,.08);
 }
+
+.bootstrap-select .dropdown-menu {
+  min-width: 10vw !important;
+  max-width: 80vw !important;
+}
+
+/* .dropdown-item.active, .dropdown-item:active */
+
 /*
 #run_cust {
   background-color: #fb6340;

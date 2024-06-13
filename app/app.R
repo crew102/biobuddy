@@ -142,6 +142,12 @@ ui <- argonDashPage(
 
 server <- function(input, output, session) {
 
+  # TODO: Save final result as rds instead of csv, for faster loading
+  behaviors <- read_csv(here("app/data/endearing-behaviors.csv"))
+  behaviors <- behaviors %>% filter(level > 1) %>% arrange(group_name, desc(level))
+  behaviors <- split(behaviors, behaviors$group_name)
+  behaviors <- lapply(behaviors, function(x) x$behavior)
+
   # temp solution to programmatically hiding sidebar
   observeEvent(input$`tab-showcase_tab`, {
     runjs("document.querySelectorAll('.navbar-toggler')[0].click()")
@@ -210,8 +216,22 @@ server <- function(input, output, session) {
           selected = "No change",
           width = "fit"
         ),
-        # TODO: Include info button with more suggestions like "include the
-        # fact that the dog wags his tail when you walk in a room."
+        pickerInput(
+          inputId = "end_beh",
+          label =  info_icon(
+            "beh_info",
+            "Endearing behaviors",
+            "Does your dog exhibit any of these behaviors?
+            Select all those that should be mentioned in the bio."
+          ),
+          choices = behaviors,
+          multiple = TRUE,
+          autocomplete = TRUE,
+          # TODO: Fix check mark appearing in middle of box
+          options = pickerOptions(
+            noneSelectedText = "None"
+          )
+        ),
         textInput(
           "arbit_input",
           label = info_icon(
@@ -264,6 +284,7 @@ server <- function(input, output, session) {
       "* Length:" = input$length_input,
       "* Emotional tone:" = input$emotive_input,
       "* Humour:" = input$humor_input,
+      "* Incorporate that the dog exhibits these endearing behaviors:" = input$end_beh,
       "* Additional instructions:" = input$arbit_input
     )
     changes_2 <- ifelse(changes == "" | changes == "No change", NA, changes)
