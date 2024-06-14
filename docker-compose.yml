@@ -3,15 +3,18 @@ version: "3.7"
 services:
   shiny-proxy:
     restart: on-failure
-    build: ./services/shiny-proxy
+    image: openanalytics/shinyproxy:3.1.0
     networks:
       - bb-net
     expose:
       - 8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
       - ${PWD}/services/shiny-proxy/application.yml:/opt/shinyproxy/application.yml
       - ${PWD}/services/shiny-proxy/env.txt:/opt/shinyproxy/env.txt
+    user: root
+
   nginx:
     image: nginx
     restart: always
@@ -21,7 +24,7 @@ services:
       - 80:80
     volumes:
       - ${PWD}/services/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./services/nginx/venus:/www/venus
+      - ./services/nginx/landing:/www/landing
       - ./services/nginx/logs:/nginx/logs
     depends_on:
       - shiny-proxy
