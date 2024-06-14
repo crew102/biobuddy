@@ -1,0 +1,124 @@
+<!-- Taken from https://insiderdev.github.io/elisa-template-demo/ with some
+modifications -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>BioBuddy</title>
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+      type="text/css">
+    <link href="vendor/magnific-popup/magnific-popup.css" rel="stylesheet">
+    <link href="vendor/animate.css/animate.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+
+    <style>
+      #element {
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .header-content img {
+        float: left !important;
+        width: 100px !important;
+        height: 100px !important;
+      }
+      .header-content h1 {
+        position: relative !important;
+        top: 18px !important;
+      }
+      @media (max-width: 430px) {
+        #blurb {
+          width: 100%;
+        }
+      }
+      @media (min-width: 431px) {
+        #blurb {
+          width: 320px;
+        }
+      }
+      .section-image-container img {
+        position: absolute;
+        bottom: 20px;
+      }
+    </style>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <![endif]-->
+  </head>
+
+  <body id="page-top" data-scroll-animation="false">
+    <div id="spinner">
+      <div class="sk-folding-cube">
+        <div class="sk-cube1 sk-cube"></div>
+        <div class="sk-cube2 sk-cube"></div>
+        <div class="sk-cube4 sk-cube"></div>
+        <div class="sk-cube3 sk-cube"></div>
+      </div>
+    </div>
+    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed"
+            data-toggle="collapse"
+            data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span> <img
+            src="img/menu-light.svg" alt="">
+          </button>
+        </div>
+        <!-- /.navbar-collapse -->
+      </div>
+      <!-- /.container-fluid -->
+    </nav>
+    <header class="mobile-on-right-small">
+      <div class="container" style="display: flex">
+        <div class="header-content">
+          <div class="header-content-inner">
+            <img src="img/bb-logo.svg" alt="logo" style="  display: block;
+              margin-left: 0;"/>
+            <div style="display: flex; padding-left: 10px;">
+              <h1 style="margin: 0px; margin-block-start: 0px">BioBuddy</h1>
+            </div>
+            <div style="display: flex; padding-left: 10px;">
+              <h4 style="margin: 0px; margin-block-start: 0px">
+                <br>
+                <span id="element"></span>
+              </h4>
+            </div>
+            <hr>
+            <script>
+              var typed = new Typed('#element', {
+                  strings: ['<TT>Dog profile writer</TT>', '<TT>Dog profile rewriter</TT>'],
+                  typeSpeed: 75, backSpeed: 75, startDelay: 700
+              });
+            </script>
+            <div style="display: flex; justify-content: flex-start; text-align: left">
+              <p class="wow fadeInUp" data-wow-delay="0.3s" id="blurb">
+                BioBuddy revamps adoption profiles, giving long-stay dogs a fresh chance to charm their way into loving families.
+              </p>
+            </div>
+            <a href="reverseproxy" class="btn btn-primary btn-xl page-scroll wow fadeInUp"
+              data-wow-delay="0.3">Sign in</a>
+          </div>
+        </div>
+      </div>
+    </header>
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+    <script src="vendor/scrollreveal/scrollreveal.min.js"></script>
+    <script src="vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+    <script src="vendor/svg-injector/svg-injector.min.js"></script>
+    <script src="vendor/wowjs/wow.min.js"></script>
+    <script src="js/index.min.js"></script>
+  </body>
+</html>

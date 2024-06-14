@@ -1,2 +1,3 @@
-services/nginx/venus/src/* linguist-generated=true
-services/nginx/venus/dist/* linguist-generated=true
+services/nginx/landing/js/* linguist-generated=true
+services/nginx/landing/vendor/* linguist-generated=true
+services/nginx/landing/css/* linguist-generated=true
