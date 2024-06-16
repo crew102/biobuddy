@@ -14,6 +14,12 @@ library(glue)
 library(bsplus)
 library(shinyWidgets)
 library(magrittr)
+library(polished)
+
+polished_config(
+  app_name = "biobuddy-dev",
+  api_key = Sys.getenv("POLISHED_API_KEY")
+)
 
 devtools::load_all()
 
@@ -149,6 +155,8 @@ ui <- argonDashPage(
 )
 
 server <- function(input, output, session) {
+
+  user <- session$userData$user()
 
   # TODO: Save final result as rds instead of csv, for faster loading
   behaviors <- read_csv(here("app/data/endearing-behaviors.csv"))
@@ -331,7 +339,25 @@ server <- function(input, output, session) {
     w$hide()
 
   })
-
 }
 
-shinyApp(ui, server)
+sign_in <- sign_in_ui_default(
+    sign_in_module = sign_in_module_ui(
+      "sign_in", "First time user? Register here.",
+      "Reset your password"
+    ),
+    color = "#5e72e4",
+    company_name = "BioBuddy",
+    logo_top = tagList(
+      tags$head(includeCSS("www/biobuddy.css")),
+      tags$div(
+        style = "width: 125px; margin-top: 30px; margin-bottom: 30px;"
+      ),
+      tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"),
+    )
+)
+
+shinyApp(
+  secure_ui(ui, sign_in_page_ui = sign_in),
+  secure_server(server)
+)
