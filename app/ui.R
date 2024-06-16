@@ -320,13 +320,8 @@ argonDashPage <- function(title = NULL, description = NULL, author = NULL,
   )
 }
 
-## stand ins
-
 footer <- argonDashFooter(
   copyrights = "@biobuddy, 2024",
-  src = "https://github.com/crew102",
-  argonFooterMenu(
-    argonFooterItem("footer 1", src = "https://github.com/RinteRface"),
-    argonFooterItem("footer 2", src = "https://demos.creative-tim.com/argon-design-system/index.html")
-  )
+  src = "https://github.com/crew102/biobuddy/blob/main/LICENSE.md"
 )
+

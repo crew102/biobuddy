@@ -5,7 +5,7 @@ Version: 0.0.9000
 Authors@R: person("Chris", "Baker", email = "chriscrewbaker@gmail.com", role = c("aut", "cre"))
 Maintainer: Chris Baker <chriscrewbaker@gmail.com>
 Description: BioBuddy pet adoption bio writer
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
