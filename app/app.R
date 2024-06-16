@@ -27,6 +27,28 @@ source(here("app/ui.R"))
 
 options(shiny.port = 3838, shiny.host = "0.0.0.0")
 
+all_dogs <- read_csv(here("app/data/lorem-ipsum-bios.csv"))
+
+
+gen_showcase_tab <- function(dog_df) {
+  # showcase tab
+  long_stays <- dog_df %>% filter(is_oldest_five) %>% slice(1:5)
+  showcase_tab_ui <- lapply(long_stays$id, function(x) {
+    p <- long_stays %>% filter(id == x)
+    card_b <- with(p, inner_body(id, raw_bio, interview_rw, pupper_rw, sectioned_rw))
+    with(p, dog_card(id, name, url, breeds_primary, card_b))
+  })
+  showcase_tab <- argonTabItem("showcase_tab", showcase_tab_ui)
+  showcase_tab <- tagAppendChildren(
+    showcase_tab,
+    tags$br(),
+    tags$div(
+      style = "display: flex; justify-content: flex-end;",
+      actionButton("view_more", "More")
+    )
+  )
+}
+
 sidebar <- argonDashSidebar(
   vertical = TRUE,
   skin = "light",
@@ -34,6 +56,7 @@ sidebar <- argonDashSidebar(
   size = "md",
   side = "left",
   id = "my_sidebar",
+  # TODO: Replace with landing page
   brand_url = "http://www.google.com",
   brand_logo = "bb-logo.svg",
   argonSidebarHeader(title = "Bios"),
@@ -58,43 +81,23 @@ sidebar <- argonDashSidebar(
   )
 )
 
-### org id will be passed in as input when sign in. we'll have showcase
-### the data in lorem-ipsum-bios.csv in batch process.
-org_id <- "GA553"
-dogs <- read_csv(here("app/data/lorem-ipsum-bios.csv")) %>%
-  filter(organization_id == org_id)
+gen_customize_tab <- function(dog_df) {
+  first_dog <- dog_df %>% slice(1)
 
-# showcase tab
-long_stays <- dogs %>% filter(is_oldest_five) %>% slice(1:5)
-showcase_tab_ui <- lapply(long_stays$id, function(x) {
-    p <- long_stays %>% filter(id == x)
-    card_b <- with(p, inner_body(id, raw_bio, interview_rw, pupper_rw, sectioned_rw))
-    with(p, dog_card(id, name, url, breeds_primary, card_b))
-})
-showcase_tab <- argonTabItem("showcase_tab", showcase_tab_ui)
-showcase_tab <- tagAppendChildren(
-  showcase_tab,
-  tags$br(),
-  tags$div(
-    style = "display: flex; justify-content: flex-end;",
-    actionButton("view_more", "More")
-  )
-)
-
-first_dog <- long_stays %>% slice(1)
-
-customize_tab <- argonTabItem(
-  tabName = "customize_tab",
+  argonTabItem(
+    tabName = "customize_tab",
     tags$div(
       tags$br(),
       tags$br(),
       tags$div(
         class = "card card-profile shadow px-4",
         # image
-        tags$div(class = "row",
-           tags$div(class = "col",
-              tags$div(class = "card-profile-image", uiOutput("out_img"))
-           )
+        tags$div(
+          class = "row",
+          tags$div(
+            class = "col",
+            tags$div(class = "card-profile-image", uiOutput("out_img"))
+          )
         ),
         # name/breed
         tags$div(
@@ -105,7 +108,7 @@ customize_tab <- argonTabItem(
               class = "text-center mt-5 pt-5",
               pickerInput(
                 inputId = "in_dog_name",
-                choices = dogs$name,
+                choices = dog_df$name,
                 selected = first_dog$name[1],
                 multiple = FALSE,
                 autocomplete = TRUE,
@@ -134,7 +137,9 @@ customize_tab <- argonTabItem(
       ),
       tags$div(hidden(textInput("biotype", "", "raw_bio")))
     )
-)
+  )
+
+}
 
 account_tab <- argonTabItem(
   tabName = "account_tab",
@@ -142,6 +147,7 @@ account_tab <- argonTabItem(
 )
 
 ui <- argonDashPage(
+  # id = "my_page",
   useShinyjs(),
   sidebar = sidebar,
   body = argonDashBody(
@@ -149,14 +155,21 @@ ui <- argonDashPage(
     tags$head(includeCSS("www/biobuddy.css")),
     tags$head(includeScript("www/biobuddy.js")),
     tags$head(includeScript("https://kit.fontawesome.com/42822e2abc.js")),
-    argonTabItems(showcase_tab, customize_tab)
+    argonTabItems(uiOutput("showcase_tab"), shinyjs::hidden(uiOutput("customize_tab")))
   ),
   footer = footer
 )
 
 server <- function(input, output, session) {
 
-  user <- session$userData$user()
+  # TODO: Replace this with actual user (via email address)
+  # user <- session$userData$user()
+  # user$email
+  org_id <- "GA553"
+  dog_df <- all_dogs %>% filter(organization_id == org_id)
+
+  output$showcase_tab <- renderUI(gen_showcase_tab(dog_df))
+  output$customize_tab <- renderUI(gen_customize_tab(dog_df))
 
   # TODO: Save final result as rds instead of csv, for faster loading
   behaviors <- read_csv(here("app/data/endearing-behaviors.csv"))
@@ -164,18 +177,22 @@ server <- function(input, output, session) {
   behaviors <- split(behaviors, behaviors$group_name)
   behaviors <- lapply(behaviors, function(x) x$behavior)
 
-  # temp solution to programmatically hiding sidebar
   observeEvent(input$`tab-showcase_tab`, {
-    runjs("document.querySelectorAll('.navbar-toggler')[0].click()")
+    shinyjs::hide("customize_tab")
+    shinyjs::show("showcase_tab")
+    runjs("collapseSidebar()")
+
   })
   observeEvent(input$`tab-customize_tab`, {
-    runjs("document.querySelectorAll('.navbar-toggler')[0].click()")
+    shinyjs::hide("showcase_tab")
+    shinyjs::show("customize_tab")
+    runjs("collapseSidebar()")
   })
 
   observeEvent(input$view_more, {
     shinyjs::runjs("setTabToCustomize();")
-    # UI elements rendered server-side don't show up unless this hack is done:
-    outputOptions(output, "out_img", suspendWhenHidden = FALSE)
+    shinyjs::hide("showcase_tab")
+    shinyjs::show("customize_tab")
   })
 
   chosen_dog <- reactive({
@@ -184,7 +201,7 @@ server <- function(input, output, session) {
     output$customize_rewrite_card <- renderUI({
       shiny::tags$div()
     })
-    dogs %>%
+    dog_df %>%
       filter(name == input$in_dog_name)
   })
 
@@ -209,7 +226,6 @@ server <- function(input, output, session) {
   })
 
   observeEvent(input$show, {
-
     showModal(modalDialog(
       id = "settings_modal",
       easyClose = TRUE,
@@ -339,6 +355,7 @@ server <- function(input, output, session) {
     w$hide()
 
   })
+
 }
 
 sign_in <- sign_in_ui_default(

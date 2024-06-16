@@ -9,10 +9,11 @@ function tooltipsOn() {
 }
 
 function setTabToCustomize() {
-  x = document.getElementById('shiny-tab-showcase_tab');
-  x.setAttribute('class', 'tab-pane container-fluid');
-  x = document.getElementById('shiny-tab-customize_tab');
-  x.setAttribute('class', 'tab-pane container-fluid active show');
   document.getElementById('tab-customize_tab').classList.add('active', 'show');
   document.getElementById('tab-showcase_tab').classList.remove('active', 'show');
+}
+
+// Temp solution to programmatically hiding sidebar
+function collapseSidebar() {
+  document.querySelectorAll('.navbar-toggler')[0].click();
 }
