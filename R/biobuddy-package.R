@@ -11,7 +11,6 @@
 #' @import stringr
 #' @import tibble
 #' @import glue
-#' @import pbapply
 #' @import shiny
 #' @import argonDash
 ## usethis namespace: end

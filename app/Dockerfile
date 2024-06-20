@@ -1,18 +1,33 @@
-FROM rocker/tidyverse
+# Docker build run in top-level dir
+# Matrix version has to be 1.6-5
+# magic has to be installled
 
-# TODO: Start from lighter base image, install renv, use lockfile and recreate
-# env from that.
-RUN /rocker_scripts/setup_R.sh https://packagemanager.posit.co/cran/__linux__/jammy/latest \
-  echo "\noptions(shiny.port = 3838, shiny.host = '0.0.0.0')" >> /usr/local/lib/R/etc/Rprofile.site \
-  Rscript -e "install.packages('polished', repos = 'https://packagemanager.posit.co/cran/latest')"
-
-EXPOSE 3838
+FROM rocker/tidyverse:4.3.3
 
 WORKDIR /home/app
 
-USER root
+ENV RENV_STARTUP_DIAGNOSTICS TRUE
+
+# Matrix 1.6-5
+
+RUN apt-get update -qq && \
+  apt-get -y --no-install-recommends install libmagick++-dev
+
+RUN R -e "install.packages('renv', repos = c(CRAN = 'https://cloud.r-project.org'))"
+
+EXPOSE 3838
 
 # TODO: Currently using dev code, change this in the future
-COPY dev/app.R .
+COPY app/dev/app.R .
+COPY renv.lock .
+
+RUN mkdir -p renv
+COPY .Rprofile .Rprofile
+COPY renv/activate.R renv/activate.R
+COPY renv/settings.json renv/settings.json
+
+RUN R -e "renv::restore()"
+
+USER root
 
 CMD ["R", "-e", "shiny::runApp()"]
