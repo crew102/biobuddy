@@ -388,6 +388,11 @@ sign_in_page_ui = sign_in_ui_default(
   color = "#5e72e4",
   company_name = "BioBuddy",
   logo_top = tagList(
+    tags$img(
+      src = "bb-logo-white.svg",
+      alt = "BioBuddy",
+      style = "width: 100px; margin-top: 30px; margin-bottom: 0px;"
+    ),
     tags$head(includeCSS("www/biobuddy.css")),
     tags$div(
       style = "width: 125px; margin-top: 30px; margin-bottom: 30px;"

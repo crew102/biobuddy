@@ -134,17 +134,6 @@
   max-width: 80vw !important;
 }
 
-.auth_panel {
-  color: rgb(52, 71, 103);
-  font-family: Open Sans,sans-serif !important;
-  border-radius: 1rem !important;
-}
-
-.auth_panel h1 {
-  font-size: 2.5rem;
-  letter-spacing: -0.05rem;
-  font-weight: 700 !important;
-}
 
 #sign_in-go_to_register, #sign_in-reset_password-reset_password {
   color: rgb(103, 116, 142);
@@ -254,5 +243,13 @@
 .gsi-material-button:not(:disabled):hover .gsi-material-button-state {
   background-color: #303030;
   opacity: 8%;
+}
+
+/* Auth sign in */
+
+.auth_panel {
+  color: #525f7f;
+  font-family: Open Sans,sans-serif !important;
+  border-radius: 1rem !important;
 }
 

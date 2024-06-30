@@ -354,47 +354,49 @@ google_sign_in_button <- HTML('
 # https://github.com/Tychobra/polished/blob/master/R/sign_in_module_2.R
 sign_in_module_2_ui_bb <- function(id) {
   ns <- shiny::NS(id)
-
-  sign_in_password_ui <- div(
-    id = ns("sign_in_password_ui"),
-    div(
-      class = "form-group",
-      style = "width: 100%;",
-      tags$label(
-        tagList(icon("unlock-alt"), "password"),
-        class = "control-label",
-        `for` = ns("sign_in_password")
-      ),
-      tags$input(
-        id = ns("sign_in_password"),
-        type = "password",
-        class = "form-control",
-        value = ""
-      )
-    ),
-    shinyFeedback::loadingButton(
-      ns("sign_in_submit"),
-      label = "Sign In",
-      class = "btn btn-primary btn-lg text-center",
-      style = "width: 30%; font-size: 1.2rem; letter-spacing: 0.025em;",
-      loadingLabel = "Authenticating...",
-      loadingClass = "btn btn-primary btn-lg text-center",
-      loadingStyle = "width: 100%"
-    )
-  )
-
+  # Tweaked output of email_input function from polished
+  email_input <- HTML('
+    <div class="form-group shiny-input-container" style="width: 100%; text-align: left;">
+      <label class="control-label" for="sign_in-sign_in_email">
+      <i class="far fa-envelope" role="presentation" aria-label="envelope icon"></i>
+      Email
+      </label>
+      <input id="sign_in-sign_in_email" type="email" class="form-control" value=""/>
+    </div>
+  ')
   sign_in_email_ui <- tags$div(
     id = ns("email_ui"),
     tags$br(),
-    email_input(
-      inputId = ns("sign_in_email"),
-      label = tagList(icon("envelope"), "email"),
-      value = "",
-      width = "100%"
-    ),
+    email_input,
     tags$div(
       id = ns("sign_in_panel_bottom"),
-        sign_in_password_ui,
+      div(
+        id = ns("sign_in_password_ui"),
+        div(
+          class = "form-group",
+          style = "width: 100%; text-align: left;",
+          tags$label(
+            tagList(icon("unlock-alt"), "Password"),
+            class = "control-label",
+            `for` = ns("sign_in_password")
+          ),
+          tags$input(
+            id = ns("sign_in_password"),
+            type = "password",
+            class = "form-control",
+            value = ""
+          )
+        ),
+        shinyFeedback::loadingButton(
+          ns("sign_in_submit"),
+          label = "Sign In",
+          class = "btn btn-primary btn-lg text-center",
+          style = "width: 30%; font-size: 1.2rem; letter-spacing: 0.025em;",
+          loadingLabel = "Authenticating...",
+          loadingClass = "btn btn-primary btn-lg text-center",
+          loadingStyle = "width: 100%"
+        )
+      ),
       div(
         style = "text-align: center;",
         br(),
@@ -403,98 +405,10 @@ sign_in_module_2_ui_bb <- function(id) {
     )
   )
 
-  continue_registration <- div(
-    id = ns("continue_registration"),
-    shiny::actionButton(
-      inputId = ns("submit_continue_register"),
-      label = "Continue",
-      width = "100%",
-      class = "btn btn-primary btn-lg"
-    )
-  )
-
-  register_passwords <- div(
-    id = ns("register_passwords"),
-    div(
-      class = "form-group",
-      style = "width: 100%",
-      tags$label(
-        tagList(icon("unlock-alt"), "password"),
-        class = "control-label",
-        `for` = ns("register_password")
-      ),
-      tags$input(
-        id = ns("register_password"),
-        type = "password",
-        class = "form-control",
-        value = ""
-      )
-    ),
-    div(
-      class = "form-group shiny-input-container",
-      style = "width: 100%",
-      tags$label(
-        tagList(shiny::icon("unlock-alt"), "verify password"),
-        class = "control-label",
-        `for` = ns("register_password_verify")
-      ),
-      tags$input(
-        id = ns("register_password_verify"),
-        type = "password",
-        class = "form-control",
-        value = ""
-      )
-    ),
-    div(
-      style = "text-align: center;",
-      shinyFeedback::loadingButton(
-        ns("register_submit"),
-        label = "Register",
-        class = "btn btn-primary btn-lg",
-        style = "width: 100%;",
-        loadingLabel = "Registering...",
-        loadingClass = "btn btn-primary btn-lg text-center",
-        loadingStyle = "width: 100%;"
-      ),
-      br(),
-      br()
-    )
-  )
-
-  register_ui <- div(
-    br(),
-    email_input(
-      inputId = ns("register_email"),
-      label = tagList(icon("envelope"), "email"),
-      value = "",
-      width = "100%"
-    ),
-    if (isTRUE(.polished$is_invite_required)) {
-      tagList(continue_registration, shinyjs::hidden(register_passwords))
-    } else {
-      register_passwords
-    }
-  )
-
-  sign_in_register_email <- shiny::tabsetPanel(
-    id = ns("tabs"),
-    shiny::tabPanel("Sign In", sign_in_email_ui),
-    shiny::tabPanel("Register", register_ui)
-  )
-
-  providers <- .polished$sign_in_providers
-
   sign_in_ui <- tags$div(
     class = "auth_panel",
-    sign_in_register_email,
+    sign_in_email_ui,
     tags$br(),
-    # This was the original call to create the equivalent of google_sign_in_button
-    # providers_ui(
-    #   ns,
-    #   providers[providers != "email"],
-    #   title = NULL,
-    #   fancy = TRUE
-    # )
     google_sign_in_button
   )
 
