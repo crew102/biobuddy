@@ -12,7 +12,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
       - ${PWD}/services/shiny-proxy/application.yml:/opt/shinyproxy/application.yml
-      - ${PWD}/services/shiny-proxy/env.txt:/opt/shinyproxy/env.txt
+      - ${PWD}/secrets.txt:/opt/shinyproxy/env.txt
     user: root
 
   nginx:
