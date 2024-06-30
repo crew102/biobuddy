@@ -325,3 +325,187 @@ footer <- argonDashFooter(
   src = "https://github.com/crew102/biobuddy/blob/main/LICENSE.md"
 )
 
+
+# https://developers.google.com/identity/branding-guidelines
+google_sign_in_button <- HTML('
+  <div id="sign_in-providers_ui">
+    <button class="gsi-material-button" id="sign_in-sign_in_with_google">
+      <div class="gsi-material-button-state"></div>
+      <div class="gsi-material-button-content-wrapper">
+        <div class="gsi-material-button-icon">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: block;">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+            <path fill="none" d="M0 0h48v48H0z"></path>
+          </svg>
+        </div>
+        <span class="gsi-material-button-contents">Sign in with Google</span>
+        <span style="display: none;">Sign in with Google</span>
+      </div>
+    </button>
+    <br/>
+    <br/>
+  </div>
+')
+
+# Tweaked from polished original:
+# https://github.com/Tychobra/polished/blob/master/R/sign_in_module_2.R
+sign_in_module_2_ui_bb <- function(id) {
+  ns <- shiny::NS(id)
+
+  sign_in_password_ui <- div(
+    id = ns("sign_in_password_ui"),
+    div(
+      class = "form-group",
+      style = "width: 100%;",
+      tags$label(
+        tagList(icon("unlock-alt"), "password"),
+        class = "control-label",
+        `for` = ns("sign_in_password")
+      ),
+      tags$input(
+        id = ns("sign_in_password"),
+        type = "password",
+        class = "form-control",
+        value = ""
+      )
+    ),
+    shinyFeedback::loadingButton(
+      ns("sign_in_submit"),
+      label = "Sign In",
+      class = "btn btn-primary btn-lg text-center",
+      style = "width: 30%; font-size: 1.2rem; letter-spacing: 0.025em;",
+      loadingLabel = "Authenticating...",
+      loadingClass = "btn btn-primary btn-lg text-center",
+      loadingStyle = "width: 100%"
+    )
+  )
+
+  sign_in_email_ui <- tags$div(
+    id = ns("email_ui"),
+    tags$br(),
+    email_input(
+      inputId = ns("sign_in_email"),
+      label = tagList(icon("envelope"), "email"),
+      value = "",
+      width = "100%"
+    ),
+    tags$div(
+      id = ns("sign_in_panel_bottom"),
+        sign_in_password_ui,
+      div(
+        style = "text-align: center;",
+        br(),
+        send_password_reset_email_module_ui(ns("reset_password"))
+      )
+    )
+  )
+
+  continue_registration <- div(
+    id = ns("continue_registration"),
+    shiny::actionButton(
+      inputId = ns("submit_continue_register"),
+      label = "Continue",
+      width = "100%",
+      class = "btn btn-primary btn-lg"
+    )
+  )
+
+  register_passwords <- div(
+    id = ns("register_passwords"),
+    div(
+      class = "form-group",
+      style = "width: 100%",
+      tags$label(
+        tagList(icon("unlock-alt"), "password"),
+        class = "control-label",
+        `for` = ns("register_password")
+      ),
+      tags$input(
+        id = ns("register_password"),
+        type = "password",
+        class = "form-control",
+        value = ""
+      )
+    ),
+    div(
+      class = "form-group shiny-input-container",
+      style = "width: 100%",
+      tags$label(
+        tagList(shiny::icon("unlock-alt"), "verify password"),
+        class = "control-label",
+        `for` = ns("register_password_verify")
+      ),
+      tags$input(
+        id = ns("register_password_verify"),
+        type = "password",
+        class = "form-control",
+        value = ""
+      )
+    ),
+    div(
+      style = "text-align: center;",
+      shinyFeedback::loadingButton(
+        ns("register_submit"),
+        label = "Register",
+        class = "btn btn-primary btn-lg",
+        style = "width: 100%;",
+        loadingLabel = "Registering...",
+        loadingClass = "btn btn-primary btn-lg text-center",
+        loadingStyle = "width: 100%;"
+      ),
+      br(),
+      br()
+    )
+  )
+
+  register_ui <- div(
+    br(),
+    email_input(
+      inputId = ns("register_email"),
+      label = tagList(icon("envelope"), "email"),
+      value = "",
+      width = "100%"
+    ),
+    if (isTRUE(.polished$is_invite_required)) {
+      tagList(continue_registration, shinyjs::hidden(register_passwords))
+    } else {
+      register_passwords
+    }
+  )
+
+  sign_in_register_email <- shiny::tabsetPanel(
+    id = ns("tabs"),
+    shiny::tabPanel("Sign In", sign_in_email_ui),
+    shiny::tabPanel("Register", register_ui)
+  )
+
+  providers <- .polished$sign_in_providers
+
+  sign_in_ui <- tags$div(
+    class = "auth_panel",
+    sign_in_register_email,
+    tags$br(),
+    # This was the original call to create the equivalent of google_sign_in_button
+    # providers_ui(
+    #   ns,
+    #   providers[providers != "email"],
+    #   title = NULL,
+    #   fancy = TRUE
+    # )
+    google_sign_in_button
+  )
+
+  htmltools::tagList(
+    shinyjs::useShinyjs(),
+    sign_in_ui,
+    tags$script(src = "polish/js/auth_keypress.js?version=2"),
+    tags$script(paste0("auth_keypress('", ns(''), "')")),
+    tags$script(
+      "$('input').attr('autocomplete', 'off');"
+    ),
+    sign_in_js(ns)
+  )
+}

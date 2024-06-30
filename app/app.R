@@ -18,7 +18,13 @@ library(polished)
 
 polished_config(
   app_name = "biobuddy-dev",
-  api_key = Sys.getenv("POLISHED_API_KEY")
+  api_key = Sys.getenv("POLISHED_API_KEY"),
+  firebase_config = list(
+    apiKey = Sys.getenv('FIREBASE_API_KEY'),
+    authDomain = "pf-analytics-232522.firebaseapp.com",
+    projectId = "pf-analytics-232522"
+  ),
+  sign_in_providers = c("google", "email")
 )
 
 devtools::load_all()
@@ -189,10 +195,29 @@ server <- function(input, output, session) {
     runjs("collapseSidebar()")
   })
 
+  # observeEvent(input$view_more, {
+  #   shinyjs::runjs("setTabToCustomize();")
+  #   shinyjs::hide("showcase_tab")
+  #   shinyjs::show("customize_tab")
+  # })
+
+  # Temp, for dev purposes:
   observeEvent(input$view_more, {
-    shinyjs::runjs("setTabToCustomize();")
-    shinyjs::hide("showcase_tab")
-    shinyjs::show("customize_tab")
+
+    tryCatch({
+
+      sign_out_from_shiny(session)
+      session$reload()
+
+    }, error = function(err) {
+
+      msg <- "unable to sign out"
+      warning(msg)
+      warning(conditionMessage(err))
+
+      invisible(NULL)
+    })
+
   })
 
   chosen_dog <- reactive({
@@ -358,23 +383,21 @@ server <- function(input, output, session) {
 
 }
 
-sign_in <- sign_in_ui_default(
-    sign_in_module = sign_in_module_ui(
-      "sign_in", "First time user? Register here.",
-      "Reset your password"
+sign_in_page_ui = sign_in_ui_default(
+  sign_in_module = sign_in_module_2_ui_bb("sign_in"),
+  color = "#5e72e4",
+  company_name = "BioBuddy",
+  logo_top = tagList(
+    tags$head(includeCSS("www/biobuddy.css")),
+    tags$div(
+      style = "width: 125px; margin-top: 30px; margin-bottom: 30px;"
     ),
-    color = "#5e72e4",
-    company_name = "BioBuddy",
-    logo_top = tagList(
-      tags$head(includeCSS("www/biobuddy.css")),
-      tags$div(
-        style = "width: 125px; margin-top: 30px; margin-bottom: 30px;"
-      ),
-      tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"),
-    )
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"),
+  )
 )
 
+
 shinyApp(
-  secure_ui(ui, sign_in_page_ui = sign_in),
+  secure_ui(ui, sign_in_page_ui = sign_in_page_ui),
   secure_server(server)
 )
