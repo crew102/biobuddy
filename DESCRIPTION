@@ -9,32 +9,5 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
-Imports: 
-    httr,
-    httr2,
-    jsonlite,
-    dplyr,
-    tidyr,
-    lubridate,
-    xml2,
-    stringr,
-    tibble,
-    glue,
-    pbapply,
-    pbmcapply,
-    shiny,
-    argonR,
-    argonDash,
-    shinyjs,
-    here,
-    readr,
-    markdown,
-    bslib,
-    devtools,
-    waiter,
-    reticulate,
-    shinyWidgets,
-    cropcircles,
-    magick,
-    magrittr,
-    htmltools
+Imports:
+  Matrix
