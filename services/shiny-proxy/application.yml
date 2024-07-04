@@ -16,9 +16,3 @@ proxy:
     container-network: biobuddy_bb-net
     # This file is mapped from host to shiny proxy container at compose up
     container-env-file: /opt/shinyproxy/env.txt
-    # FOR DEV PURPOSES
-    # Overwrites code used in containers spun up by shiny proxy (based on bb-app
-    # image, which is built off of biobuddy/app/Dockerfile).
-    # NOTE THE USE OF DEV dir here, so it's not even true dev stuff, it's
-    # dev of dev (used for services testing).
-    container-volumes: ["/Users/cbaker/Documents/git-chris/biobuddy/app/dev:/home/app"]

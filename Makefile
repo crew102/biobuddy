@@ -1,11 +1,11 @@
 bup:
-	docker-compose down
-	docker-compose up -d
+	docker compose down
+	docker compose up -d
 
 build:
-	docker-compose build --no-cache
-	docker-compose down
-	docker-compose up -d
+	docker compose build --no-cache
+	docker compose down
+	docker compose up -d
 
 img:
 	Rscript scripts/lockfile-write.R
