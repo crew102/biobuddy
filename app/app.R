@@ -77,12 +77,6 @@ sidebar <- argonDashSidebar(
       tabName = "customize_tab",
       icon = argonIcon(name = "planet", color = "warning"),
       "Customize"
-    ),
-    argonDropNavDivider(),
-    argonSidebarItem(
-      tabName = "account_tab",
-      icon = argonIcon(name = "planet", color = "warning"),
-      "Account"
     )
   )
 )
@@ -400,7 +394,6 @@ sign_in_page_ui = sign_in_ui_default(
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"),
   )
 )
-
 
 shinyApp(
   secure_ui(ui, sign_in_page_ui = sign_in_page_ui),

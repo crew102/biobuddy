@@ -1,7 +1,8 @@
 services:
+
   shiny-proxy:
-    restart: on-failure
     image: openanalytics/shinyproxy:3.1.0
+    restart: on-failure
     networks:
       - bb-net
     expose:
@@ -13,7 +14,7 @@ services:
     user: root
 
   nginx:
-    image: nginx
+    image: nginx:1.27.0
     restart: always
     networks:
       - bb-net
@@ -25,7 +26,8 @@ services:
       - ./services/nginx/logs:/nginx/logs
     depends_on:
       - shiny-proxy
-    command: [nginx-debug, '-g', 'daemon off;']
+    command: [nginx-debug, "-g", "daemon off;"]
+
   # Services for dev purposes. Will restrict incoming traffic on these ports
   # to my IP address (hence no password).
   portainer:

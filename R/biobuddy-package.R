@@ -13,5 +13,6 @@
 #' @import glue
 #' @import shiny
 #' @import argonDash
+#' @import pbapply
 ## usethis namespace: end
 NULL
