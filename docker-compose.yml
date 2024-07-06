@@ -26,6 +26,31 @@ services:
     depends_on:
       - shiny-proxy
     command: [nginx-debug, '-g', 'daemon off;']
+  # Services for dev purposes. Will restrict incoming traffic on these ports
+  # to my IP address (hence no password).
+  portainer:
+    image: portainer/portainer-ce:latest
+    restart: unless-stopped
+    networks:
+      - bb-net
+    ports:
+      - 9443:9443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  # TODO: secrets mapping in, preferences automated, working dir
+  # /.rstudio/monitored/user-settings/user-settings
+  rstudio-dev:
+    image: bb-app
+    restart: unless-stopped
+    networks:
+      - bb-net
+    ports:
+      - 8787:8787
+    environment:
+      DISABLE_AUTH: true
+      ROOT: true
+    command: ["/init"]
 
 networks:
   bb-net:
