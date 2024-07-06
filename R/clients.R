@@ -6,8 +6,8 @@ auth_pf <- function() {
       "https://api.petfinder.com/v2/oauth2/token",
       body = list(
         grant_type = "client_credentials",
-        "client_id" = Sys.getenv("PF_CLIENT_ID"),
-        client_secret = Sys.getenv("PF_CLIENT_SECRET")
+        "client_id" = get_secret("PF_CLIENT_ID"),
+        client_secret = get_secret("PF_CLIENT_SECRET")
       ),
       encode = "form"
     )
@@ -223,7 +223,7 @@ parallel_request_rewrites <- function(prompt_df, raw_bios,
     payload <- list(model = model, messages = prompt_df)
     httr2::request("https://api.openai.com/v1/chat/completions") %>%
       httr2::req_headers(
-        Authorization = paste0("Bearer ", Sys.getenv("OPENAI_API_KEY"))
+        Authorization = paste0("Bearer ", get_secret("OPENAI_API_KEY"))
       ) %>%
       httr2::req_body_json(payload)
   })
@@ -241,7 +241,7 @@ generic_openai_request <- function(prompt_df, model = "gpt-3.5-turbo-0125") {
   payload <- list(model = model, messages = prompt_df)
   req <- httr2::request("https://api.openai.com/v1/chat/completions") %>%
     httr2::req_headers(
-      Authorization = paste0("Bearer ", Sys.getenv("OPENAI_API_KEY"))
+      Authorization = paste0("Bearer ", get_secret("OPENAI_API_KEY"))
     ) %>%
     httr2::req_body_json(payload)
 

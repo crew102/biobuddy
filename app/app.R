@@ -16,20 +16,20 @@ library(shinyWidgets)
 library(magrittr)
 library(polished)
 
+devtools::load_all()
+
+source(here("app/ui.R"))
+
 polished_config(
   app_name = "biobuddy-dev",
-  api_key = Sys.getenv("POLISHED_API_KEY"),
+  api_key = get_secret("POLISHED_API_KEY"),
   firebase_config = list(
-    apiKey = Sys.getenv('FIREBASE_API_KEY'),
+    apiKey = get_secret("FIREBASE_API_KEY"),
     authDomain = "pf-analytics-232522.firebaseapp.com",
     projectId = "pf-analytics-232522"
   ),
   sign_in_providers = c("google", "email")
 )
-
-devtools::load_all()
-
-source(here("app/ui.R"))
 
 options(shiny.port = 3838, shiny.host = "0.0.0.0")
 
