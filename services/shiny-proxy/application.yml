@@ -17,3 +17,4 @@ proxy:
     # This file is mapped from host to shiny proxy container at compose up if
     # we're in a dev env (will use AWS Secrets Manager for prod).
     container-env-file: /opt/shinyproxy/env.txt
+#    container-volumes: ["./logs:/home/biobuddy/logs"]

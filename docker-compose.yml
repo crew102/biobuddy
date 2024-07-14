@@ -20,6 +20,7 @@ services:
       - bb-net
     ports:
       - 80:80
+      - 443:443
     volumes:
       - ./services/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./services/nginx/landing:/www/landing

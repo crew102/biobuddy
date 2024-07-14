@@ -9,7 +9,10 @@ COPY app app
 COPY R R
 
 RUN apt-get update -qq && \
-  apt-get -y --no-install-recommends install libmagick++-dev
+  apt-get -y --no-install-recommends install \
+  libmagick++-dev cron certbot python3-certbot-nginx nano
+
+ENV EDITOR nano
 
 RUN R -e "install.packages('renv', repos = c(CRAN = 'https://cloud.r-project.org'))"
 
