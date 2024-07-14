@@ -41,9 +41,30 @@ modifications -->
           width: 320px;
         }
       }
+
+      @media (min-width: 768px) {
+        header.mobile-on-right-small {
+          min-height: 100%;
+        }
+
+        header.mobile-on-right-small .header-content {
+          text-align: left;
+          padding: 0;
+          height: 100vh;
+          min-height: 100vh;
+        }
+      }
       .section-image-container img {
         position: absolute;
         bottom: 20px;
+      }
+      body {
+          background: url('img/bg-pattern.png'), #663FB5;
+          background: url('img/bg-pattern.png'), -webkit-linear-gradient(to left, #663FB5, #2B8BE3);
+          /* Chrome 10-25, Safari 5.1-6 */
+          background: url('img/bg-pattern.png'), linear-gradient(to left, #663FB5, #2B8BE3);
+          /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+          background-repeat: repeat;
       }
     </style>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -121,4 +142,6 @@ modifications -->
     <script src="vendor/wowjs/wow.min.js"></script>
     <script src="js/index.min.js"></script>
   </body>
+
+
 </html>
