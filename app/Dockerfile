@@ -10,7 +10,7 @@ COPY R R
 
 RUN apt-get update -qq && \
   apt-get -y --no-install-recommends install \
-  libmagick++-dev cron certbot python3-certbot-nginx nano
+  libmagick++-dev cron nano htop
 
 ENV EDITOR nano
 
