@@ -168,11 +168,11 @@ def lambda_handler(event, context):
             connection=ec2.Port.HTTP.tcp(80)
         )
 
-        # Spot instance to host the site
-        startup_script = """#!/bin/bash
-        echo "Hello, World!" > /tmp/hello.txt
-        """
+        with open("ec2-startup.sh", "r") as f:
+            startup_script = f.read()
         user_data = ec2.UserData.custom(startup_script)
+
+        # See notes re: how to get an AMI programmatically at runtime
         machine_image = ec2.MachineImage.generic_linux(
             ami_map={"us-east-1": "ami-04a81a99f5ec58529"},
             user_data=user_data
