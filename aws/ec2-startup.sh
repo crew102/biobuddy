@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 apt-get update && \
   apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -50,7 +52,6 @@ declare -a secret_names=(
 #  "AWS_SECRET_ACCESS_KEY"
 #  "AWS_DEFAULT_REGION"
 )
-
 for secret_name in "${secret_names[@]}"; do
   secret_value=$(
     aws secretsmanager get-secret-value --secret-id "$secret_name" \
@@ -74,7 +75,7 @@ local_version="services/nginx/install-cert.sh"
 docker_version="/nginx/install-cert.sh"
 chmod +x "$local_version"
 nginx_container=$(docker compose ps -q nginx)
-docker exec -it "$nginx_container" "$docker_version"
+docker exec "$nginx_container" "$docker_version"
 
 echo "cd /home/biobuddy" >> ~/.bashrc
 

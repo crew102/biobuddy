@@ -15,7 +15,6 @@ LOCAL_IP = '108.51.225.117/32'
 
 
 def _get_secret(secret_name):
-    # Initialize the Secrets Manager client
     client = boto3.client('secretsmanager')
     response = client.get_secret_value(SecretId=secret_name)
     ss = response['SecretString']
