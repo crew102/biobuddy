@@ -50,6 +50,8 @@ services:
       - bb-net
     ports:
       - 8787:8787
+    volumes:
+      - .:/home/rstudio/biobuddy
     environment:
       DISABLE_AUTH: true
       ROOT: true
