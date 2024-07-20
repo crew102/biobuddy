@@ -1,3 +1,5 @@
+import json
+
 from aws_cdk import (
     Stack,
     aws_ec2 as ec2,
@@ -10,9 +12,30 @@ from aws_cdk import (
 )
 from constructs import Construct
 from cdk_ec2_spot_simple import SpotInstance
-
+import boto3
 
 LOCAL_IP = '108.51.225.117/32'
+
+
+def _get_secret_via_sm_arn(secret_name):
+    # Initialize the Secrets Manager client
+    client = boto3.client('secretsmanager')
+
+    # Paginate through all secrets if necessary
+    paginator = client.get_paginator('list_secrets')
+
+    arn_val = ''
+    for page in paginator.paginate():
+        for secret in page['SecretList']:
+            if secret['Name'] == secret_name:
+                arn_val = secret['ARN']
+
+    # Get the secret value
+    client = boto3.client('secretsmanager')
+    response = client.get_secret_value(SecretId=arn_val)
+    ss = response['SecretString']
+    a_dict = json.loads(ss)
+    return a_dict[secret_name]
 
 
 class EcsOnFargate(Stack):
@@ -107,13 +130,14 @@ def lambda_handler(event, context):
         )
         rule.add_target(targets.LambdaFunction(start_task_function))
 
+        role_arn = _get_secret_via_sm_arn("READ-SECRETS-FROM-EC2")
         # Reference the existing IAM Role
-        # secrets_role = iam.Role.from_role_arn(
-        #     self,
-        #     "ExistingSecretsRole",
-        #     role_arn="arn:aws:iam::797137051954:role/secrets-role",
-        #     mutable=False,
-        # )  # Set mutable to False as the role is not defined within this stack
+        secrets_role = iam.Role.from_role_arn(
+            self, "ccb-existing-secrets-role",
+            role_arn=role_arn,
+            # Set mutable to False as the role is not defined within this stack
+            mutable=False
+        )
 
         sg = ec2.SecurityGroup(
             self, id="ccb-security-group",
@@ -160,7 +184,7 @@ def lambda_handler(event, context):
             vpc=vpc,
             key_name="pair-2",
             security_group=sg,
-            # role=secrets_role,
+            role=secrets_role,
             block_devices=[
                 ec2.BlockDevice(
                     device_name="/dev/sda1",
