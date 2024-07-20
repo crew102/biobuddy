@@ -78,3 +78,5 @@ nginx_container=$(docker compose ps -q nginx)
 docker exec -it "$nginx_container" "$install_file"
 
 echo "cd /home/biobuddy" >> .bashrc
+
+echo -e "\n\nsSTARTUP DONE\n\n"
