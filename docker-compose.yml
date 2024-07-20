@@ -25,7 +25,7 @@ services:
       - ./services/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./services/nginx/landing:/www/landing
       - ./services/nginx/logs:/nginx/logs
-      - ./services/nginx/install-cert.sh:/install-cert.sh
+      - ./services/nginx/install-cert.sh:/nginx/install-cert.sh
     depends_on:
       - shiny-proxy
     command: [nginx-debug, "-g", "daemon off;"]

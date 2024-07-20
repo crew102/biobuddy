@@ -72,11 +72,13 @@ make bup
 echo -e "ONE-TIME INSTALL OF SSL CERT\n\n"
 # Reminder: This is the version of the script that exists in the repo, not the
 # one that you're dealing with during interactive deployment.
-install_file="/install-cert.sh"
-chmod +x "$install_file"
+# Reminder: This script gets mapped into nginx container at docker compose up
+local_version="services/nginx/install-cert.sh"
+docker_version="/nginx/install-cert.sh"
+chmod +x "$local_version"
 nginx_container=$(docker compose ps -q nginx)
-docker exec -it "$nginx_container" "$install_file"
+docker exec -it "$nginx_container" "$docker_version"
 
-echo "cd /home/biobuddy" >> .bashrc
+echo "cd /home/biobuddy" >> ~/.bashrc
 
 echo -e "\n\nsSTARTUP DONE\n\n"
