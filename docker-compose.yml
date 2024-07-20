@@ -52,10 +52,18 @@ services:
     ports:
       - 8787:8787
     volumes:
-      - .:/home/rstudio/biobuddy
+      # Reminder that working dir is /home/biobuddy in container normally. Here
+      # we map in dev code to a new directory. Code from build image is in
+      # /home/biobuddy/app
+      - .:/home/rstudio/biobuddy-dev
+      # Will remove this file in the container so I don't activate the renv
+      # when i enter the project
+      - /dev/null:/home/rstudio/biobuddy-dev/.Rprofile
     environment:
       DISABLE_AUTH: true
       ROOT: true
+      # TODO: remove this
+      R_LIBS_USER: /home/biobuddy/renv/lib
     command: ["/init"]
 
 networks:
