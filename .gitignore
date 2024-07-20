@@ -12,3 +12,6 @@ _dev.R
 app/www/.bio-images/
 TODO.md
 secrets.txt
+aws/.venv
+.aws
+*.pyc
