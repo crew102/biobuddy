@@ -17,22 +17,10 @@ import boto3
 LOCAL_IP = '108.51.225.117/32'
 
 
-def _get_secret_via_sm_arn(secret_name):
+def _get_secret(secret_name):
     # Initialize the Secrets Manager client
     client = boto3.client('secretsmanager')
-
-    # Paginate through all secrets if necessary
-    paginator = client.get_paginator('list_secrets')
-
-    arn_val = ''
-    for page in paginator.paginate():
-        for secret in page['SecretList']:
-            if secret['Name'] == secret_name:
-                arn_val = secret['ARN']
-
-    # Get the secret value
-    client = boto3.client('secretsmanager')
-    response = client.get_secret_value(SecretId=arn_val)
+    response = client.get_secret_value(SecretId=secret_name)
     ss = response['SecretString']
     a_dict = json.loads(ss)
     return a_dict[secret_name]
@@ -56,19 +44,18 @@ class EcsOnFargate(Stack):
             ]
         )
 
-        # Create an ECS Cluster
+        # ECS cluster
         cluster = ecs.Cluster(
             self, "ecs-cluster",
             vpc=vpc, enable_fargate_capacity_providers=True
         )
         cluster.apply_removal_policy(RemovalPolicy.DESTROY)
 
-        # Define the Task Definition
+        # Fargate task on ECS cluster
         task_definition = ecs.FargateTaskDefinition(
             self, "fargate-task",
             memory_limit_mib=512, cpu=256,
         )
-        # Add container to the Task Definition
         task_definition.add_container(
             "HelloWorldContainer",
             image=ecs.ContainerImage.from_registry("hello-world"),
@@ -78,6 +65,7 @@ class EcsOnFargate(Stack):
         # IAM Role for Lambda
         lambda_role = iam.Role(
             self, "lambda-iam-role",
+            # This means that lambda can use this role
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
             managed_policies=[
                 iam.ManagedPolicy.from_aws_managed_policy_name(
@@ -130,7 +118,8 @@ def lambda_handler(event, context):
         )
         rule.add_target(targets.LambdaFunction(start_task_function))
 
-        role_arn = _get_secret_via_sm_arn("READ-SECRETS-FROM-EC2")
+        # The read-secrets-from-ec2
+        role_arn = _get_secret("READ-SECRETS-FROM-EC2")
         # Reference the existing IAM Role
         secrets_role = iam.Role.from_role_arn(
             self, "ccb-existing-secrets-role",
