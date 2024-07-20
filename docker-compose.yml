@@ -14,7 +14,7 @@ services:
     user: root
 
   nginx:
-    image: nginx:1.27.0
+    build: ./services/nginx
     restart: always
     networks:
       - bb-net
