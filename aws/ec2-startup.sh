@@ -61,9 +61,6 @@ for secret_name in "${secret_names[@]}"; do
   echo "$secret_value" >> "secrets.txt"
 done
 
-echo -e "BUILDING BB-APP IMAGE\n\n"
-make img-deploy
-
 echo -e "DOCKER-COMPOSE UP\n\n"
 make bup
 

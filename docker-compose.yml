@@ -12,6 +12,10 @@ services:
       - ./services/shiny-proxy/application.yml:/opt/shinyproxy/application.yml
       - ./secrets.txt:/opt/shinyproxy/env.txt
     user: root
+    depends_on:
+      # So that we can be sure there's an image to use for launching the app
+      # containers
+      - rstudio-dev
 
   nginx:
     build: ./services/nginx
@@ -45,7 +49,7 @@ services:
   # TODO: secrets mapping in, preferences automated, working dir
   # /.rstudio/monitored/user-settings/user-settings
   rstudio-dev:
-    image: bb-app
+    build: ./app
     restart: unless-stopped
     networks:
       - bb-net
@@ -57,13 +61,11 @@ services:
       # /home/biobuddy/app
       - .:/home/rstudio/biobuddy-dev
       # Will remove this file in the container so I don't activate the renv
-      # when i enter the project
+      # when I enter the project
       - /dev/null:/home/rstudio/biobuddy-dev/.Rprofile
     environment:
       DISABLE_AUTH: true
       ROOT: true
-      # TODO: remove this
-      R_LIBS_USER: /home/biobuddy/renv/lib
     command: ["/init"]
 
 networks:
