@@ -3,11 +3,8 @@ import json
 from aws_cdk import (
     Stack,
     aws_ec2 as ec2,
-    aws_ecs as ecs,
     aws_iam as iam,
-    aws_lambda as _lambda,
-    aws_events as events,
-    aws_events_targets as targets,
+    aws_s3 as s3,
     RemovalPolicy
 )
 from constructs import Construct
@@ -26,7 +23,7 @@ def _get_secret(secret_name):
     return a_dict[secret_name]
 
 
-class EcsOnFargate(Stack):
+class EC2spot(Stack):
 
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
@@ -44,88 +41,27 @@ class EcsOnFargate(Stack):
             ]
         )
 
-        # ECS cluster
-        cluster = ecs.Cluster(
-            self, "ecs-cluster",
-            vpc=vpc, enable_fargate_capacity_providers=True
-        )
-        cluster.apply_removal_policy(RemovalPolicy.DESTROY)
-
-        # Fargate task on ECS cluster
-        task_definition = ecs.FargateTaskDefinition(
-            self, "fargate-task",
-            memory_limit_mib=512, cpu=256,
-        )
-        task_definition.add_container(
-            "HelloWorldContainer",
-            image=ecs.ContainerImage.from_registry("hello-world"),
-            logging=ecs.LogDriver.aws_logs(stream_prefix="HelloWorld")
-        )
-
-        # IAM Role for Lambda
-        lambda_role = iam.Role(
-            self, "lambda-iam-role",
-            # This means that lambda can use this role
-            assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
-            managed_policies=[
-                iam.ManagedPolicy.from_aws_managed_policy_name(
-                    "service-role/AWSLambdaBasicExecutionRole"
-                ),
-                iam.ManagedPolicy.from_aws_managed_policy_name(
-                    "AmazonECS_FullAccess"
-                ),
-                iam.ManagedPolicy.from_aws_managed_policy_name(
-                    "AmazonEC2ContainerRegistryReadOnly"
-                )
-            ]
-        )
-
-        # Lambda function to start Fargate Task
-        start_task_function = _lambda.Function(
-            self, "start-fargate-task",
-            runtime=_lambda.Runtime.PYTHON_3_8,
-            handler="index.lambda_handler",
-            code=_lambda.Code.from_inline(
-                f"""
-import boto3
-
-def lambda_handler(event, context):
-    client = boto3.client('ecs')
-    response = client.run_task(
-        cluster='{cluster.cluster_name}',
-        capacityProviderStrategy=[{{
-            'capacityProvider': 'FARGATE_SPOT',
-            'weight': 1
-        }}],
-        taskDefinition='{task_definition.task_definition_arn}',
-        networkConfiguration={{
-            'awsvpcConfiguration': {{
-                'subnets': ['{vpc.public_subnets[0].subnet_id}'],
-                'assignPublicIp': 'ENABLED'
-            }}
-        }}
-    )
-    print(response)
-                """
-            ),
-            role=lambda_role
-        )
-
-        # Create a rule to trigger the Lambda function at 4 PM every day
-        rule = events.Rule(
-            self, "lambda-cron-rule",
-            schedule=events.Schedule.cron(minute="35", hour="0")
-        )
-        rule.add_target(targets.LambdaFunction(start_task_function))
-
-        # The read-secrets-from-ec2
+        # The read-secrets-from-ec2 ARN
         role_arn = _get_secret("READ-SECRETS-FROM-EC2")
         # Reference the existing IAM Role
+        # TODO: Rename this role
         secrets_role = iam.Role.from_role_arn(
             self, "ccb-existing-secrets-role",
             role_arn=role_arn,
             # Set mutable to False as the role is not defined within this stack
             mutable=False
+        )
+
+        bucket = s3.Bucket(
+            self, "catchall-data-bucket",
+            removal_policy=RemovalPolicy.RETAIN
+        )
+        policy = iam.PolicyStatement(
+            actions=["s3:*"],
+            resources=[bucket.bucket_arn, f"{bucket.bucket_arn}/*"]
+        )
+        secrets_role.attach_inline_policy(
+            iam.Policy(self, "ccb-read-s3-bucket", statements=[policy])
         )
 
         sg = ec2.SecurityGroup(

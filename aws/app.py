@@ -3,12 +3,12 @@ import os
 
 import aws_cdk as cdk
 
-from ecs.ecs_on_fargate import EcsOnFargate
+from ec2.ec2_spot import EC2spot
 
 
 app = cdk.App()
-EcsOnFargate(
-    app, "ecs-on-fargate",
+EC2spot(
+    app, "ec2-spot",
     # If you don't specify 'env', this stack will be environment-agnostic.
     # Account/Region-dependent features and *context lookups will not work,
     # but a single synthesized template can be deployed anywhere.

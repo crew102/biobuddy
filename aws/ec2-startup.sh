@@ -81,4 +81,4 @@ docker exec -it "$nginx_container" "$docker_version"
 
 echo "cd /home/biobuddy" >> ~/.bashrc
 
-echo -e "\n\nsSTARTUP DONE\n\n"
+echo -e "\n\nSTARTUP DONE\n\n"
