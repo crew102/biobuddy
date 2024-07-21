@@ -12,10 +12,6 @@ services:
       - ./services/shiny-proxy/application.yml:/opt/shinyproxy/application.yml
       - ./secrets.txt:/opt/shinyproxy/env.txt
     user: root
-    depends_on:
-      # So that we can be sure there's an image to use for launching the app
-      # containers
-      - rstudio-dev
 
   nginx:
     build: ./services/nginx
@@ -49,7 +45,7 @@ services:
   # TODO: secrets mapping in, preferences automated, working dir
   # /.rstudio/monitored/user-settings/user-settings
   rstudio-dev:
-    build: ./app
+    image: bb-app
     restart: unless-stopped
     networks:
       - bb-net
