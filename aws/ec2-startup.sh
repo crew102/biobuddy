@@ -62,6 +62,9 @@ for secret_name in "${secret_names[@]}"; do
   echo "$secret_value" >> "secrets.txt"
 done
 
+# Set rstudio password using docker compose env vars interpolation
+grep RSTUDIO_PASSWORD secrets.txt > .env
+
 echo -e "BUILDING BB-APP IMAGE\n\n"
 make img-deploy
 

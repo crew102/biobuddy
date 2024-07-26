@@ -28,7 +28,7 @@ services:
       - ./services/nginx/install-cert.sh:/nginx/install-cert.sh
     depends_on:
       - shiny-proxy
-    command: [nginx-debug, "-g", "daemon off;"]
+#    command: [nginx-debug, "-g", "daemon off;"]
 
   # Services for dev purposes. Will restrict incoming traffic on these ports
   # to my IP address (hence no password).
@@ -60,8 +60,8 @@ services:
       # when I enter the project
       - /dev/null:/home/rstudio/biobuddy-dev/.Rprofile
     environment:
-      DISABLE_AUTH: true
       ROOT: true
+      PASSWORD: "${RSTUDIO_PASSWORD}"
     command: ["/init"]
 
 networks:
