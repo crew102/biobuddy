@@ -1,12 +1,12 @@
 import json
 import os
+import re
 
 from aws_cdk import (
     Stack,
     aws_ec2 as ec2,
     aws_iam as iam,
-    aws_s3 as s3,
-    RemovalPolicy
+    aws_s3 as s3
 )
 from constructs import Construct
 from cdk_ec2_spot_simple import SpotInstance
@@ -14,9 +14,9 @@ import boto3
 
 
 def _get_secret(secret_name):
-    client = boto3.client('secretsmanager')
+    client = boto3.client("secretsmanager")
     response = client.get_secret_value(SecretId=secret_name)
-    ss = response['SecretString']
+    ss = response["SecretString"]
     a_dict = json.loads(ss)
     return a_dict[secret_name]
 
@@ -46,27 +46,35 @@ class EC2spot(Stack):
         secrets_role = iam.Role.from_role_arn(
             self, "ccb-existing-secrets-role",
             role_arn=role_arn,
-            # Set mutable to False as the role is not defined within this stack
             mutable=False
         )
 
-        bucket = s3.Bucket(
-            self, "catchall-data-bucket",
-            removal_policy=RemovalPolicy.RETAIN
-        )
-        policy = iam.PolicyStatement(
-            actions=["s3:*"],
-            resources=[bucket.bucket_arn, f"{bucket.bucket_arn}/*"]
-        )
-        secrets_role.attach_inline_policy(
-            iam.Policy(self, "ccb-read-s3-bucket", statements=[policy])
-        )
+        bid = "catchall-data-bucket"
+        bid_id = bid.replace("-", "")
+        s3_client = boto3.client("s3")
+        bucks = s3_client.list_buckets()
+        bucket_exists = [
+            i for i in bucks["Buckets"] if re.search(bid_id, i["Name"])
+        ]
+        if not bucket_exists:
+            s3.Bucket(
+                self,
+                bid,
+                public_read_access=True,
+                website_index_document="index.html",
+                block_public_access=s3.BlockPublicAccess(
+                    block_public_acls=False,
+                    ignore_public_acls=False,
+                    block_public_policy=False,
+                    restrict_public_buckets=False,
+                ),
+            )
 
         sg = ec2.SecurityGroup(
             self, id="ccb-security-group",
             vpc=vpc, allow_all_outbound=True
         )
-        ip = os.environ.get('LOCAL_IP')
+        ip = os.environ.get("LOCAL_IP")
         sg.add_ingress_rule(
             peer=ec2.Peer.ipv4(ip),
             connection=ec2.Port.tcp(22)
