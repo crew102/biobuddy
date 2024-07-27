@@ -31,7 +31,7 @@ apt-get update && \
 #  python3-pip \
 #  python3-boto3
 
-echo -e "AWS INSTALL\n\n"
+echo -e "AWS CLI INSTALL\n\n"
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.0.30.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 ./aws/install
@@ -48,9 +48,7 @@ declare -a secret_names=(
   "OPENAI_API_KEY"
   "POLISHED_API_KEY"
   "FIREBASE_API_KEY"
-#  "AWS_ACCESS_KEY_ID"
-#  "AWS_SECRET_ACCESS_KEY"
-#  "AWS_DEFAULT_REGION"
+  "RSTUDIO_PASSWORD"
 )
 for secret_name in "${secret_names[@]}"; do
   secret_value=$(
@@ -68,7 +66,7 @@ grep RSTUDIO_PASSWORD secrets.txt > .env
 echo -e "BUILDING BB-APP IMAGE\n\n"
 make img-deploy
 
-echo -e "DOCKER-COMPOSE UP\n\n"
+echo -e "RUNNING DOCKER-COMPOSE UP\n\n"
 make bup
 
 # Not terribly proud of this. Dipping into the nginx container and installing
