@@ -10,7 +10,7 @@ COPY R R
 
 RUN apt-get update -qq && \
   apt-get -y --no-install-recommends install \
-  libmagick++-dev cron nano htop
+  libmagick++-dev cron nano htop libz-dev libharfbuzz-dev libfribidi-dev libgit2-dev
 
 ENV R_LIBS_USER="/home/biobuddy/renv/lib"
 ENV RETICULATE_PYTHON="/home/biobuddy/.local/share/r-miniconda/envs/r-reticulate/bin/python"

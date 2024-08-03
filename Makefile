@@ -7,11 +7,8 @@ build:
 	docker compose down
 	docker compose up -d
 
-img-local:
+img:
 	Rscript scripts/lockfile-write.R
-	docker build -t bb-app -f app/Dockerfile .
-
-img-deploy:
 	docker build -t bb-app -f app/Dockerfile .
 
 app:
@@ -30,4 +27,3 @@ aws-up:
 clean:
 	docker image prune
 
-.PHONY: bup build img-local img-deploy app clean

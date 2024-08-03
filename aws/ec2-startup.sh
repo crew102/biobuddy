@@ -64,7 +64,7 @@ done
 grep RSTUDIO_PASSWORD secrets.txt > .env
 
 echo -e "BUILDING BB-APP IMAGE\n\n"
-make img-deploy
+make img
 
 echo -e "RUNNING DOCKER-COMPOSE UP\n\n"
 make bup
