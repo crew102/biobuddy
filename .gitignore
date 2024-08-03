@@ -15,3 +15,4 @@ secrets.txt
 aws/.venv
 .aws
 *.pyc
+.env
