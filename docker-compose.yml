@@ -59,6 +59,9 @@ services:
       # Will remove this file in the container so I don't activate the renv
       # when I enter the project
       - /dev/null:/home/rstudio/biobuddy-dev/.Rprofile
+      # Preferences
+      - ./aws/conf/rstudio-prefs.json:/home/rstudio/.config/rstudio/rstudio-prefs.json
+      - ./aws/conf/rstudio_bindings.json:/home/rstudio/.config/rstudio/keybindings/rstudio_bindings.json
     environment:
       ROOT: true
       PASSWORD: "${RSTUDIO_PASSWORD}"
