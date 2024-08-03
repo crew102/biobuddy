@@ -14,6 +14,9 @@ img:
 app:
 	docker run --rm -it -p 3838:3838 -v `pwd`/secrets.txt:/root/.Renviron -v `pwd`/app:/home/biobuddy/app -v `pwd`/R:/home/biobuddy/R bb-app
 
+py-venv-install:
+	cd aws; source .venv/bin/activate; pip install -r requirements.txt
+
 aws-downup:
 	# To avoid issues where an existing resource is already associated with
 	# an instance, destroy stack first...Will probably need to add
@@ -27,3 +30,7 @@ aws-up:
 clean:
 	docker image prune
 
+writedir:
+	sudo chmod -R 777 /home/biobuddy/
+
+.PHONY: bup build img app clean writedir
