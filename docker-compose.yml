@@ -30,8 +30,7 @@ services:
       - shiny-proxy
 #    command: [nginx-debug, "-g", "daemon off;"]
 
-  # Services for dev purposes. Will restrict incoming traffic on these ports
-  # to my IP address (hence no password).
+  # Services for dev purposes
   portainer:
     image: portainer/portainer-ce:latest
     restart: unless-stopped
@@ -42,8 +41,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
-  # TODO: secrets mapping in, preferences automated, working dir
-  # /.rstudio/monitored/user-settings/user-settings
   rstudio-dev:
     image: bb-app
     restart: unless-stopped
@@ -61,7 +58,7 @@ services:
       - /dev/null:/home/rstudio/biobuddy-dev/.Rprofile
       # Preferences
       - ./aws/conf/rstudio-prefs.json:/home/rstudio/.config/rstudio/rstudio-prefs.json
-      - ./aws/conf/rstudio_bindings.json:/home/rstudio/.config/rstudio/keybindings/rstudio_bindings.json
+      - ./aws/conf/rstudio-bindings.json:/home/rstudio/.config/rstudio/keybindings/rstudio_bindings.json
     environment:
       ROOT: true
       PASSWORD: "${RSTUDIO_PASSWORD}"
