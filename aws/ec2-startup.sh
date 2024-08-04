@@ -49,22 +49,31 @@ declare -a secret_names=(
   "POLISHED_API_KEY"
   "FIREBASE_API_KEY"
   "RSTUDIO_PASSWORD"
+  "CR_PAT"
 )
 for secret_name in "${secret_names[@]}"; do
+
   secret_value=$(
     aws secretsmanager get-secret-value --secret-id "$secret_name" \
       --query 'SecretString' --output text | \
       jq -r --arg KEY "$secret_name" \
       '. | to_entries | map(select(.key == $KEY)) | .[] | "\(.key)=\(.value)"'
   )
+
   echo "$secret_value" >> "secrets.txt"
+
+  if [ "$secret_name" == "CR_PAT" ]; then
+    export "$secret_value"
+  fi
+
 done
 
 # Set rstudio password using docker compose env vars interpolation
 grep RSTUDIO_PASSWORD secrets.txt > .env
 
-echo -e "BUILDING BB-APP IMAGE\n\n"
-make img-deploy
+echo -e "PULLING BB-APP IMAGE\n\n"
+echo "$CR_PAT" | docker login ghcr.io -u crew102 --password-stdin
+docker pull ghcr.io/crew102/bb-app:latest
 
 echo -e "RUNNING DOCKER-COMPOSE UP\n\n"
 make bup
