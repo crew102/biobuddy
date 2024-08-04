@@ -2,6 +2,8 @@ FROM rocker/rstudio:4.4
 
 WORKDIR /home/biobuddy
 
+LABEL org.opencontainers.image.source https://github.com/crew102/biobuddy
+
 USER root
 
 COPY NAMESPACE DESCRIPTION biobuddy.Rproj renv.lock config.yml .
