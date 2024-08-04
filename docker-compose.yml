@@ -42,7 +42,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   rstudio-dev:
-    image: bb-app
+    image: ghcr.io/crew102/bb-app
     restart: unless-stopped
     networks:
       - bb-net
