@@ -7,8 +7,13 @@ build:
 	docker compose down
 	docker compose up -d
 
-img:
+# Build main app image totally locally, with potentially new dependencies added
+img-local:
 	Rscript scripts/lockfile-write.R
+	docker build -t bb-app -f app/Dockerfile .
+
+# Build app on aws, using existing lockfile
+img-deploy:
 	docker build -t bb-app -f app/Dockerfile .
 
 app:
