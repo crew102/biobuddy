@@ -1,29 +1,18 @@
-# !/usr/bin/env python3
-import os
-
 import aws_cdk as cdk
-
 from ec2.ec2_spot import EC2spot
 
-
 app = cdk.App()
+
 EC2spot(
-    app, "ec2-spot",
-    # If you don't specify 'env', this stack will be environment-agnostic.
-    # Account/Region-dependent features and *context lookups will not work,
-    # but a single synthesized template can be deployed anywhere.
+    app, "ec2-spot-staging",
+    environment="staging",
+    allocation_id="eipalloc-023ea7cfc4367442b"
+)
 
-    # Uncomment the next line to specialize this stack for the AWS Account
-    # and Region that are implied by the current CLI configuration.
-
-    #env=cdk.Environment(account=os.getenv('CDK_DEFAULT_ACCOUNT'), region=os.getenv('CDK_DEFAULT_REGION')),
-
-    # Uncomment the next line if you know exactly what Account and Region you
-    # want to deploy the stack to. */
-
-    #env=cdk.Environment(account='123456789012', region='us-east-1'),
-
-    # For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html
+EC2spot(
+    app, "ec2-spot-prod",
+    environment="prod",
+    allocation_id="eipalloc-036052c2719eb7748"
 )
 
 app.synth()

@@ -22,15 +22,15 @@ app:
 py-venv-install:
 	cd aws; source .venv/bin/activate; pip install -r requirements.txt
 
-aws-downup:
+aws-stage:
 	# To avoid issues where an existing resource is already associated with
 	# an instance, destroy stack first...Will probably need to add
 	# a DeletionPolicy for s3 bucket and whatnot. That, or use boto3 to destroy
 	# associations at runtime
-	cd aws; source .venv/bin/activate; cdk destroy --force; cdk deploy --require-approval never
+	cd aws; source .venv/bin/activate; cdk destroy --force; cdk deploy ec2-spot-staging -e --require-approval never
 
-aws-up:
-	cd aws; source .venv/bin/activate; cdk deploy --require-approval never
+aws-prod:
+	cd aws; source .venv/bin/activate; cdk destroy --force; cdk deploy ec2-spot-prod -e --require-approval never
 
 clean:
 	docker image prune

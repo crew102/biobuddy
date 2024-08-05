@@ -9,7 +9,9 @@ services:
       - 8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      # TODO: Consider removing:
       - ./services/shiny-proxy/application.yml:/opt/shinyproxy/application.yml
+      # TODO: Note what this injection is for
       - ./secrets.txt:/opt/shinyproxy/env.txt
     user: root
 
@@ -22,10 +24,7 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./services/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./services/nginx/landing:/www/landing
       - ./services/nginx/logs:/nginx/logs
-      - ./services/nginx/install-cert.sh:/nginx/install-cert.sh
     depends_on:
       - shiny-proxy
 #    command: [nginx-debug, "-g", "daemon off;"]
@@ -49,12 +48,9 @@ services:
     ports:
       - 8787:8787
     volumes:
-      # Reminder that working dir is /home/biobuddy in container normally. Here
-      # we map in dev code to a new directory. Code from build image is in
-      # /home/biobuddy/app
       - .:/home/rstudio/biobuddy-dev
-      # Will remove this file in the container so I don't activate the renv
-      # when I enter the project
+      # Remove this file in the container so I don't activate the renv
+      # when I enter the project:
       - /dev/null:/home/rstudio/biobuddy-dev/.Rprofile
       # Preferences
       - ./aws/conf/rstudio-prefs.json:/home/rstudio/.config/rstudio/rstudio-prefs.json

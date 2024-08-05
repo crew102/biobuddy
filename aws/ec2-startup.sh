@@ -27,9 +27,6 @@ apt-get update && \
   containerd.io \
   docker-buildx-plugin \
   docker-compose-plugin
-#  python3 \
-#  python3-pip \
-#  python3-boto3
 
 echo -e "AWS CLI INSTALL\n\n"
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.0.30.zip" -o "awscliv2.zip"
@@ -60,6 +57,7 @@ for secret_name in "${secret_names[@]}"; do
       '. | to_entries | map(select(.key == $KEY)) | .[] | "\(.key)=\(.value)"'
   )
 
+  # Includes the name of the secret (i..e, SOME_SECRET=hithere)
   echo "$secret_value" >> "secrets.txt"
 
   if [ "$secret_name" == "CR_PAT" ]; then
@@ -68,8 +66,25 @@ for secret_name in "${secret_names[@]}"; do
 
 done
 
+echo -e "WRITING .ENV FILE\n\n"
 # Set rstudio password using docker compose env vars interpolation
 grep RSTUDIO_PASSWORD secrets.txt > .env
+
+echo -e "WRITING NGINX CONF FILE BASED ON IP ADDRESS\n\n"
+PROD="52.7.217.197"
+STAGE="34.225.226.49"
+LIP=$(curl ifconfig.me)
+if [ "$LIP" == "$PROD" ]; then
+  SERVER_NAME="biobuddyai.com"
+elif [ "$LIP" == "$STAGE" ]; then
+  SERVER_NAME="biobuddydev.com"
+else
+  echo "ERROR: IP address is not equal to either PROD or STAGE"
+  exit 1
+fi
+export SERVER_NAME
+NEW_CONF_FILE=$(envsubst '${SERVER_NAME}' < services/nginx/nginx.conf)
+echo "$NEW_CONF_FILE" > services/nginx/nginx.conf
 
 echo -e "PULLING BB-APP IMAGE\n\n"
 echo "$CR_PAT" | docker login ghcr.io -u crew102 --password-stdin
@@ -78,17 +93,12 @@ docker pull ghcr.io/crew102/bb-app:latest
 echo -e "RUNNING DOCKER-COMPOSE UP\n\n"
 make bup
 
+echo -e "ONE-TIME INSTALL OF SSL CERT\n\n"
 # Not terribly proud of this. Dipping into the nginx container and installing
 # an SSL cert without a real plan for how to renew.
-echo -e "ONE-TIME INSTALL OF SSL CERT\n\n"
-# Reminder: This is the version of the script that exists in the repo, not the
-# one that you're dealing with during interactive deployment.
-# Reminder: This script gets mapped into nginx container at docker compose up
-local_version="services/nginx/install-cert.sh"
-docker_version="/nginx/install-cert.sh"
-chmod +x "$local_version"
+install_cert="/nginx/install-cert.sh"
 nginx_container=$(docker compose ps -q nginx)
-docker exec "$nginx_container" "$docker_version"
+docker exec "$nginx_container" bash -c "chmod +x $install_cert; $install_cert"
 
 echo "cd /home/biobuddy" >> ~/.bashrc
 

@@ -12,6 +12,10 @@ from constructs import Construct
 from cdk_ec2_spot_simple import SpotInstance
 import boto3
 
+INSTANCE_TYPE = "t3.medium"
+AMI_ID = "ami-04a81a99f5ec58529"
+EBS_VOLUME_SIZE = 20
+
 
 def _get_secret(secret_name):
     client = boto3.client("secretsmanager")
@@ -23,28 +27,27 @@ def _get_secret(secret_name):
 
 class EC2spot(Stack):
 
-    def __init__(self, scope: Construct, id: str, **kwargs) -> None:
+    def __init__(self, scope: Construct, id: str, environment: str,
+                 allocation_id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
         # Create a VPC with a public subnet
         vpc = ec2.Vpc(
-            self, "ccb-vpc",
+            self, f"{environment}-vpc",
             max_azs=2,
             subnet_configuration=[
                 ec2.SubnetConfiguration(
                     subnet_type=ec2.SubnetType.PUBLIC,
-                    name="Public",
-                    cidr_mask=24
+                    name=f"{environment}-subnet", cidr_mask=24
                 )
-            ]
+            ],
         )
 
         # The read-secrets-from-ec2 ARN
         role_arn = _get_secret("READ-SECRETS-FROM-EC2")
         # Reference the existing IAM Role
-        # TODO: Rename this role
         secrets_role = iam.Role.from_role_arn(
-            self, "ccb-existing-secrets-role",
+            self, "existing-secrets-role",
             role_arn=role_arn,
             mutable=False
         )
@@ -71,7 +74,7 @@ class EC2spot(Stack):
             )
 
         sg = ec2.SecurityGroup(
-            self, id="ccb-security-group",
+            self, id=f"{environment}-security-group",
             vpc=vpc, allow_all_outbound=True
         )
         ip = os.environ.get("LOCAL_IP")
@@ -103,15 +106,13 @@ class EC2spot(Stack):
         with open("ec2-startup.sh", "r") as f:
             startup_script = f.read()
         user_data = ec2.UserData.custom(startup_script)
-
-        # See notes re: how to get an AMI programmatically at runtime
         machine_image = ec2.MachineImage.generic_linux(
-            ami_map={"us-east-1": "ami-04a81a99f5ec58529"},
+            ami_map={"us-east-1": AMI_ID},
             user_data=user_data
         )
         spot_instance = SpotInstance(
-            self, "app-spot",
-            instance_type=ec2.InstanceType("t3.medium"),
+            self, f"{environment}-app-spot",
+            instance_type=ec2.InstanceType(INSTANCE_TYPE),
             machine_image=machine_image,
             vpc=vpc,
             key_name="pair-2",
@@ -120,18 +121,15 @@ class EC2spot(Stack):
             block_devices=[
                 ec2.BlockDevice(
                     device_name="/dev/sda1",
-                    # TODO(cbaker): update this
-                    volume=ec2.BlockDeviceVolume.ebs(20)
+                    volume=ec2.BlockDeviceVolume.ebs(EBS_VOLUME_SIZE)
                 )
             ],
             user_data=ec2.UserData.custom(startup_script),
             vpc_subnets=ec2.SubnetSelection(subnets=[vpc.public_subnets[0]])
         )
 
-        # Associate the Elastic IP with the Spot Instance
         ec2.CfnEIPAssociation(
-            self, "eip-spot-association",
-            # existing elastic IP
-            allocation_id="eipalloc-023ea7cfc4367442b",
+            self, f"{environment}-eip-spot-association",
+            allocation_id=allocation_id,
             instance_id=spot_instance.instance_id,
         )
