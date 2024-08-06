@@ -25,6 +25,7 @@ services:
       - 443:443
     volumes:
       - ./services/nginx/logs:/nginx/logs
+      - ./services/nginx/landing:/www/landing
     depends_on:
       - shiny-proxy
 #    command: [nginx-debug, "-g", "daemon off;"]
