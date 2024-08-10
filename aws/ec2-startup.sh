@@ -98,7 +98,7 @@ echo -e "ONE-TIME INSTALL OF SSL CERT\n\n"
 # an SSL cert without a real plan for how to renew.
 install_cert="/nginx/install-cert.sh"
 nginx_container=$(docker compose ps -q nginx)
-docker exec "$nginx_container" bash -c "export $SERVER_NAME; chmod +x $install_cert; $install_cert"
+docker exec "$nginx_container" bash -c "export SERVER_NAME=\"$SERVER_NAME\"; chmod +x $install_cert; $install_cert"
 
 echo "cd /home/biobuddy" >> ~/.bashrc
 
