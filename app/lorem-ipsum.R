@@ -48,7 +48,7 @@ prompt_dfs <- sapply(styles, function(x) {
 
 rw <- sapply(prompt_dfs, function(x) {
   parallel_request_rewrites(
-    x, animals$raw_bio, model = "gpt-4o"
+    x, animals$raw_bio, model = "gpt-4o-mini"
   )
 }, simplify = FALSE, USE.NAMES = TRUE)
 rw <- as.data.frame(rw) %>%
