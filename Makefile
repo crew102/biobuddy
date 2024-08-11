@@ -22,15 +22,14 @@ app:
 py-venv-install:
 	cd aws; source .venv/bin/activate; pip install -r requirements.txt
 
+aws-deploy:
+	cd aws; source .venv/bin/activate; cdk destroy --force $(ENV_NAME); cdk deploy $(ENV_NAME) -e --require-approval never
+
 aws-stage:
-	# To avoid issues where an existing resource is already associated with
-	# an instance, destroy stack first...Will probably need to add
-	# a DeletionPolicy for s3 bucket and whatnot. That, or use boto3 to destroy
-	# associations at runtime
-	cd aws; source .venv/bin/activate; cdk destroy --force; cdk deploy ec2-spot-staging -e --require-approval never
+	$(MAKE) aws-deploy ENV_NAME=ec2-spot-staging
 
 aws-prod:
-	cd aws; source .venv/bin/activate; cdk destroy --force; cdk deploy ec2-spot-prod -e --require-approval never
+	$(MAKE) aws-deploy ENV_NAME=ec2-spot-prod
 
 clean:
 	docker image prune
@@ -38,4 +37,7 @@ clean:
 writedir:
 	sudo chmod -R 777 /home/biobuddy/
 
-.PHONY: bup build img app clean writedir
+ebuild:
+	sudo cat /var/log/cloud-init-output.log
+
+.PHONY: bup build img app clean writedir ebuild
