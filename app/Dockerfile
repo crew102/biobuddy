@@ -12,6 +12,7 @@ USER root
 COPY NAMESPACE DESCRIPTION biobuddy.Rproj renv.lock config.yml requirements.txt .
 COPY app app
 COPY R R
+COPY db db
 
 RUN apt-get update -qq && \
   apt-get -y --no-install-recommends install \

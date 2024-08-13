@@ -33,7 +33,7 @@ polished_config(
 
 options(shiny.port = 3838, shiny.host = "0.0.0.0")
 
-all_dogs <- read_csv(here("app/data/lorem-ipsum-bios.csv"))
+all_dogs <- read_csv(here("db/lorem-ipsum-bios.csv"))
 
 
 gen_showcase_tab <- function(dog_df) {
