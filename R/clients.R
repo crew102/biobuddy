@@ -69,6 +69,10 @@ fetch_pf_pages <- function(token,
                            gender = NULL,
                            age = NULL) {
 
+  if (length(organization) > 1) {
+    organization <- paste0(organization, collapse = ",")
+  }
+
   query <- list(
     animal_id = animal_id,
     type = type,
