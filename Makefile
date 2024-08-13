@@ -20,10 +20,12 @@ app:
 	docker run --rm -it -p 3838:3838 -v `pwd`/secrets.txt:/root/.Renviron -v `pwd`/app:/home/biobuddy/app -v `pwd`/R:/home/biobuddy/R bb-app
 
 py-venv-install:
-	cd aws; source .venv/bin/activate; pip install -r requirements.txt
+	python3 -m venv .venv
+	source .venv/bin/activate
+	python3 -m pip install -r requirements.txt
 
 aws-deploy:
-	cd aws; source .venv/bin/activate; cdk destroy --force $(ENV_NAME); cdk deploy $(ENV_NAME) -e --require-approval never
+	source .venv/bin/activate; cd aws; cdk destroy --force $(ENV_NAME); cdk deploy $(ENV_NAME) -e --require-approval never
 
 aws-stage:
 	$(MAKE) aws-deploy ENV_NAME=ec2-spot-staging

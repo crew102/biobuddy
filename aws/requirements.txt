@@ -3,3 +3,5 @@ constructs>=10.0.0,<11.0.0
 cdk-ec2-spot-simple==2.2.0
 boto3==1.34.144
 botocore==1.34.144
+dlib==19.24.6
+opencv-python==4.10.0.84
