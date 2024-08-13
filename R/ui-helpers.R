@@ -10,16 +10,6 @@ clean_raw_bios <- function(bios) {
   ifelse(nchar(bios) < 300, NA, bios)
 }
 
-write_local_cropped_img <- function(id, url, directory) {
-  if (!dir.exists(directory)) {
-    dir.create(directory, recursive = TRUE)
-  }
-  cropped_fi <- file.path(directory, glue("{id}.png"))
-  GET(url, write_disk(cropped_fi, overwrite = TRUE))
-  raw_img <- magick::image_read(cropped_fi)
-  cropcircles::crop_circle(raw_img, to = cropped_fi)
-}
-
 # Tweaked version of one of bsicons's functions
 info_icon <- function(id, input_txt, tooltip_text) {
   HTML(glue('
