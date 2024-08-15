@@ -14,7 +14,10 @@ img-local:
 
 # Build app on aws, using existing lockfile
 img-deploy:
-	docker build -t bb-app -f app/Dockerfile .
+	docker build --no-cache -t bb-app -f app/Dockerfile .
+
+dprune:
+	docker system prune -a
 
 app:
 	docker run --rm -it -p 3838:3838 -v `pwd`/secrets.txt:/root/.Renviron -v `pwd`/app:/home/biobuddy/app -v `pwd`/R:/home/biobuddy/R bb-app
