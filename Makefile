@@ -14,7 +14,7 @@ img-local:
 
 # Build app on aws, using existing lockfile
 img-deploy:
-	docker build --no-cache -t bb-app -f app/Dockerfile .
+	docker build --no-cache -t bb-app:latest -f app/Dockerfile .
 
 dprune:
 	docker system prune -a
