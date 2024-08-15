@@ -15,6 +15,6 @@ secrets.txt
 .aws
 *.pyc
 .env
-db/
+db/.*
 temp-dir-jpg/
 .venv
