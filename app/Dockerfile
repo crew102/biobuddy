@@ -9,14 +9,16 @@ LABEL org.opencontainers.image.source https://github.com/crew102/biobuddy
 
 USER root
 
-COPY NAMESPACE DESCRIPTION biobuddy.Rproj renv.lock config.yml requirements.txt .
+COPY NAMESPACE DESCRIPTION biobuddy.Rproj renv.lock requirements.txt deb-requirements.txt .
 COPY app app
 COPY R R
 COPY db db
 
+# first order deps are:
+# libmagick++-dev cron nano htop libz-dev libharfbuzz-dev libfribidi-dev
+# libgit2-dev cmake libcurl4-openssl-dev
 RUN apt-get update -qq && \
-  apt-get -y --no-install-recommends install \
-  libmagick++-dev cron nano htop libz-dev libharfbuzz-dev libfribidi-dev libgit2-dev cmake
+  xargs -a deb-requirements.txt apt-get install -y --no-install-recommends
 
 ENV R_LIBS_USER="/home/biobuddy/renv/lib"
 ENV RETICULATE_PYTHON="/home/biobuddy/.local/share/r-miniconda/envs/r-reticulate/bin/python"
