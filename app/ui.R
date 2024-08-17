@@ -1,5 +1,5 @@
 # Source code pulled from argonR with some minor changes
-dog_card <- function(id, name, profile_url, breed, card_b) {
+dog_card <- function(name, profile_url, headshot_url, breed, card_b) {
 
   tags$div(
     tags$br(),
@@ -11,7 +11,10 @@ dog_card <- function(id, name, profile_url, breed, card_b) {
         tags$div(
           class = "col",
           tags$div(class = "card-profile-image",
-            img(src = paste0(".bio-images/", id, ".png"), class = "rounded-circle")
+            img(
+              src = headshot_url,
+              class = "rounded-circle"
+            )
           )
         )
       ),

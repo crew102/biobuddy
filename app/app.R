@@ -33,7 +33,7 @@ polished_config(
 
 options(shiny.port = 3838, shiny.host = "0.0.0.0")
 
-all_dogs <- read_csv(here("db/lorem-ipsum-bios.csv"))
+all_dogs <- read_s3_file(file = "db/rewrites.csv", read_csv)
 
 
 gen_showcase_tab <- function(dog_df) {
@@ -42,7 +42,7 @@ gen_showcase_tab <- function(dog_df) {
   showcase_tab_ui <- lapply(long_stays$id, function(x) {
     p <- long_stays %>% filter(id == x)
     card_b <- with(p, inner_body(id, raw_bio, interview_rw, pupper_rw, sectioned_rw))
-    with(p, dog_card(id, name, url, breeds_primary, card_b))
+    with(p, dog_card(name, url, headshot_url, breeds_primary, card_b))
   })
   showcase_tab <- argonTabItem("showcase_tab", showcase_tab_ui)
   showcase_tab <- tagAppendChildren(
@@ -226,7 +226,10 @@ server <- function(input, output, session) {
 
   output$out_img <- renderUI({
     chosen_dog() %$%
-      img(src = paste0(".bio-images/", id, ".png"), class = "rounded-circle")
+      img(
+        src = headshot_url,
+        class = "rounded-circle"
+      )
   })
 
   output$out_breed <- renderUI({

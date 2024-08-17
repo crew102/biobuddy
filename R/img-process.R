@@ -1,27 +1,20 @@
-#' @import reticulate
-
-maybe_resize_image <- function(local_path, resize_if_greater = 500000,
-                               px_to_resize_to = "800x") {
+# THIS OVERWRITES THE FILE
+maybe_resize_image <- function(local_path, resize_if_greater = 400000,
+                               px_to_resize_to = "700x") {
   img <- magick::image_read(local_path)
   info <- magick::image_info(img)
   if (info$filesize > resize_if_greater) {
-    print(glue('resizing {local_path}'))
+    print(glue("resizing {local_path}"))
     resized <- magick::image_resize(img, px_to_resize_to)
     magick::image_write(resized, local_path)
   }
-}
-
-# Backup function if face detection fails
-naive_crop_circle <- function(local_path) {
-  raw_img <- magick::image_read(local_path)
-  cropcircles::crop_circle(raw_img, to = local_path)
 }
 
 zero_if_negative <- function(x) {
   ifelse(x < 0, 0, x)
 }
 
-head_aware_crop_circle <- function(local_path, cr) {
+head_aware_crop_circle <- function(original_img_path, cr, cropped_path) {
   cr <- zero_if_negative(cr)
   x1 <- cr[1]
   y1 <- cr[2]
@@ -29,7 +22,7 @@ head_aware_crop_circle <- function(local_path, cr) {
   x2 <- cr[3]
   y2 <- cr[4]
 
-  raw_img <- magick::image_read(local_path)
+  raw_img <- magick::image_read(original_img_path)
   inf2 <- magick::image_info(raw_img)
 
   tow_mins <- c(
@@ -50,13 +43,77 @@ head_aware_crop_circle <- function(local_path, cr) {
   x_off <- x1_new #+ wd/ 2
   y_off <- y1_new #+ ht/ 2
 
-  some_img <- magick::image_crop(
+  head_cropped <- magick::image_crop(
     raw_img,
     geometry = glue("{wd}x{ht}+{x_off}+{y_off}")
   )
 
   cropcircles::crop_circle(
-    some_img,
-    to = local_path
+    head_cropped,
+    to = cropped_path
   )
+}
+
+crop_headshots <- function(detector, raw_paths, cropped_paths) {
+
+  one_try <- function(raw_path, cropped_path) {
+    tryCatch({
+      # attempt to detect head coordinates
+      cr <- py$one_detection(detector, raw_path)
+      x <- head_aware_crop_circle(raw_path, cr = unlist(cr), cropped_path)
+      NULL
+    },
+    error = function(e) {
+      raw_path
+    })
+  }
+
+  failures <- pbapply::pbmapply(
+    one_try,
+    raw_path = raw_paths,
+    cropped_path = cropped_paths,
+    USE.NAMES = FALSE
+  )
+  failures <- unlist(failures)
+  if (length(failures) == 0) {
+    NULL
+  } else {
+    as.numeric(gsub("\\..*", "", basename(failures)))
+  }
+
+}
+
+crop_alternate_imgs <- function(detector, to_retry) {
+
+  success <- c()
+  failure_ids <- unique(to_retry$id)
+  TEMP_RAW <- "0.jpg"
+
+  for (i in failure_ids) {
+    this_pup <- to_retry %>% filter(id == i)
+
+    for (one_pic in this_pup$full) {
+      try({
+        one_img <- httr2::req_perform_sequential(
+          list(httr2::request(one_pic)),
+          on_error = "stop",
+          paths = TEMP_RAW
+        )
+        maybe_resize_image(TEMP_RAW)
+        local_failure <- crop_headshots(detector, TEMP_RAW, TEMP_RAW)
+        if (length(local_failure) == 0) {
+          file.copy(
+            TEMP_RAW,
+            path_df[path_df$id == i, "cropped_path"][[1]],
+            overwrite = TRUE
+          )
+          success <- c(success, i)
+          break
+        }
+      })
+    }
+  }
+  try(file.remove(TEMP_RAW))
+
+  failure_ids[!(failure_ids %in% success)]
 }

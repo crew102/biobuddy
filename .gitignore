@@ -18,3 +18,4 @@ secrets.txt
 db/.*
 temp-dir-jpg/
 .venv
+.dog-head-detector.dat
