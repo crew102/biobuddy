@@ -957,6 +957,17 @@
       ],
       "Hash": "2f566fbb82f0118d522e80b5c71afd3c"
     },
+    "pbapply": {
+      "Package": "pbapply",
+      "Version": "1.7-2",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "parallel"
+      ],
+      "Hash": "68a2d681e10cf72f0afa1d84d45380e5"
+    },
     "pillar": {
       "Package": "pillar",
       "Version": "1.9.0",
