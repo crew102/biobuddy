@@ -117,12 +117,36 @@ fetch_pf_pages <- function(token,
         setpb(pb, i)
       }
     }
-    unested <- lapply(out_animals, function(x) {
-      x %>%
+    unnested <- lapply(out_animals, function(x) {
+      expected_cols <- c(
+        "id", "organization_id", "url", "type", "species", "breeds_primary",
+        "breeds_secondary", "breeds_mixed", "breeds_unknown", "colors_primary",
+        "colors_secondary", "colors_tertiary", "age", "gender", "size",
+        "coat", "attributes_spayed_neutered", "attributes_house_trained",
+        "attributes_declawed", "attributes_special_needs", "attributes_shots_current",
+        "environment_children", "environment_dogs", "environment_cats",
+        "tags", "name", "description", "organization_animal_id", "photos",
+        "primary_photo_cropped_small", "primary_photo_cropped_medium",
+        "primary_photo_cropped_large", "primary_photo_cropped_full",
+        "videos", "status", "status_changed_at", "published_at", "distance",
+        "contact_email", "contact_phone", "contact_address", "_links_self",
+        "_links_type", "_links_organization"
+      )
+
+      raw_df <- x %>%
         unnest_wider(where(is.data.frame), names_sep = "_") %>%
         ungroup()
+      # not super proud of this:
+      existing_cols <- colnames(raw_df)
+      for (col in expected_cols) {
+        if (!(col %in% existing_cols)) {
+          raw_df[[col]] <- NA
+        }
+      }
+      raw_df[expected_cols]
     })
-    animals <- do.call(rbind, unested)
+
+    animals <- do.call(rbind, unnested)
     list(animals = animals, pagination = one_res$pagination)
 
   } else {
@@ -166,14 +190,14 @@ fetch_all_orgs <- function(token) {
     setpb(pb, i)
   }
 
-  unested <- lapply(out_animals, function(x) {
+  unnested <- lapply(out_animals, function(x) {
     x %>%
       select(1:social_media) %>%
       select(-hours, -url) %>%
       unnest_wider(where(is.data.frame), names_sep = "_") %>%
       ungroup()
   })
-  do.call(rbind, unested) %>%
+  do.call(rbind, unnested) %>%
     select(!matches("address(1|2)")) %>%
     select(-adoption_url) %>%
     select(!matches("pinterest")) %>%
