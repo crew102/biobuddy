@@ -1,5 +1,4 @@
 clean_raw_bios <- function(bios) {
-  bios <- gsub("Meet [A-z]*", "", bios)
   bios <- gsub(" {2,}", " ", bios)
   bios <- gsub("\n", " ", bios)
   bios <- gsub(" {2,}", " ", bios)
@@ -8,6 +7,10 @@ clean_raw_bios <- function(bios) {
   bios <- gsub("^[0-9]* ", "", bios)
   bios <- gsub(" ,", ",", bios)
   ifelse(nchar(bios) < 300, NA, bios)
+}
+
+clean_pet_name <- function(name) {
+  gsub("[0-9]+ ", "", name)
 }
 
 # Tweaked version of one of bsicons's functions

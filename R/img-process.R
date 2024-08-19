@@ -1,6 +1,7 @@
 # THIS OVERWRITES THE FILE
-maybe_resize_image <- function(local_path, resize_if_greater = 400000,
-                               px_to_resize_to = "700x") {
+  maybe_resize_image <- function(local_path,
+                                 resize_if_greater = if is_local() 100000 else 400000,
+                                 px_to_resize_to = if is_local() "200x" else "700x") {
   img <- magick::image_read(local_path)
   info <- magick::image_info(img)
   if (info$filesize > resize_if_greater) {
@@ -83,14 +84,15 @@ crop_headshots <- function(detector, raw_paths, cropped_paths) {
 
 }
 
-crop_alternate_imgs <- function(detector, to_retry) {
+crop_alternate_imgs <- function(detector, alternatives, path_df) {
 
   success <- c()
-  failure_ids <- unique(to_retry$id)
+  failure_ids <- unique(alternatives$id)
   TEMP_RAW <- "0.jpg"
+  on.exit(try(file.remove(TEMP_RAW)))
 
   for (i in failure_ids) {
-    this_pup <- to_retry %>% filter(id == i)
+    this_pup <- alternatives %>% filter(id == i)
 
     for (one_pic in this_pup$full) {
       try({
@@ -113,7 +115,6 @@ crop_alternate_imgs <- function(detector, to_retry) {
       })
     }
   }
-  try(file.remove(TEMP_RAW))
 
   failure_ids[!(failure_ids %in% success)]
 }

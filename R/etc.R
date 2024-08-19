@@ -20,3 +20,7 @@ write_s3_file <- function(obj, write_fun, remote_path, ...) {
   write_fun(obj, fi, ...)
   py$upload_file_to_s3(BUCKET, remote_path = remote_path, local_path = fi)
 }
+
+is_local <- function() {
+  Sys.getenv("LOCAL") == "true"
+}

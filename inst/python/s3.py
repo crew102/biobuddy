@@ -54,7 +54,19 @@ def upload_dir_to_s3(bucket_name, remote_dir, local_dir):
                                                                                   
             S3_CLIENT.upload_file(local_path, bucket_name, s3_key)                
             print(f"Uploaded {local_path} to s3://{bucket_name}/{s3_key}")
-            
+
+
+def list_files_in_s3(bucket_name, remote_dir):
+    file_list = []
+
+    response = S3_CLIENT.list_objects_v2(Bucket=bucket_name, Prefix=remote_dir)
+
+    if "Contents" in response:
+        for obj in response["Contents"]:
+            file_list.append(obj["Key"])
+
+    return file_list
+
 
 def make_imgs_readable(bucket_name):
     policy = {

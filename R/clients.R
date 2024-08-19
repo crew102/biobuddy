@@ -170,7 +170,6 @@ one_org_request <- function(token, query) {
   fromJSON(cnt)
 }
 
-
 fetch_all_orgs <- function(token) {
 
   query <- list(limit = 100, page = 1)
@@ -245,7 +244,7 @@ parallel_fetch_pf_bios <- function(urls) {
 ## OpenAI
 
 parallel_request_rewrites <- function(prompt_df, raw_bios,
-                                      model = "gpt-3.5-turbo-0125") {
+                                      model = "gpt-4o-mini") {
   reqs <- lapply(raw_bios, function(x) {
     prompt_df[nrow(prompt_df), "content"] <- x
     payload <- list(model = model, messages = prompt_df)
