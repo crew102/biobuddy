@@ -68,6 +68,17 @@ def list_files_in_s3(bucket_name, remote_dir):
     return file_list
 
 
+def delete_s3_directory(bucket_name, remote_dir):
+    response = S3_CLIENT.list_objects_v2(
+        Bucket=bucket_name, Prefix=remote_dir
+    )
+
+    if "Contents" in response:
+        for obj in response["Contents"]:
+            S3_CLIENT.delete_object(Bucket=bucket_name, Key=obj["Key"])
+            print(f"Deleted {obj["Key"]}")
+
+
 def make_imgs_readable(bucket_name):
     policy = {
         "Version": "2012-10-17",

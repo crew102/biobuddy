@@ -8,11 +8,13 @@ library(here)
 
 devtools::load_all()
 
-BASE_DIR <- "db/img"
-RAW_DIR <- file.path(BASE_DIR, "raw")
-CROPPED_DIR <- file.path(BASE_DIR, "cropped")
+# Manually managed file with orgs that are participating
+ORG_FILE <- "orgs.csv"
+
+BASE_IMG_DIR <- "db/img"
+RAW_DIR <- file.path(BASE_IMG_DIR, "raw")
+CROPPED_DIR <- file.path(BASE_IMG_DIR, "cropped")
 REWRITES_FILE <- "db/rewrites.csv"
-ORG_FILE <- "db/orgs.csv"
 SEEN_ON_FILE <- "db/seen-on.csv"
 EXIT_STATUS_FILE <- "db/run-exit-status.csv"
 try(unlink(RAW_DIR, force = TRUE, recursive = TRUE))
@@ -21,15 +23,21 @@ try(unlink(CROPPED_DIR, force = TRUE, recursive = TRUE))
 files_in_db <- py$list_files_in_s3(biobuddy::BUCKET, "db")
 IS_FIRST_DAY <- !(REWRITES_FILE %in% files_in_db)
 NOW_FORMATTED <- format(
-  Sys.time(), "%Y-%m-%dT%H:%M:%S+0000", tz = "UTC", usetz = FALSE
+  Sys.time(), "%Y-%m-%dT%H:%M:%S+0000", tz = "utc", usetz = FALSE
 )
+EST_TIME <- format(
+  Sys.time(), "%Y-%m-%d %I:%M:%S %p", tz = "US/Eastern", usetz = FALSE
+)
+
+# To start from scratch:
+# py$delete_s3_directory(BUCKET, "db")
 
 pf_data <- function() {
   organization <- read_s3_file(ORG_FILE, read_csv)$id
 
   # PF DOWNLOAD
   token <- auth_pf()
-  print("Downloading pages from PetFinder")
+  dprint("Downloading pages from PetFinder")
   some_pups <- fetch_pf_pages(
     token, organization = organization,
     sort = "-recent", pages = NULL
@@ -38,7 +46,7 @@ pf_data <- function() {
 
   # For now we download all bios, regardless of whether we've seen pet in past
   # "raw" bios and names
-  print("Fetching bios")
+  dprint("Fetching bios")
   raw_bios <- parallel_fetch_pf_bios(todays_pups$url)
   todays_pups$raw_bio <- clean_raw_bios(raw_bios)
   todays_pups$name <- clean_pet_name(todays_pups$name)
@@ -111,16 +119,16 @@ img_path_df <- function(todo_pups) {
 
 download_crop_imgs <- function(path_df) {
   # DOWNLOAD RAW
-  print("Downloading raw images")
+  dprint("Downloading raw images")
   reqs <- lapply(path_df$primary_photo_cropped_full, request)
   resps <- req_perform_parallel(
     reqs, on_error = "continue", paths = path_df$raw_path
   )
-  print("Downloaded raw image files:")
-  print(list.files(RAW_DIR, recursive = TRUE))
+  dprint("Downloaded raw image files:")
+  dprint(list.files(RAW_DIR, recursive = TRUE))
 
   # RESIZE RAW
-  print("Resizing raw images")
+  dprint("Resizing raw images")
   dev_null <- sapply(path_df$raw_path, maybe_resize_image)
 
   # CROP RAW USING HEAD DETECTOR
@@ -133,7 +141,7 @@ download_crop_imgs <- function(path_df) {
   py_run_string(glue(
     "detector = dlib.cnn_face_detection_model_v1('{dat_path}')"
   ))
-  print("Cropping raw images")
+  dprint("Cropping raw images")
   failure_ids <- crop_headshots(
     py$detector, path_df$raw_path, path_df$cropped_path
   )
@@ -154,9 +162,10 @@ download_crop_imgs <- function(path_df) {
 }
 
 rewrite_bios <- function(todo_pups) {
-  print("Rewriting bios")
+  dprint("Rewriting bios")
   styles <- c("interview", "pup-perspective", "sectioned")
   rw <- sapply(styles, function(x) {
+    dprint(paste("Rewriting using style:", x))
     prompt_file <- here(glue("app/prompts/{x}.json"))
     prompt_df <- read_json(prompt_file, TRUE)
     parallel_request_rewrites(prompt_df, todo_pups$raw_bio, "gpt-4o-mini")
@@ -193,9 +202,19 @@ daily_update_worker <- function() {
 
   todo_rewrites <- rewrite_bios(todo_pups)
 
-  if (!IS_FIRST_DAY) {
+  if (!IS_FIRST_DAY && nrow(todo_rewrites) > 0) {
+    dprint("Not first day and > 0 bios rewritten, binding rewrite df")
     existing_rewrites <- read_s3_file(REWRITES_FILE, read_csv)
     todo_rewrites <- todo_rewrites %>% bind_rows(existing_rewrites)
+  } else if (!IS_FIRST_DAY && nrow(todo_rewrites) == 0) {
+    dprint("Not first day BUT no bios to be written, no bind with existing")
+    todo_rewrites <- read_s3_file(REWRITES_FILE, read_csv)
+    write_s3_file(
+      seen_on_df, write_csv, SEEN_ON_FILE, log = "Uploading SEEN_ON_FILE"
+    )
+    return()
+  } else {
+    dprint("First day, no need to bind with existing rewrites")
   }
 
   todo_rewrites <- todo_rewrites %>%
@@ -205,14 +224,19 @@ daily_update_worker <- function() {
     ungroup() %>%
     arrange(organization_id, desc(is_oldest_five))
 
+  dprint("Uploading SEEN_ON_FILE, CROPPED_DIR, and REWRITES_FILE")
   write_s3_file(seen_on_df, write_csv, SEEN_ON_FILE)
   py$upload_dir_to_s3(BUCKET, CROPPED_DIR, CROPPED_DIR)
   write_s3_file(todo_rewrites, write_csv, REWRITES_FILE)
+  dprint("Done")
 
-  "Full script run with pups updated"
+  to_log <- "Full script run with pups updated"
+  dprint(to_log)
+  to_log
 }
 
 daily_update <- function() {
+  dprint(paste("IS_FIRST_DAY is", IS_FIRST_DAY))
   status <- tryCatch({
     daily_update_worker()
   }, error = function(e) {
@@ -221,9 +245,11 @@ daily_update <- function() {
 
   status_df <- tibble(
     daily_update_time = NOW_FORMATTED,
+    est_update_time = EST_TIME,
     status = status
   )
 
+  dprint("Uploading Exit status file")
   files_in_db <- py$list_files_in_s3(biobuddy::BUCKET, "db")
   if (IS_FIRST_DAY || !(EXIT_STATUS_FILE %in% files_in_db)) {
     write_s3_file(status_df, write_csv, EXIT_STATUS_FILE)
@@ -235,6 +261,7 @@ daily_update <- function() {
       bind_rows(seen_on_existing, status_df), write_csv, EXIT_STATUS_FILE
     )
   }
+  dprint("Done")
 }
 
 daily_update()

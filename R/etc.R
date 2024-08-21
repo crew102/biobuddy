@@ -15,12 +15,28 @@ read_s3_file <- function(file, read_fun, ...) {
 }
 
 # write arbit r object to s3
-write_s3_file <- function(obj, write_fun, remote_path, ...) {
+write_s3_file <- function(obj, write_fun, remote_path, log = NULL, ...) {
+  if (!is.null(log)) {
+    cat("\n")
+    print(log, ...)
+    cat("\n")
+  }
   fi <- tempfile()
   write_fun(obj, fi, ...)
   py$upload_file_to_s3(BUCKET, remote_path = remote_path, local_path = fi)
+  if (!is.null(log)) {
+    cat("\n")
+    print("Done")
+    cat("\n")
+  }
 }
 
 is_local <- function() {
   Sys.getenv("LOCAL") == "true"
+}
+
+dprint <- function(x, ...) {
+  cat("\n")
+  print(x, ...)
+  cat("\n")
 }
