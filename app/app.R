@@ -35,7 +35,6 @@ options(shiny.port = 3838, shiny.host = "0.0.0.0")
 
 all_dogs <- read_s3_file(file = "db/rewrites.csv", read_csv)
 
-
 gen_showcase_tab <- function(dog_df) {
   # showcase tab
   long_stays <- dog_df %>% filter(is_oldest_five) %>% slice(1:5)
@@ -297,7 +296,7 @@ server <- function(input, output, session) {
             "arbit_input_info",
             "Additional instructions",
             "Convey additional instructions just like you would to a human, e.g.,
-            'Make the first sentence grab the reader's attention and also don't be so sappy'"
+            'Make the first sentence grab the reader's attention'"
           ),
           value = "",
           placeholder = "Write it in Spanish"

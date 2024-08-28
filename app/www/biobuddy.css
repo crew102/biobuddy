@@ -253,3 +253,7 @@
   border-radius: 1rem !important;
 }
 
+.card-profile-image img {
+  width: 180px;
+}
+

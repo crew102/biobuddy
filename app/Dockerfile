@@ -5,7 +5,7 @@ FROM rocker/rstudio:4.4
 
 WORKDIR /home/biobuddy
 
-LABEL org.opencontainers.image.source https://github.com/crew102/biobuddy
+LABEL org.opencontainers.image.source="https://github.com/crew102/biobuddy"
 
 USER root
 
