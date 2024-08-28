@@ -1,12 +1,12 @@
 # THIS OVERWRITES THE FILE
   maybe_resize_image <- function(local_path,
-                                 resize_if_greater = ifelse(is_local(), 100000, 400000),
-                                 px_to_resize_to = ifelse(is_local(), "200x", "700x")) {
+                                 resize_if_greater = ifelse(is_local(), 100000, 400000)
+                                 ) {
   img <- magick::image_read(local_path)
   info <- magick::image_info(img)
   if (info$filesize > resize_if_greater) {
     print(glue("resizing {local_path}"))
-    resized <- magick::image_resize(img, px_to_resize_to)
+    resized <- magick::image_resize(img, "700x")
     magick::image_write(resized, local_path)
   }
 }
