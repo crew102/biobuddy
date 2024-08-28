@@ -117,7 +117,7 @@ download_and_crop_imgs <- function(path_df) {
     local_path = dat_path
   )
   py_run_string(glue(
-    "detector = dlib.cnn_face_detection_model_v1('{dat_path}')"
+    "import dlib; detector = dlib.cnn_face_detection_model_v1('{dat_path}')"
   ))
   dprint("Cropping raw images")
   failure_ids <- crop_headshots(
