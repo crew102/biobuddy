@@ -29,10 +29,18 @@ EST_TIME <- format(
   Sys.time(), "%Y-%m-%d %I:%M:%S %p", tz = "US/Eastern", usetz = FALSE
 )
 
+if (IS_FIRST_DAY) {
+  EXISTING_REWRITES <- tibble()
+  SEEN_ON_EXISTING <- tibble()
+} else {
+  EXISTING_REWRITES <- read_s3_file(REWRITES_FILE, read_csv)
+  SEEN_ON_EXISTING <- read_s3_file(SEEN_ON_FILE, read_csv, col_types = "iccclic")
+}
+
 # To start from scratch:
 # py$delete_s3_directory(BUCKET, "db")
 
-pf_data <- function() {
+fetch_all_pf_data <- function() {
   organization <- read_s3_file(ORG_FILE, read_csv)$id
 
   # PF DOWNLOAD
@@ -53,47 +61,17 @@ pf_data <- function() {
   todays_pups
 }
 
-seen_on_df <- function(todays_pups) {
+gen_seen_on_df <- function(todays_pups) {
   # match time format used by petfinder api
   formatted_time <- format(
     Sys.time(), "%Y-%m-%dT%H:%M:%S+0000", tz = "UTC", usetz = FALSE
   )
-  seen_on_df <- todays_pups %>%
+  todays_pups %>%
+    # Some metadata cols to explain to future self why rewrites/imgs are missing
     mutate(has_primary_photo = !is.na(primary_photo_cropped_full)) %>%
     mutate(raw_bio_length = nchar(raw_bio)) %>%
     select(id, name, organization_id, published_at, has_primary_photo, raw_bio_length) %>%
     mutate(seen_on = NOW_FORMATTED)
-
-  if (!IS_FIRST_DAY) {
-    seen_on_existing <- read_s3_file(
-      SEEN_ON_FILE, read_csv, col_types = "iccclic"
-    )
-    seen_on_df <- seen_on_df %>%
-      bind_rows(seen_on_existing) %>%
-      distinct()
-  }
-
-  seen_on_df
-}
-
-todo_pups <- function(todays_pups) {
-  # GENERIC FILTER RE: PUPS TO KEEP
-  todays_pups <- todays_pups %>% filter(!is.na(raw_bio))
-  todays_pups <- todays_pups %>% filter(!is.na(primary_photo_cropped_full))
-
-  # FILTER ON IF WE'VE DONE THEM BEFORE
-  if (!IS_FIRST_DAY) {
-    existing_rewrites <- read_s3_file(REWRITES_FILE, read_csv)
-    existing_imgs <- py$list_files_in_s3(biobuddy::BUCKET, CROPPED_DIR)
-    existing_img_ids <- try(as.numeric(gsub("\\..*", "", basename(existing_imgs))))
-
-    rewrite_ids <- existing_rewrites %>% pull(id)
-    done_pups <- rewrite_ids[rewrite_ids %in% existing_img_ids]
-    todo_pups <- todays_pups %>% filter(!(id %in% done_pups))
-  } else {
-    todo_pups <- todays_pups
-  }
-  todo_pups
 }
 
 img_path_df <- function(todo_pups) {
@@ -117,7 +95,7 @@ img_path_df <- function(todo_pups) {
     )
 }
 
-download_crop_imgs <- function(path_df) {
+download_and_crop_imgs <- function(path_df) {
   # DOWNLOAD RAW
   dprint("Downloading raw images")
   reqs <- lapply(path_df$primary_photo_cropped_full, request)
@@ -149,7 +127,7 @@ download_crop_imgs <- function(path_df) {
   # CROP RAW USING ALTERNATE IMG IF NEEDED
   to_retry <- path_df %>% filter(id %in% failure_ids)
 
-  if (length(to_retry) != 0) {
+  if (nrow(to_retry) != 0) {
     try({
       alternatives <- to_retry %>%
         select(id, photos) %>%
@@ -181,22 +159,44 @@ rewrite_bios <- function(todo_pups) {
     bind_cols(as.data.frame(rw))
 }
 
-daily_update_worker <- function() {
-  todays_pups <- pf_data()
-  seen_on_df <- seen_on_df(todays_pups)
-  todo_pups <- todo_pups(todays_pups)
+execute_daily_update <- function() {
+  todays_pups <- fetch_all_pf_data()
 
-  if (length(todo_pups) == 0) {
-    write_s3_file(seen_on_df, write_fun = write_csv, remote_path = SEEN_ON_FILE)
-    # the oldest five should still be the oldest five, so no need to update that
-    return("No pups to process today")
+  # Seen on file creation and upload
+  seen_on_df <- gen_seen_on_df(todays_pups)
+  seen_on_df <- bind_rows(SEEN_ON_EXISTING, seen_on_df)
+  write_s3_file(
+    seen_on_df, write_csv, SEEN_ON_FILE, log = "Uploading SEEN_ON_FILE"
+  )
+
+  # Remove pups we don't need to update for whatever reason
+  if (nrow(EXISTING_REWRITES) == 0) {
+    existing_ids <- c()
+  } else {
+    existing_ids <- EXISTING_REWRITES$id
   }
+  todo_pups <- todays_pups %>%
+    filter(!is.na(raw_bio)) %>%
+    filter(!is.na(primary_photo_cropped_full)) %>%
+    filter(!(id %in% existing_ids))
+  if (nrow(todo_pups) == 0) {
+    # The oldest five should still be the oldest five, so no need to update that
+    status <- "No pups to process today, all in daily PF batch are in rewrites.csv"
+    dprint(status)
+    return(status)
+  }
+
   path_df <- img_path_df(todo_pups)
-  blacklist <- download_crop_imgs(path_df)
+  blacklist <- download_and_crop_imgs(path_df)
 
   # TODO: actually maintain a blacklist across days so we don't do this work
   # each day
   todo_pups <- todo_pups %>% filter(!(id %in% blacklist))
+  if (nrow(todays_pups) == 0) {
+    status <- "There were TODO pups but none had a detectible dog head in photo"
+    dprint(status)
+    return(status)
+  }
   todo_pups <- todo_pups %>%
     mutate(headshot_url = glue("https://{BUCKET}.s3.amazonaws.com/{CROPPED_DIR}/{organization_id}/{id}.jpg"))
 
@@ -204,15 +204,11 @@ daily_update_worker <- function() {
 
   if (!IS_FIRST_DAY && nrow(todo_rewrites) > 0) {
     dprint("Not first day and > 0 bios rewritten, binding rewrite df")
-    existing_rewrites <- read_s3_file(REWRITES_FILE, read_csv)
-    todo_rewrites <- todo_rewrites %>% bind_rows(existing_rewrites)
+    todo_rewrites <- todo_rewrites %>% bind_rows(EXISTING_REWRITES)
   } else if (!IS_FIRST_DAY && nrow(todo_rewrites) == 0) {
-    dprint("Not first day BUT no bios to be written, no bind with existing")
-    todo_rewrites <- read_s3_file(REWRITES_FILE, read_csv)
-    write_s3_file(
-      seen_on_df, write_csv, SEEN_ON_FILE, log = "Uploading SEEN_ON_FILE"
-    )
-    return()
+    status <- "Not first day, photos detectible, but no available bios to rewrite"
+    dprint(status)
+    return(status)
   } else {
     dprint("First day, no need to bind with existing rewrites")
   }
@@ -224,21 +220,23 @@ daily_update_worker <- function() {
     ungroup() %>%
     arrange(organization_id, desc(is_oldest_five))
 
-  dprint("Uploading SEEN_ON_FILE, CROPPED_DIR, and REWRITES_FILE")
-  write_s3_file(seen_on_df, write_csv, SEEN_ON_FILE)
+  dprint("Uploading CROPPED_DIR")
   py$upload_dir_to_s3(BUCKET, CROPPED_DIR, CROPPED_DIR)
-  write_s3_file(todo_rewrites, write_csv, REWRITES_FILE)
-  dprint("Done")
 
-  to_log <- "Full script run with pups updated"
-  dprint(to_log)
-  to_log
+  dprint("Uploading REWRITES_FILE")
+  write_s3_file(todo_rewrites, write_csv, REWRITES_FILE)
+
+  status <- "Full script run with pups updated"
+  dprint(status)
+  status
 }
 
-daily_update <- function() {
+execute_and_log_daily_update <- function() {
+
   dprint(paste("IS_FIRST_DAY is", IS_FIRST_DAY))
+
   status <- tryCatch({
-    daily_update_worker()
+    execute_daily_update()
   }, error = function(e) {
     paste("Error:", as.character(e))
   })
@@ -254,14 +252,11 @@ daily_update <- function() {
   if (IS_FIRST_DAY || !(EXIT_STATUS_FILE %in% files_in_db)) {
     write_s3_file(status_df, write_csv, EXIT_STATUS_FILE)
   } else {
-    seen_on_existing <- read_s3_file(
-      EXIT_STATUS_FILE, read_csv, col_types = "cc"
-    )
-    write_s3_file(
-      bind_rows(seen_on_existing, status_df), write_csv, EXIT_STATUS_FILE
-    )
+    existing_status <- read_s3_file(EXIT_STATUS_FILE, read_csv, col_types = "cc")
+    full_status <- bind_rows(existing_status, status_df)
+    write_s3_file(full_status, write_csv, EXIT_STATUS_FILE)
   }
   dprint("Done")
 }
 
-daily_update()
+execute_and_log_daily_update()
