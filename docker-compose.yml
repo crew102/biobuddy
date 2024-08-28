@@ -31,7 +31,8 @@ services:
       - shiny-proxy
 #    command: [nginx-debug, "-g", "daemon off;"]
 
-  # Services for dev purposes
+  #### Services for dev purposes ####
+
   portainer:
     image: portainer/portainer-ce:latest
     restart: unless-stopped
@@ -43,7 +44,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   rstudio-dev:
-    image: ghcr.io/crew102/bb-app
+    # Not that big of a deal what version of bb-app is used here, as we map
+    # code into container directory.
+    image: ghcr.io/crew102/bb-app:latest
     restart: unless-stopped
     networks:
       - bb-net
@@ -59,6 +62,7 @@ services:
       - ./aws/conf/rstudio-bindings.json:/home/rstudio/.config/rstudio/keybindings/rstudio_bindings.json
     environment:
       ROOT: true
+      # Locally in .env
       PASSWORD: "${RSTUDIO_PASSWORD}"
     command: ["/init"]
 

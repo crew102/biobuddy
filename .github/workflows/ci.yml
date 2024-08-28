@@ -34,6 +34,7 @@ jobs:
         make img-deploy
         docker tag bb-app:latest ghcr.io/${{ github.actor }}/bb-app:${{ env.VERSION }}
         docker tag bb-app:latest ghcr.io/${{ github.actor }}/bb-app:${{ env.GIT_SHA }}
+        docker tag bb-app:latest ghcr.io/${{ github.actor }}/bb-app:latest
 
     - name: Test Docker image
       run: |
@@ -43,3 +44,4 @@ jobs:
       run: |
         docker push ghcr.io/${{ github.actor }}/bb-app:${{ env.VERSION }}
         docker push ghcr.io/${{ github.actor }}/bb-app:${{ env.GIT_SHA }}
+        docker push ghcr.io/${{ github.actor }}/bb-app:latest
