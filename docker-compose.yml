@@ -33,6 +33,7 @@ services:
 
   #### Services for dev purposes ####
 
+  # TODO: set password using interpolation
   portainer:
     image: portainer/portainer-ce:latest
     restart: unless-stopped

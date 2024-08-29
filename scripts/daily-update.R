@@ -96,7 +96,7 @@ img_path_df <- function(todo_pups) {
 }
 
 download_and_crop_imgs <- function(path_df) {
-  # DOWNLOAD RAW
+  # Download raw
   dprint("Downloading raw images")
   reqs <- lapply(path_df$primary_photo_cropped_full, request)
   resps <- req_perform_parallel(
@@ -105,11 +105,11 @@ download_and_crop_imgs <- function(path_df) {
   dprint("Downloaded raw image files:")
   dprint(list.files(RAW_DIR, recursive = TRUE))
 
-  # RESIZE RAW
+  # Resize raw
   dprint("Resizing raw images")
   dev_null <- sapply(path_df$raw_path, maybe_resize_image)
 
-  # CROP RAW USING HEAD DETECTOR
+  # Crop raw image using head detector
   dat_path <- file.path("db", ".dog-head-detector.dat")
   py$download_file_from_s3(
     biobuddy::BUCKET,
@@ -119,12 +119,12 @@ download_and_crop_imgs <- function(path_df) {
   py_run_string(glue(
     "import dlib; detector = dlib.cnn_face_detection_model_v1('{dat_path}')"
   ))
-  dprint("Cropping raw images")
+  dprint("Cropping raw images using head detector")
   failure_ids <- crop_headshots(
     py$detector, path_df$raw_path, path_df$cropped_path
   )
 
-  # CROP RAW USING ALTERNATE IMG IF NEEDED
+  # Crop raw using alternate img if needed
   to_retry <- path_df %>% filter(id %in% failure_ids)
 
   if (nrow(to_retry) != 0) {

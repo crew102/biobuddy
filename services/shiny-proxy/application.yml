@@ -12,6 +12,7 @@ proxy:
     container-network: biobuddy_bb-net
   specs:
   - id: bb-app
+    # TODO: specified as envvar PROXY_SPECS_CONTAINER_IMAGE:"ghcr.io/crew102/bb-app"
     container-image: ghcr.io/crew102/bb-app
     container-network: biobuddy_bb-net
     container-env-file: /opt/shinyproxy/env.txt

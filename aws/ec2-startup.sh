@@ -33,6 +33,7 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.0.30.zip" -o "awscl
 unzip awscliv2.zip
 ./aws/install
 
+# TODO
 echo -e "CLONING REPO\n\n"
 cd /home
 git clone https://github.com/crew102/biobuddy.git
@@ -88,6 +89,8 @@ echo "$NEW_CONF_FILE" > services/nginx/nginx.conf
 
 echo -e "PULLING BB-APP IMAGE\n\n"
 echo "$CR_PAT" | docker login ghcr.io -u crew102 --password-stdin
+
+# TODO
 docker pull ghcr.io/crew102/bb-app:latest
 
 echo -e "RUNNING DOCKER-COMPOSE UP\n\n"

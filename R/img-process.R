@@ -96,7 +96,7 @@ crop_alternate_imgs <- function(detector, alternatives, path_df) {
 
     for (one_pic in this_pup$full) {
       try({
-        one_img <- httr2::req_perform_sequential(
+        httr2::req_perform_sequential(
           list(httr2::request(one_pic)),
           on_error = "stop",
           paths = TEMP_RAW

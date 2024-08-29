@@ -77,6 +77,8 @@ class EC2spot(Stack):
             self, id=f"{environment}-security-group",
             vpc=vpc, allow_all_outbound=True
         )
+        # No big deal if local IP changes, just update security settings in
+        # AWS web app/console
         ip = os.environ.get("LOCAL_IP")
         sg.add_ingress_rule(
             peer=ec2.Peer.ipv4(ip),
