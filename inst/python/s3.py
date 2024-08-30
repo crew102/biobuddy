@@ -1,9 +1,11 @@
 import os
 import json
+import logging
 
 import boto3
 
 S3_CLIENT = boto3.client("s3")
+logger = logging.getLogger()
 
 
 def get_catchall_bucket_name():
@@ -19,12 +21,12 @@ def get_catchall_bucket_name():
 
 def download_file_from_s3(bucket_name, remote_path, local_path):
     S3_CLIENT.download_file(bucket_name, remote_path, local_path)
-    print(f"Downloaded {remote_path} to {local_path}")
+    logger.info(f"Downloaded {remote_path} to {local_path}")
 
 
 def upload_file_to_s3(bucket_name, remote_path, local_path):
     S3_CLIENT.upload_file(local_path, bucket_name, remote_path)
-    print(f"Uploaded {local_path} to s3://{bucket_name}/{remote_path}")
+    logger.info(f"Uploaded {local_path} to s3://{bucket_name}/{remote_path}")
 
 
 def download_dir_from_s3(bucket_name, remote_dir, local_dir):
@@ -40,9 +42,9 @@ def download_dir_from_s3(bucket_name, remote_dir, local_dir):
             local_path = os.path.join(local_dir, file_name)
 
             S3_CLIENT.download_file(bucket_name, remote_path, local_path)
-            print(f"Downloaded {remote_path} to {local_path}")
+            logger.info(f"Downloaded {remote_path} to {local_path}")
     else:
-        print(f"No files found in {remote_dir}")
+        logger.info(f"No files found in {remote_dir}")
 
 
 def upload_dir_to_s3(bucket_name, remote_dir, local_dir):                        
@@ -53,7 +55,7 @@ def upload_dir_to_s3(bucket_name, remote_dir, local_dir):
             s3_key = os.path.join(remote_dir, relative_path).replace("\\", "/")  
                                                                                   
             S3_CLIENT.upload_file(local_path, bucket_name, s3_key)                
-            print(f"Uploaded {local_path} to s3://{bucket_name}/{s3_key}")
+            logger.info(f"Uploaded {local_path} to s3://{bucket_name}/{s3_key}")
 
 
 def list_files_in_s3(bucket_name, remote_dir):
@@ -76,7 +78,7 @@ def delete_s3_directory(bucket_name, remote_dir):
     if "Contents" in response:
         for obj in response["Contents"]:
             S3_CLIENT.delete_object(Bucket=bucket_name, Key=obj["Key"])
-            print(f"Deleted {obj["Key"]}")
+            print(f"Deleted {obj['Key']}")
 
 
 def make_imgs_readable(bucket_name):

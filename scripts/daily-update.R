@@ -36,6 +36,8 @@ if (IS_FIRST_DAY) {
   EXISTING_REWRITES <- read_s3_file(REWRITES_FILE, read_csv)
   SEEN_ON_EXISTING <- read_s3_file(SEEN_ON_FILE, read_csv, col_types = "iccclic")
 }
+# So log ordering isn't confusing, in cases where we set logger to info level
+Sys.sleep(3)
 
 # To start from scratch:
 # py$delete_s3_directory(BUCKET, "db")
@@ -181,7 +183,7 @@ execute_daily_update <- function() {
     filter(!(id %in% existing_ids))
   if (nrow(todo_pups) == 0) {
     # The oldest five should still be the oldest five, so no need to update that
-    status <- "No pups to process today, all in daily PF batch are in rewrites.csv"
+    status <- "No pups to process today, all in daily download are already in rewrites.csv"
     dprint(status)
     return(status)
   }
@@ -247,7 +249,7 @@ execute_and_log_daily_update <- function() {
     status = status
   )
 
-  dprint("Uploading Exit status file")
+  dprint("Uploading exit status file")
   files_in_db <- py$list_files_in_s3(biobuddy::BUCKET, "db")
   if (IS_FIRST_DAY || !(EXIT_STATUS_FILE %in% files_in_db)) {
     write_s3_file(status_df, write_csv, EXIT_STATUS_FILE)
@@ -256,7 +258,7 @@ execute_and_log_daily_update <- function() {
     full_status <- bind_rows(existing_status, status_df)
     write_s3_file(full_status, write_csv, EXIT_STATUS_FILE)
   }
-  dprint("Done")
+  dprint("Daily update done")
 }
 
 execute_and_log_daily_update()
