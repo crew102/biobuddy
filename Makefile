@@ -8,13 +8,16 @@ build:
 	docker compose up -d
 
 # Build main app image totally locally, with potentially new dependencies added
-img-local:
+img-deps-local:
 	Rscript scripts/lockfile-write.R
-	docker build -t bb-app -f app/Dockerfile .
+	docker build -t bb-deps .
+
+img-deps-gh:
+	docker build -t bb-deps:latest .
 
 # Build app on aws, using existing lockfile
-img-deploy:
-	docker build --no-cache -t bb-app:latest -f app/Dockerfile .
+img-app-gh:
+	docker build -t bb-app:latest --no-cache -f app/Dockerfile .
 
 dprune:
 	docker system prune -a
