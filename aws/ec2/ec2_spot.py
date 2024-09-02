@@ -80,22 +80,24 @@ class EC2spot(Stack):
         # No big deal if local IP changes, just update security settings in
         # AWS web app/console
         ip = os.environ.get("LOCAL_IP")
-        sg.add_ingress_rule(
-            peer=ec2.Peer.ipv4(ip),
-            connection=ec2.Port.tcp(22)
-        )
-        sg.add_ingress_rule(
-            peer=ec2.Peer.ipv4(ip),
-            connection=ec2.Port.tcp(9443)
-        )
-        sg.add_ingress_rule(
-            peer=ec2.Peer.ipv4(ip),
-            connection=ec2.Port.tcp(8787)
-        )
-        sg.add_ingress_rule(
-            peer=ec2.Peer.ipv4(ip),
-            connection=ec2.Port.tcp(3838)
-        )
+        if ip is not None:
+            sg.add_ingress_rule(
+                peer=ec2.Peer.ipv4(ip),
+                connection=ec2.Port.tcp(22)
+            )
+            sg.add_ingress_rule(
+                peer=ec2.Peer.ipv4(ip),
+                connection=ec2.Port.tcp(9443)
+            )
+            sg.add_ingress_rule(
+                peer=ec2.Peer.ipv4(ip),
+                connection=ec2.Port.tcp(8787)
+            )
+            sg.add_ingress_rule(
+                peer=ec2.Peer.ipv4(ip),
+                connection=ec2.Port.tcp(3838)
+            )
+
         sg.add_ingress_rule(
             peer=ec2.Peer.any_ipv4(),
             connection=ec2.Port.HTTPS.tcp(443)
