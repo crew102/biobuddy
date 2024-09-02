@@ -1,4 +1,3 @@
-#' @export
 BUCKET <- NULL
 
 .onLoad <- function(libname, pkgname) {

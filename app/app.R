@@ -2,14 +2,11 @@ library(shiny)
 library(argonR)
 library(argonDash)
 library(bslib)
-library(readr)
 library(dplyr)
 library(markdown)
 library(here)
 library(shinyjs)
 library(waiter)
-library(cropcircles)
-library(magick)
 library(glue)
 library(bsplus)
 library(shinyWidgets)
@@ -180,7 +177,6 @@ server <- function(input, output, session) {
     shinyjs::hide("customize_tab")
     shinyjs::show("showcase_tab")
     runjs("collapseSidebar()")
-
   })
   observeEvent(input$`tab-customize_tab`, {
     shinyjs::hide("showcase_tab")
@@ -357,7 +353,7 @@ server <- function(input, output, session) {
     )
     prompt_df$content[2] <- bio_to_rewrite
 
-    out <- generic_openai_request(prompt_df, "gpt-3.5-turbo-0125")
+    out <- generic_openai_request(prompt_df)
     # TODO: handle case where out is a string (error from API) and not response
     customize_rewrite_txt <- out$choices[[1]]$message$content
     output$customize_rewrite_card <- renderUI({

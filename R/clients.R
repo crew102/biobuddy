@@ -264,7 +264,7 @@ parallel_request_rewrites <- function(prompt_df, raw_bios,
   }, character(1))
 }
 
-generic_openai_request <- function(prompt_df, model = "gpt-3.5-turbo-0125") {
+generic_openai_request <- function(prompt_df, model = "gpt-4o-mini") {
   payload <- list(model = model, messages = prompt_df)
   req <- httr2::request("https://api.openai.com/v1/chat/completions") %>%
     httr2::req_headers(
