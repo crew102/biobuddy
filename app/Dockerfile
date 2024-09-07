@@ -1,4 +1,5 @@
-FROM ghcr.io/crew102/bb-deps:latest
+ARG DEPS_SHA=latest
+FROM ghcr.io/crew102/bb-deps:${DEPS_SHA}
 
 WORKDIR /home/biobuddy
 
