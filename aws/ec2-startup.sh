@@ -2,6 +2,8 @@
 
 set -e
 
+echo "APP image SHA to use is: $1"
+
 apt-get update && \
   apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -28,24 +30,23 @@ apt-get update && \
   docker-buildx-plugin \
   docker-compose-plugin
 
+touch /Users/cbaker/.Renviron
+
 echo -e "AWS CLI INSTALL\n\n"
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.0.30.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 ./aws/install
 
-# TODO
 echo -e "CLONING REPO\n\n"
 cd /home
 git clone https://github.com/crew102/biobuddy.git
 cd biobuddy
+git checkout "$1"
 
-echo -e "WRITING SECRETS FILE\n\n"
+# Reminder that we don't need aws credentials defined b/c EC2 is already told
+# it has permissions to do what I need
+echo -e "PULLING RELEVANT SECRETS\n\n"
 declare -a secret_names=(
-  "PF_CLIENT_ID"
-  "PF_CLIENT_SECRET"
-  "OPENAI_API_KEY"
-  "POLISHED_API_KEY"
-  "FIREBASE_API_KEY"
   "RSTUDIO_PASSWORD"
   "CR_PAT"
 )
@@ -58,18 +59,15 @@ for secret_name in "${secret_names[@]}"; do
       '. | to_entries | map(select(.key == $KEY)) | .[] | "\(.key)=\(.value)"'
   )
 
-  # Includes the name of the secret (i..e, SOME_SECRET=hithere)
-  echo "$secret_value" >> "secrets.txt"
-
   if [ "$secret_name" == "CR_PAT" ]; then
     export "$secret_value"
   fi
 
-done
+  if [ "$secret_name" == "RSTUDIO_PASSWORD" ]; then
+    export "$secret_name"="$secret_value"
+  fi
 
-echo -e "WRITING .ENV FILE\n\n"
-# Set rstudio password using docker compose env vars interpolation
-grep RSTUDIO_PASSWORD secrets.txt > .env
+done
 
 echo -e "WRITING NGINX CONF FILE BASED ON IP ADDRESS\n\n"
 PROD="52.7.217.197"
@@ -90,8 +88,7 @@ echo "$NEW_CONF_FILE" > services/nginx/nginx.conf
 echo -e "PULLING BB-APP IMAGE\n\n"
 echo "$CR_PAT" | docker login ghcr.io -u crew102 --password-stdin
 
-# TODO
-docker pull ghcr.io/crew102/bb-app:latest
+docker docker pull ghcr.io/crew102/bb-app:"$1"
 
 echo -e "RUNNING DOCKER-COMPOSE UP\n\n"
 make bup
