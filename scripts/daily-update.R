@@ -20,7 +20,7 @@ EXIT_STATUS_FILE <- "db/run-exit-status.csv"
 try(unlink(RAW_DIR, force = TRUE, recursive = TRUE))
 try(unlink(CROPPED_DIR, force = TRUE, recursive = TRUE))
 
-files_in_db <- py$list_files_in_s3(biobuddy::BUCKET, "db")
+files_in_db <- py$list_files_in_s3(BUCKET, "db")
 IS_FIRST_DAY <- !(REWRITES_FILE %in% files_in_db)
 NOW_FORMATTED <- format(
   Sys.time(), "%Y-%m-%dT%H:%M:%S+0000", tz = "utc", usetz = FALSE
@@ -114,7 +114,7 @@ download_and_crop_imgs <- function(path_df) {
   # Crop raw image using head detector
   dat_path <- file.path("db", ".dog-head-detector.dat")
   py$download_file_from_s3(
-    biobuddy::BUCKET,
+    BUCKET,
     remote_path = "models/dog-head-detector.dat",
     local_path = dat_path
   )
@@ -250,7 +250,7 @@ execute_and_log_daily_update <- function() {
   )
 
   dprint("Uploading exit status file")
-  files_in_db <- py$list_files_in_s3(biobuddy::BUCKET, "db")
+  files_in_db <- py$list_files_in_s3(BUCKET, "db")
   if (IS_FIRST_DAY || !(EXIT_STATUS_FILE %in% files_in_db)) {
     write_s3_file(status_df, write_csv, EXIT_STATUS_FILE)
   } else {
