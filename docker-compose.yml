@@ -11,9 +11,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       # TODO: Consider removing:
       - ./services/shiny-proxy/application.yml:/opt/shinyproxy/application.yml
-      # TODO: Note what this injection is for
-      - ./secrets.txt:/opt/shinyproxy/env.txt
+      # This injection is needed for local development, where I'm testing out
+      # shiny proxy in docker stack
+      - /Users/cbaker/.Renviron:/opt/shinyproxy/env.txt
     user: root
+    environment:
+      APP_IMAGE: "${APP_IMAGE}"
 
   nginx:
     build: ./services/nginx
@@ -32,14 +35,14 @@ services:
 #    command: [nginx-debug, "-g", "daemon off;"]
 
   daily-update-cron:
-    image: ghcr.io/crew102/bb-app:${VAR:-latest}
+    image: "${APP_IMAGE}"
     restart: always
     networks:
       - bb-net
     command: ["/bin/bash", "-c", "cron && tail -f /var/log/cron.log"]
+
   #### Services for dev purposes ####
 
-  # TODO: set password using interpolation
   portainer:
     image: portainer/portainer-ce:latest
     restart: unless-stopped
@@ -51,9 +54,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   rstudio-dev:
-    # Not that big of a deal what version of bb-app is used here, as we map
-    # code into container directory.
-    image: ghcr.io/crew102/bb-app:latest
+    image: "${APP_IMAGE}"
     restart: unless-stopped
     networks:
       - bb-net
@@ -70,7 +71,7 @@ services:
     environment:
       ROOT: true
       # Locally in .env
-      PASSWORD: "${RSTUDIO_PASSWORD}"
+      PASSWORD: "${RSTUDIO_PASSWORD-rstudio}"
     command: ["/init"]
 
 networks:

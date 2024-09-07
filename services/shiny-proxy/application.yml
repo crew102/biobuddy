@@ -1,5 +1,3 @@
-# Reminder: This whole config is getting mapped into shiny proxy container at
-# config up
 proxy:
   landing-page: /app_direct/bb-app
   heartbeat-timeout: 60000
@@ -12,8 +10,9 @@ proxy:
     container-network: biobuddy_bb-net
   specs:
   - id: bb-app
-    # TODO: specified as envvar PROXY_SPECS_CONTAINER_IMAGE:"ghcr.io/crew102/bb-app"
-    container-image: ghcr.io/crew102/bb-app
+    container-image: ${APP_IMAGE}
     container-network: biobuddy_bb-net
+    # This is needed for local development, b/c we don't get auth to secrets
+    # locally in Docker like we do when we run on EC2.
     container-env-file: /opt/shinyproxy/env.txt
 #    container-volumes: ["./logs:/home/biobuddy/logs"]

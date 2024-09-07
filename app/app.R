@@ -12,6 +12,7 @@ library(bsplus)
 library(shinyWidgets)
 library(magrittr)
 library(polished)
+library(readr)
 
 devtools::load_all()
 

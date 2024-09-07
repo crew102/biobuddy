@@ -10,14 +10,10 @@ build:
 # Build main app image totally locally, with potentially new dependencies added
 img-deps-local:
 	Rscript scripts/lockfile-write.R
-	docker build -t bb-deps .
+	docker build -t ghcr.io/crew102/bb-deps:latest .
 
-img-deps-gh:
-	docker build -t bb-deps:latest .
-
-# Build app on aws, using existing lockfile
-img-app-gh:
-	docker build -t bb-app:latest --no-cache -f app/Dockerfile .
+img-app-local:
+	docker build -t ghcr.io/crew102/bb-app:latest --no-cache -f app/Dockerfile .
 
 dprune:
 	docker system prune -a
