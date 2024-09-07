@@ -16,6 +16,10 @@ COPY scripts scripts
 ENV R_LIBS_USER="/home/biobuddy/renv/lib"
 # Reminder that you use biobuddy/.venv venv instead of this env when working locally
 ENV RETICULATE_PYTHON="/home/biobuddy/.local/share/r-miniconda/envs/r-reticulate/bin/python"
+# Cron job for daily update
+RUN touch /var/log/cron.log
+RUN chmod +x scripts/daily-update.sh
+COPY scripts/daily-update-crontab /etc/cron.d/daily-update-crontab
 
 RUN R -e "install.packages('renv', repos = c(CRAN = 'https://cloud.r-project.org'))"
 RUN R -e "options(renv.consent = TRUE); renv::restore(library = 'renv/lib')"

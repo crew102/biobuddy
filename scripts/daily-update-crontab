@@ -1,0 +1,1 @@
+* * * * * /home/biobuddy/scripts/daily-update.sh >> /var/log/cron.log 2>&1

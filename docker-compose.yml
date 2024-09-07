@@ -31,6 +31,12 @@ services:
       - shiny-proxy
 #    command: [nginx-debug, "-g", "daemon off;"]
 
+  daily-update-cron:
+    image: ghcr.io/crew102/bb-app:${VAR:-latest}
+    restart: always
+    networks:
+      - bb-net
+    command: ["/bin/bash", "-c", "cron && tail -f /var/log/cron.log"]
   #### Services for dev purposes ####
 
   # TODO: set password using interpolation
