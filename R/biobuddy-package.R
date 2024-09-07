@@ -3,7 +3,6 @@
 
 ## usethis namespace: start
 #' @import httr
-#' @import jsonlite
 #' @import dplyr
 #' @import tidyr
 #' @import lubridate

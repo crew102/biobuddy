@@ -33,7 +33,7 @@ fetch_one_pf_page <- function(token, query) {
   stop_for_status(response)
   cnt <- content(response, "text", encoding = "utf-8", flatten = TRUE)
 
-  fromJSON(cnt)
+  jsonlite::fromJSON(cnt)
 }
 
 fetch_pf_pages <- function(token,
@@ -167,7 +167,7 @@ one_org_request <- function(token, query) {
   )
   stop_for_status(response)
   cnt <- content(response, "text", encoding = "utf-8", flatten = TRUE)
-  fromJSON(cnt)
+  jsonlite::fromJSON(cnt)
 }
 
 fetch_all_orgs <- function(token) {
