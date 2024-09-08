@@ -55,6 +55,7 @@ jobs:
       run: |
         docker build --build-arg DEPS_SHA=$DEPS_SHA -t ghcr.io/crew102/bb-app:${{ inputs.app_sha }} --no-cache -f app/Dockerfile .
         docker tag ghcr.io/crew102/bb-app:${{ inputs.app_sha }} ghcr.io/crew102/bb-app:${{ env.VERSION }}
+        docker tag ghcr.io/crew102/bb-app:${{ inputs.app_sha }} ghcr.io/crew102/bb-app:latest
 
 #    - name: Test Docker image
 #      run: |
@@ -64,3 +65,4 @@ jobs:
       run: |
         docker push ghcr.io/crew102/bb-app:${{ inputs.app_sha }}
         docker push ghcr.io/crew102/bb-app:${{ env.VERSION }}
+        docker push ghcr.io/crew102/bb-app:latest

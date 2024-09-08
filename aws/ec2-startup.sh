@@ -2,8 +2,6 @@
 
 set -e
 
-echo "APP image SHA to use is: $1"
-
 apt-get update && \
   apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -30,6 +28,9 @@ apt-get update && \
   docker-buildx-plugin \
   docker-compose-plugin
 
+# To conform to local dev environment, though we won't end up using this file
+# on EC2
+mkdir -p /Users/cbaker
 touch /Users/cbaker/.Renviron
 
 echo -e "AWS CLI INSTALL\n\n"
@@ -52,22 +53,19 @@ declare -a secret_names=(
 )
 for secret_name in "${secret_names[@]}"; do
 
-  secret_value=$(
+  to_export=$(
     aws secretsmanager get-secret-value --secret-id "$secret_name" \
       --query 'SecretString' --output text | \
       jq -r --arg KEY "$secret_name" \
       '. | to_entries | map(select(.key == $KEY)) | .[] | "\(.key)=\(.value)"'
   )
 
-  if [ "$secret_name" == "CR_PAT" ]; then
-    export "$secret_value"
-  fi
-
-  if [ "$secret_name" == "RSTUDIO_PASSWORD" ]; then
-    export "$secret_name"="$secret_value"
-  fi
+  export "$to_export"
 
 done
+
+echo -e "SETTING APP_IMAGE ENVVAR\n\n"
+export APP_IMAGE="ghcr.io/crew102/bb-app":"$1"
 
 echo -e "WRITING NGINX CONF FILE BASED ON IP ADDRESS\n\n"
 PROD="52.7.217.197"
@@ -87,8 +85,13 @@ echo "$NEW_CONF_FILE" > services/nginx/nginx.conf
 
 echo -e "PULLING BB-APP IMAGE\n\n"
 echo "$CR_PAT" | docker login ghcr.io -u crew102 --password-stdin
-
-docker docker pull ghcr.io/crew102/bb-app:"$1"
+if ! docker pull ghcr.io/crew102/bb-app:"$1"; then
+  # For situations when in development and don't want to push current version of
+  # image to CR
+  echo -e "REVERTING TO USING LATEST IMAGE B/C LATEST
+  COMMIT SHA ISN'T AVAILABLE\n\n"
+  docker pull ghcr.io/crew102/bb-app:latest
+fi
 
 echo -e "RUNNING DOCKER-COMPOSE UP\n\n"
 make bup
