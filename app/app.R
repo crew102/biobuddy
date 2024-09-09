@@ -13,6 +13,7 @@ library(shinyWidgets)
 library(magrittr)
 library(polished)
 library(readr)
+library(jsonlite)
 
 devtools::load_all()
 
