@@ -23,11 +23,11 @@ app:
 
 py-venv-install:
 	python3 -m venv .venv
-	source .venv/bin/activate
+	. .venv/bin/activate
 	python3 -m pip install -r requirements.txt
 
 aws-deploy:
-	source .venv/bin/activate; cd aws; cdk destroy --force $(ENV_NAME); cdk deploy $(ENV_NAME) -e --require-approval never
+	. .venv/bin/activate; cd aws; cdk destroy --force $(ENV_NAME); cdk deploy $(ENV_NAME) -e --require-approval never
 
 aws-stage:
 	$(MAKE) aws-deploy ENV_NAME=ec2-spot-staging

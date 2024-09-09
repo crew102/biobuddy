@@ -5,6 +5,7 @@ WORKDIR /home/biobuddy
 USER root
 
 COPY renv.lock requirements.txt ./
+COPY aws/requirements.txt aws/requirements.txt
 
 ENV R_LIBS_USER="/home/biobuddy/renv/lib"
 # Reminder that you use biobuddy/.venv venv instead of this env when working locally

@@ -12,6 +12,7 @@ ENV EDITOR=nano
 ENV AWS_DEFAULT_REGION="us-east-1"
 
 COPY NAMESPACE DESCRIPTION biobuddy.Rproj renv.lock requirements.txt ./
+COPY aws/requirements.txt aws/requirements.txt
 COPY app app
 COPY R R
 COPY db db
