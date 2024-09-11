@@ -83,6 +83,9 @@ export SERVER_NAME
 NEW_CONF_FILE=$(envsubst '${SERVER_NAME}' < services/nginx/nginx.conf)
 echo "$NEW_CONF_FILE" > services/nginx/nginx.conf
 
+echo -e "LISTING FILES\n\n"
+ls -la
+
 echo -e "PULLING BB-APP IMAGE\n\n"
 echo "$CR_PAT" | docker login ghcr.io -u crew102 --password-stdin
 if ! docker pull ghcr.io/crew102/bb-app:"$1"; then
