@@ -3,7 +3,7 @@ name: Deploy app
 on:
   workflow_dispatch:
     inputs:
-      deps_sha:
+      app_sha:
         description: 'Commit SHA to deploy'
         required: true
         type: string
@@ -34,8 +34,8 @@ jobs:
 
     - name: Checkout
       run: |
-        echo ${{ inputs.deps_sha }}
-        git checkout ${{ inputs.deps_sha }}
+        echo ${{ inputs.app_sha }}
+        git checkout ${{ inputs.app_sha }}
 
     - name: Set up Python
       uses: actions/setup-python@v2
