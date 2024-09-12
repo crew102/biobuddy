@@ -1,7 +1,5 @@
-import json
 import os
 import re
-import subprocess
 
 from aws_cdk import (
     Stack,
@@ -13,39 +11,13 @@ from constructs import Construct
 from cdk_ec2_spot_simple import SpotInstance
 import boto3
 
+from deploy_utils import get_latest_commit_sha, get_secret
+
 INSTANCE_TYPE = "t3.medium"
 AMI_ID = "ami-04a81a99f5ec58529"
 EBS_VOLUME_SIZE = 20
 
 LOCAL_IP = os.environ.get("LOCAL_IP")
-
-
-# The idea here is that in both scenarios where we want to deploy the stack
-# (locally during dev and on a Github Action), we'll be running the deployment
-# command inside the repo at the commit we want to deploy.
-# Reminder that you have to push to Github though so that any recent local
-# commit is available to be fetched in the EC2 startup script.
-def _get_latest_commit_sha():
-    if LOCAL_IP is not None:
-        result = subprocess.run(
-            ["git", "log", "origin/main..main"],
-            capture_output=True, text=True
-        )
-        if result.stdout.strip() != "":
-            raise RuntimeError("Origin is out of sync with local repo")
-    result = subprocess.run(
-        ["git", "rev-parse", "--short", "HEAD"],
-        capture_output=True, text=True
-    )
-    return result.stdout.strip()
-
-
-def _get_secret(secret_name):
-    client = boto3.client("secretsmanager")
-    response = client.get_secret_value(SecretId=secret_name)
-    ss = response["SecretString"]
-    a_dict = json.loads(ss)
-    return a_dict[secret_name]
 
 
 class EC2spot(Stack):
@@ -67,7 +39,7 @@ class EC2spot(Stack):
         )
 
         # The read-secrets-from-ec2 ARN
-        role_arn = _get_secret("READ-SECRETS-FROM-EC2")
+        role_arn = get_secret("READ-SECRETS-FROM-EC2")
         # Reference the existing IAM Role
         secrets_role = iam.Role.from_role_arn(
             self, "existing-secrets-role",
@@ -134,7 +106,7 @@ class EC2spot(Stack):
         # Not terribly proud of this hack, but it's simpler than using a script
         # argument where I would have to upload the script to S3
         startup_script = re.sub(
-            '"\\$1"', _get_latest_commit_sha(), startup_script
+            '"\\$1"', get_latest_commit_sha(), startup_script
         )
         user_data = ec2.UserData.custom(startup_script)
         machine_image = ec2.MachineImage.generic_linux(
