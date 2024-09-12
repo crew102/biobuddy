@@ -35,6 +35,15 @@ is_local <- function() {
   Sys.getenv("LOCAL") == "true"
 }
 
+get_env <- function() {
+  env <- Sys.getenv("ENVIRONMENT")
+  if (env == "") {
+    "staging"
+  } else {
+    env
+  }
+}
+
 dprint <- function(x, ...) {
   cat("\n")
   cat(x, ...)

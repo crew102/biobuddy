@@ -20,7 +20,7 @@ devtools::load_all()
 source(here("app/ui.R"))
 
 polished_config(
-  app_name = "biobuddy-dev",
+  app_name = paste0("biobuddy-", get_env()),
   api_key = get_secret("POLISHED_API_KEY"),
   firebase_config = list(
     apiKey = get_secret("FIREBASE_API_KEY"),

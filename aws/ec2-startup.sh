@@ -2,6 +2,8 @@
 
 set -e
 
+ENV_FILE="/Users/cbaker/.Renviron"
+
 apt-get update && \
   apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -31,7 +33,8 @@ apt-get update && \
 # To conform to local dev environment, though we won't end up using this file
 # on EC2
 mkdir -p /Users/cbaker
-touch /Users/cbaker/.Renviron
+touch "$ENV_FILE"
+echo "ENVIRONMENT=staging" > "$ENV_FILE"
 
 echo -e "AWS CLI INSTALL\n\n"
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.0.30.zip" -o "awscliv2.zip"
@@ -67,12 +70,13 @@ done
 echo -e "SETTING APP_IMAGE ENVVAR\n\n"
 export APP_IMAGE="ghcr.io/crew102/bb-app":"$1"
 
-echo -e "WRITING NGINX CONF FILE BASED ON IP ADDRESS\n\n"
+echo -e "WRITING NGINX CONF FILE BASED ON IP ADDRESS AND CHANING ENV_FILES\n\n"
 PROD="52.7.217.197"
 STAGE="34.225.226.49"
 LIP=$(curl ifconfig.me)
 if [ "$LIP" == "$PROD" ]; then
   SERVER_NAME="biobuddyai.com"
+  sed -i.bak "s/^ENVIRONMENT=.*/ENVIRONMENT=prod/" "$ENV_FILE"
 elif [ "$LIP" == "$STAGE" ]; then
   SERVER_NAME="biobuddydev.com"
 else
