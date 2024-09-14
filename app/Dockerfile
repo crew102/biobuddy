@@ -22,7 +22,7 @@ COPY scripts scripts
 # Cron job for daily update
 RUN touch /var/log/cron.log
 RUN chmod +x scripts/daily-update.sh
-COPY scripts/daily-update-crontab /etc/cron.d/daily-update-crontab
+COPY scripts/daily-update.crontab /etc/crontab
 
 # Install any dependencies that aren't already installed
 RUN R -e "options(renv.consent = TRUE); renv::restore(library = 'renv/lib')"
