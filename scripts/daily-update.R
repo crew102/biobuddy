@@ -23,9 +23,10 @@ try(unlink(CROPPED_DIR, force = TRUE, recursive = TRUE))
 
 files_in_db <- py$list_files_in_s3(BUCKET, "db")
 IS_FIRST_DAY <- !(REWRITES_FILE %in% files_in_db)
-NOW_FORMATTED <- format(
-  Sys.time(), "%Y-%m-%dT%H:%M:%S+0000", tz = "utc", usetz = FALSE
-)
+time_to_char <- function(x) {
+  format(x, "%Y-%m-%dT%H:%M:%S+0000", tz = "utc", usetz = FALSE)
+}
+NOW_FORMATTED <- time_to_char(Sys.time())
 EST_TIME <- format(
   Sys.time(), "%Y-%m-%d %I:%M:%S %p", tz = "US/Eastern", usetz = FALSE
 )
@@ -35,6 +36,8 @@ if (IS_FIRST_DAY) {
   SEEN_ON_EXISTING <- tibble()
 } else {
   EXISTING_REWRITES <- read_s3_file(REWRITES_FILE, read_csv)
+  EXISTING_REWRITES <- EXISTING_REWRITES %>%
+    mutate(published_at = time_to_char(published_at))
   SEEN_ON_EXISTING <- read_s3_file(SEEN_ON_FILE, read_csv, col_types = "iccclic")
 }
 # So log ordering isn't confusing, in cases where we set logger to info level
@@ -65,10 +68,6 @@ fetch_all_pf_data <- function() {
 }
 
 gen_seen_on_df <- function(todays_pups) {
-  # match time format used by petfinder api
-  formatted_time <- format(
-    Sys.time(), "%Y-%m-%dT%H:%M:%S+0000", tz = "UTC", usetz = FALSE
-  )
   todays_pups %>%
     # Some metadata cols to explain to future self why rewrites/imgs are missing
     mutate(has_primary_photo = !is.na(primary_photo_cropped_full)) %>%
@@ -235,12 +234,17 @@ execute_daily_update <- function() {
 }
 
 execute_and_log_daily_update <- function() {
+  on.exit({
+    try(unlink(RAW_DIR, force = TRUE, recursive = TRUE))
+    try(unlink(CROPPED_DIR, force = TRUE, recursive = TRUE))
+  })
 
   dprint(paste("IS_FIRST_DAY is", IS_FIRST_DAY))
 
   status <- tryCatch({
     execute_daily_update()
   }, error = function(e) {
+    print(as.character(e))
     paste("Error:", as.character(e))
   })
 
@@ -249,6 +253,9 @@ execute_and_log_daily_update <- function() {
     est_update_time = EST_TIME,
     status = status
   )
+
+  dprint("Sending exit status email")
+  send_email(subject = "Daily update exit status", body = status)
 
   dprint("Uploading exit status file")
   files_in_db <- py$list_files_in_s3(BUCKET, "db")
