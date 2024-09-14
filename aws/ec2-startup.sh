@@ -101,7 +101,7 @@ if ! docker pull ghcr.io/crew102/bb-app:"$1"; then
 fi
 
 echo -e "RUNNING DOCKER-COMPOSE UP\n\n"
-make bup
+docker compose up -d
 
 echo -e "ONE-TIME INSTALL OF SSL CERT\n\n"
 # Not terribly proud of this. Dipping into the nginx container and installing

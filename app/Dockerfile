@@ -11,6 +11,7 @@ ENV EDITOR=nano
 # Consider making this a config element:
 ENV AWS_DEFAULT_REGION="us-east-1"
 
+# Code copy
 COPY NAMESPACE DESCRIPTION biobuddy.Rproj renv.lock requirements.txt ./
 COPY aws/requirements.txt aws/requirements.txt
 COPY app app
@@ -18,6 +19,10 @@ COPY R R
 COPY db db
 COPY inst inst
 COPY scripts scripts
+
+# Preferences
+COPY aws/conf/rstudio-prefs.json /home/rstudio/.config/rstudio/rstudio-prefs.json
+COPY aws/conf/rstudio-bindings.json /home/rstudio/.config/rstudio/keybindings/rstudio_bindings.json
 
 # Cron job for daily update
 RUN touch /var/log/cron.log

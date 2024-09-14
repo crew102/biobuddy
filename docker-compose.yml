@@ -9,13 +9,16 @@ services:
       - "8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      # TODO: Consider removing:
+      # We go straight from shinyproxy image, hence have to map in our config
+      # at runtime
       - ./services/shiny-proxy/application.yml:/opt/shinyproxy/application.yml
       # This injection is needed for local development, where I'm testing out
       # shiny proxy in docker stack
       - ./.Renviron:/opt/shinyproxy/env.txt
     user: root
     environment:
+      # APP_IMAGE is defined in ec2-startup.sh based on git commit SHA. Locally
+      # it's defined as ghcr.io/crew102/bb-app:latest in .bashrc
       APP_IMAGE: "${APP_IMAGE}"
 
   nginx:
@@ -29,6 +32,8 @@ services:
     volumes:
       - ./services/nginx/logs:/nginx/logs
       - ./services/nginx/landing:/www/landing
+      # This file is manipulated in ec2-startup.sh to reflect the environment
+      # (host) that should be used, hence have to map into container.
       - ./services/nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - shiny-proxy
@@ -61,14 +66,13 @@ services:
       - "8787:8787"
     volumes:
       - .:/home/rstudio/biobuddy-dev
-      # Remove this file in the container so I don't activate the renv
-      # when I enter the project:
+      # Removing the .Rprofile file in the container, so I don't activate renv
+      # when I enter the project
       - /dev/null:/home/rstudio/biobuddy-dev/.Rprofile
-      # Preferences
-      - ./aws/conf/rstudio-prefs.json:/home/rstudio/.config/rstudio/rstudio-prefs.json
-      - ./aws/conf/rstudio-bindings.json:/home/rstudio/.config/rstudio/keybindings/rstudio_bindings.json
     environment:
       ROOT: true
+      # Exported as envvar in ec2-startup.sh. Locally we can just use rstudio
+      # default password.
       PASSWORD: "${RSTUDIO_PASSWORD-rstudio}"
     command: ["/init"]
 
