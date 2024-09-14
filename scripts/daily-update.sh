@@ -1,3 +1,4 @@
 #!/bin/bash
 
-/usr/local/bin/Rscript /home/biobuddy/scripts/daily-update.R
+cd /home/biobuddy
+Rscript scripts/daily-update.R

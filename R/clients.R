@@ -285,7 +285,7 @@ send_email <- function(subject, body, to = "chriscrewbaker@gmail.com") {
   key <- "GMAILR_KEY"
   from <- "pfanalytics787@gmail.com"
   val <- get_secret(key)
-  Sys.setenv(key = val)
+  Sys.setenv(GMAILR_KEY = val)
   py$download_file_from_s3(BUCKET, token_fi, token_fi)
   gmailr::gm_auth(token = gmailr::gm_token_read(path = token_fi, key = key))
   print(gmailr::gm_profile())
