@@ -2,8 +2,6 @@
 
 set -e
 
-ENV_FILE="/Users/cbaker/.Renviron"
-
 apt-get update && \
   apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -29,12 +27,6 @@ apt-get update && \
   containerd.io \
   docker-buildx-plugin \
   docker-compose-plugin
-
-# To conform to local dev environment, though we won't end up using this file
-# on EC2
-mkdir -p /Users/cbaker
-touch "$ENV_FILE"
-echo "ENVIRONMENT=staging" > "$ENV_FILE"
 
 echo -e "AWS CLI INSTALL\n\n"
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.0.30.zip" -o "awscliv2.zip"
@@ -70,15 +62,23 @@ done
 echo -e "SETTING APP_IMAGE ENVVAR\n\n"
 export APP_IMAGE="ghcr.io/crew102/bb-app":"$1"
 
-echo -e "WRITING NGINX CONF FILE BASED ON IP ADDRESS AND CHANING ENV_FILES\n\n"
+echo -e "WRITING NGINX CONF FILE BASED ON IP ADDRESS AND CREATING ENV_FILES\n\n"
+# To conform to local dev environment, though we won't end up using this file on
+# EC2. On EC2 we source all of our secrets from AWS secrets store. The EC2
+# instance was given secrets access and AWS propagates that access across all
+# containers on EC2.
+ENV_FILE=".Renviron"
+touch "$ENV_FILE"
+
 PROD="52.7.217.197"
 STAGE="34.225.226.49"
 LIP=$(curl ifconfig.me)
 if [ "$LIP" == "$PROD" ]; then
   SERVER_NAME="biobuddyai.com"
-  sed -i.bak "s/^ENVIRONMENT=.*/ENVIRONMENT=prod/" "$ENV_FILE"
+  echo "ENVIRONMENT=prod" > "$ENV_FILE"
 elif [ "$LIP" == "$STAGE" ]; then
   SERVER_NAME="biobuddydev.com"
+  echo "ENVIRONMENT=staging" > "$ENV_FILE"
 else
   echo "ERROR: IP address is not equal to either PROD or STAGE"
   exit 1

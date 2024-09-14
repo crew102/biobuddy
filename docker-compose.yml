@@ -13,7 +13,7 @@ services:
       - ./services/shiny-proxy/application.yml:/opt/shinyproxy/application.yml
       # This injection is needed for local development, where I'm testing out
       # shiny proxy in docker stack
-      - /Users/cbaker/.Renviron:/opt/shinyproxy/env.txt
+      - ./.Renviron:/opt/shinyproxy/env.txt
     user: root
     environment:
       APP_IMAGE: "${APP_IMAGE}"
