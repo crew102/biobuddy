@@ -13,7 +13,7 @@ import boto3
 
 from deploy_utils import get_latest_commit_sha, get_secret
 
-INSTANCE_TYPE = "t3.medium"
+INSTANCE_TYPE = "t3.large"
 AMI_ID = "ami-04a81a99f5ec58529"
 EBS_VOLUME_SIZE = 20
 
