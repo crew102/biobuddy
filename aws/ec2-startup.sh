@@ -110,6 +110,8 @@ install_cert="/nginx/install-cert.sh"
 nginx_container=$(docker compose ps -q nginx)
 docker exec "$nginx_container" bash -c "export SERVER_NAME=\"$SERVER_NAME\"; chmod +x $install_cert; $install_cert"
 
+# For dev after running sudo su to change to root user:
 echo "cd /home/biobuddy" >> ~/.bashrc
+echo 'alias appimg="export APP_IMAGE=$(docker images --format \"{{.Repository}}:{{.Tag}}\" | grep bb-app)"' >> ~/.bashrc
 
 echo -e "\n\nSTARTUP DONE\n\n"

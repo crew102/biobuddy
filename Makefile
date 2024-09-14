@@ -18,9 +18,6 @@ img-app-local:
 dprune:
 	docker system prune -a
 
-app:
-	docker run --rm -it -p 3838:3838 -v `pwd`/secrets.txt:/root/.Renviron -v `pwd`/app:/home/biobuddy/app -v `pwd`/R:/home/biobuddy/R bb-app
-
 py-venv-install:
 	python3 -m venv .venv
 	. .venv/bin/activate
