@@ -35,6 +35,19 @@ aws-stage:
 aws-prod:
 	$(MAKE) aws-deploy ENV_NAME=ec2-spot-prod
 
+open-sg:
+	.venv/bin/python aws/open_sg.py
+
+# Locally triggered Github action-based jobs
+gh-app-build:
+	.venv/bin/python aws/trigger_gh_action_job.py
+
+gh-stage-deploy:
+	.venv/bin/python aws/trigger_gh_action_job.py --workflow_file="deploy.yml" --environment="staging"
+
+gh-prod-deploy:
+	.venv/bin/python aws/trigger_gh_action_job.py --workflow_file="deploy.yml" --environment="prod"
+
 clean:
 	docker image prune
 
