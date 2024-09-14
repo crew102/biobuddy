@@ -83,6 +83,8 @@ else
   echo "ERROR: IP address is not equal to either PROD or STAGE"
   exit 1
 fi
+# Needed for CRON, which on EC2 will have credentials but not region set:
+echo "AWS_DEFAULT_REGION=us-east-1" >> "$ENV_FILE"
 export SERVER_NAME
 NEW_CONF_FILE=$(envsubst '${SERVER_NAME}' < services/nginx/nginx.conf)
 echo "$NEW_CONF_FILE" > services/nginx/nginx.conf

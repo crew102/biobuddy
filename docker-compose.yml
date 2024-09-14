@@ -40,7 +40,11 @@ services:
 
   daily-update-cron:
     image: "${APP_IMAGE}"
-    restart: always
+    volumes:
+      # For testing out cron job locally, I have to have AWS credentials mapped
+      # into the container. Not a requirement on EC2, as containers spawned from
+      # that instance were given access to AWS secrets
+      - ./.Renviron:/home/biobuddy/.Renviron
     networks:
       - bb-net
     command: ["/bin/bash", "-c", "cron && tail -f /var/log/cron.log"]
