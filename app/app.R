@@ -27,12 +27,11 @@ polished_config(
     authDomain = "pf-analytics-232522.firebaseapp.com",
     projectId = "pf-analytics-232522"
   ),
-  sign_in_providers = c("google", "email")
+  sign_in_providers = c("google", "email"),
+  is_invite_required = TRUE
 )
 
 options(shiny.port = 3838, shiny.host = "0.0.0.0")
-
-all_dogs <- read_s3_file(file = "db/rewrites.csv", read_csv)
 
 gen_showcase_tab <- function(dog_df) {
   # showcase tab
@@ -392,7 +391,8 @@ sign_in_page_ui = sign_in_ui_default(
       style = "width: 125px; margin-top: 30px; margin-bottom: 30px;"
     ),
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"),
-  )
+  ),
+  icon_href = "bb-logo.svg"
 )
 
 shinyApp(
