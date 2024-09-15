@@ -78,7 +78,7 @@ services:
       # Exported as envvar in ec2-startup.sh. Locally we can just use rstudio
       # default password.
       PASSWORD: "${RSTUDIO_PASSWORD-rstudio}"
-    command: ["/init"]
+    command: ["chmod", "-R", "a+rw", "/home/rstudio/biobuddy-dev &&", "/init"]
 
 networks:
   bb-net:
