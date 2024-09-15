@@ -10,7 +10,7 @@ library(jsonlite)
 devtools::load_all()
 
 # Manually managed file with orgs that are participating
-ORG_FILE <- "orgs.csv"
+ORG_FILE <- "db/orgs.csv"
 
 BASE_IMG_DIR <- "db/img"
 RAW_DIR <- file.path(BASE_IMG_DIR, "raw")
