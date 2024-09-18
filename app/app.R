@@ -48,6 +48,13 @@ gen_showcase_tab <- function(dog_df) {
     tags$div(
       style = "display: flex; justify-content: flex-end;",
       actionButton("view_more", "More")
+    ),
+
+    actionButton(
+      "sign_out",
+      "Sign Out",
+      icon = icon("sign-out-alt"),
+      class = "pull-left"
     )
   )
 }
@@ -144,7 +151,6 @@ account_tab <- argonTabItem(
 )
 
 ui <- argonDashPage(
-  # id = "my_page",
   useShinyjs(),
   sidebar = sidebar,
   body = argonDashBody(
@@ -194,14 +200,14 @@ server <- function(input, output, session) {
     runjs("collapseSidebar()")
   })
 
-  # observeEvent(input$view_more, {
-  #   shinyjs::runjs("setTabToCustomize();")
-  #   shinyjs::hide("showcase_tab")
-  #   shinyjs::show("customize_tab")
-  # })
+  observeEvent(input$view_more, {
+    shinyjs::runjs("setTabToCustomize();")
+    shinyjs::hide("showcase_tab")
+    shinyjs::show("customize_tab")
+  })
 
   # Temp, for dev purposes:
-  observeEvent(input$view_more, {
+  observeEvent(input$sign_out, {
 
     tryCatch({
 

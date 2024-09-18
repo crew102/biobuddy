@@ -393,7 +393,7 @@ sign_in_module_2_ui_bb <- function(id) {
           style = "width: 30%; font-size: 1.2rem; letter-spacing: 0.025em;",
           loadingLabel = "Authenticating...",
           loadingClass = "btn btn-primary btn-lg text-center",
-          loadingStyle = "width: 50%"
+          loadingStyle = "width: 30%; font-size: 1.2rem; letter-spacing: 0.025em;"
         )
       ),
       div(
