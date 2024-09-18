@@ -38,8 +38,11 @@ aws-prod:
 
 # GH actions
 ################################################################################
-gh-image-build:
-	.venv/bin/python aws/trigger_gh_action_job.py
+gh-app-build:
+	.venv/bin/python aws/trigger_gh_action_job.py --workflow_file="build-app-image.yml"
+
+gh-deps-build:
+	.venv/bin/python aws/trigger_gh_action_job.py --workflow_file="build-deps-image.yml"
 
 gh-deploy-stage:
 	.venv/bin/python aws/trigger_gh_action_job.py --workflow_file="deploy.yml" --environment="staging"
