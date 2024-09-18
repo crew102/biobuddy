@@ -40,6 +40,7 @@ if (IS_FIRST_DAY) {
     mutate(published_at = time_to_char(published_at))
   SEEN_ON_EXISTING <- read_s3_file(SEEN_ON_FILE, read_csv, col_types = "iccclic")
 }
+
 # So log ordering isn't confusing, in cases where we set logger to info level
 Sys.sleep(3)
 
@@ -47,13 +48,13 @@ Sys.sleep(3)
 # py$delete_s3_directory(BUCKET, "db")
 
 fetch_all_pf_data <- function() {
-  organization <- read_s3_file(ORG_FILE, read_csv)$id
+  organization <- read_s3_file(ORG_FILE, read_csv)
 
   # PF DOWNLOAD
   token <- auth_pf()
   dprint("Downloading pages from PetFinder")
   some_pups <- fetch_pf_pages(
-    token, organization = organization,
+    token, organization = organization$id,
     sort = "-recent", pages = NULL
   )
   todays_pups <- some_pups$animals
@@ -64,7 +65,12 @@ fetch_all_pf_data <- function() {
   raw_bios <- parallel_fetch_pf_bios(todays_pups$url)
   todays_pups$raw_bio <- clean_raw_bios(raw_bios)
   todays_pups$name <- clean_pet_name(todays_pups$name)
-  todays_pups
+
+  # We need org name and email for filtering down to relevant bios in the app
+  o <- organization %>% select(id, name, email) %>%
+    rename(organization_name = name, organization_email = email)
+  todays_pups %>%
+    left_join(o, by = c(organization_id = "id"))
 }
 
 gen_seen_on_df <- function(todays_pups) {
@@ -155,8 +161,8 @@ rewrite_bios <- function(todo_pups) {
 
   todo_pups %>%
     select(
-      id, name, organization_id, url, headshot_url, breeds_primary, published_at,
-      raw_bio
+      id, name, organization_id, organization_name, organization_email,
+      url, headshot_url, breeds_primary, published_at, raw_bio
     ) %>%
     bind_cols(as.data.frame(rw))
 }

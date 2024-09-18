@@ -159,7 +159,7 @@ fetch_pf_pages <- function(token,
   }
 }
 
-one_org_request <- function(token, query) {
+one_orgs_request <- function(token, query) {
   response <- GET(
     "https://api.petfinder.com/v2/organizations",
     auth_pf_headers(token),
@@ -184,7 +184,7 @@ fetch_all_orgs <- function(token) {
   on.exit(closepb(pb))
   for (i in 2:to_pull_pages) {
     query$page <- i
-    another_res <- one_org_request(token, query)
+    another_res <- one_orgs_request(token, query)
     suppressWarnings(out_animals[i] <- another_res)
     setpb(pb, i)
   }
@@ -201,6 +201,25 @@ fetch_all_orgs <- function(token) {
     select(-adoption_url) %>%
     select(!matches("pinterest")) %>%
     rename_all(~gsub("address_|social_media_", "", .))
+}
+
+one_org_request <- function(id) {
+  response <- GET(
+    glue("https://api.petfinder.com/v2/organizations/{id}"),
+    auth_pf_headers(token)
+  )
+  stop_for_status(response)
+  cnt <- content(response, "text", encoding = "utf-8", flatten = TRUE)
+  x <- jsonlite::fromJSON(cnt)
+  as.data.frame(
+    x$organization[c("id", "name", "email", "website")],
+    stringsAsFactors = FALSE
+  )
+}
+
+fetch_some_orgs <- function(token, organizations) {
+  out <- lapply(organizations, one_org_request)
+  do.call(rbind, out)
 }
 
 ## Scraping PF outside of API (needed for full bios)

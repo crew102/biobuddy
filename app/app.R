@@ -158,12 +158,21 @@ ui <- argonDashPage(
 )
 
 server <- function(input, output, session) {
+  rewrites <- read_s3_file(file = "db/rewrites.csv", read_csv)
 
-  # TODO: Replace this with actual user (via email address)
-  # user <- session$userData$user()
-  # user$email
-  org_id <- "GA553"
-  dog_df <- all_dogs %>% filter(organization_id == org_id)
+  user <- session$userData$user()
+  if (user$is_admin) {
+    # ids <-  c("GA553", "NH177", "FL1737", "NJ03")
+    # emails <- c(
+    #   "doberman@dru.org", "general@humanesocietyhoco.org", "media@ahsppz.org",
+    #   "pawliferescuegroup@gmail.com"
+    # )
+    user_email <- "doberman@dru.org"
+  } else {
+    user_email <- tolower(user$email)
+  }
+
+  dog_df <- rewrites %>% filter(tolower(organization_email) == user_email)
 
   output$showcase_tab <- renderUI(gen_showcase_tab(dog_df))
   output$customize_tab <- renderUI(gen_customize_tab(dog_df))
