@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+from datetime import datetime
 
 import boto3
 
@@ -70,7 +71,7 @@ def list_files_in_s3(bucket_name, remote_dir):
     return file_list
 
 
-def delete_s3_directory(bucket_name, remote_dir):
+def delete_s3_path(bucket_name, remote_dir):
     response = S3_CLIENT.list_objects_v2(
         Bucket=bucket_name, Prefix=remote_dir
     )
@@ -79,6 +80,41 @@ def delete_s3_directory(bucket_name, remote_dir):
         for obj in response["Contents"]:
             S3_CLIENT.delete_object(Bucket=bucket_name, Key=obj["Key"])
             print(f"Deleted {obj['Key']}")
+
+
+def backup_s3_bucket(source_bucket_name, backup_bucket_prefix):
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+    backup_bucket_name = f"{backup_bucket_prefix}-{timestamp}"
+
+    S3_CLIENT.create_bucket(Bucket=backup_bucket_name)
+    logger.info(f"Created backup bucket: {backup_bucket_name}")
+
+    copy_source = {"Bucket": source_bucket_name}
+    response = S3_CLIENT.list_objects_v2(Bucket=source_bucket_name)
+    if "Contents" in response:
+        for obj in response["Contents"]:
+            copy_source["Key"] = obj["Key"]
+            S3_CLIENT.copy_object(
+                CopySource=copy_source,
+                Bucket=backup_bucket_name,
+                Key=obj["Key"]
+            )
+            logger.info(f"Copied {obj['Key']} to {backup_bucket_name}")
+
+    return backup_bucket_name
+
+
+def delete_old_catchall_buckets():
+    response = S3_CLIENT.list_buckets()
+    for bucket in response["Buckets"]:
+        bucket_name = bucket["Name"]
+        # TODO: HANDLE DEV/PROD DATA DISTINCTION
+        if "ec2-spot-catchall-DEV" in bucket_name:
+            creation_date = bucket["CreationDate"].replace(tzinfo=None)
+            age = datetime.now() - creation_date
+            if age.days > 5:
+                S3_CLIENT.delete_bucket(Bucket=bucket_name)
+                logger.info(f"Deleted bucket: {bucket_name}")
 
 
 def make_imgs_readable(bucket_name):

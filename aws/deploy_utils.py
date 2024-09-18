@@ -33,7 +33,7 @@ def trigger_github_action(workflow_file="build-app-image.yml", app_sha=None,
                           environment="staging"):
     if app_sha is None:
         app_sha = get_latest_commit_sha(check_remote=False)
-        print(f"Using latest commit SHA as app_sha, which is {app_sha}")
+        print(f"\nUsing latest commit SHA as app_sha, which is {app_sha}\n")
 
     url = f"https://api.github.com/repos/crew102/biobuddy/actions/workflows/{workflow_file}/dispatches"
     headers = {
@@ -42,8 +42,8 @@ def trigger_github_action(workflow_file="build-app-image.yml", app_sha=None,
     }
     if workflow_file=="build-app-image.yml":
         print(
-            "Reminder that we are using latest version of the deps image for "
-            "this app build"
+            "\n\nReminder that we are using latest version of the deps image"
+            "for this app build\n\n"
         )
         data = {
             "ref": "main",
