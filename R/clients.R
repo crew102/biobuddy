@@ -147,6 +147,7 @@ fetch_pf_pages <- function(token,
     })
 
     animals <- do.call(rbind, unnested)
+    animals <- animals %>% mutate(name = as.character(shiny::HTML(name)))
     list(animals = animals, pagination = one_res$pagination)
 
   } else {
