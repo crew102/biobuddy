@@ -11,14 +11,14 @@ py-venv-install:
 
 # Local dev targets
 ################################################################################
-local-image-deps:
+local-deps-build:
 	Rscript scripts/lockfile-write.R
 	docker build -t ghcr.io/crew102/bb-deps:latest .
 
-local-image-app:
+local-app-build:
 	docker build -t ghcr.io/crew102/bb-app:latest --no-cache -f app/Dockerfile .
 
-local-deploy: local-image-app
+local-deploy: local-app-build
 	docker compose build --no-cache
 	docker compose down
 	docker compose up -d
@@ -36,13 +36,14 @@ aws-stage:
 aws-prod:
 	$(MAKE) _aws-deploy ENV_NAME=ec2-spot-prod
 
-# GH actions
+# GH actions. Note that the targets shown above are used for deployment-related
+# tasks below.
 ################################################################################
-gh-app-build:
-	.venv/bin/python aws/trigger_gh_action_job.py --workflow_file="build-app-image.yml"
-
 gh-deps-build:
 	.venv/bin/python aws/trigger_gh_action_job.py --workflow_file="build-deps-image.yml"
+
+gh-app-build:
+	.venv/bin/python aws/trigger_gh_action_job.py --workflow_file="build-app-image.yml"
 
 gh-deploy-stage:
 	.venv/bin/python aws/trigger_gh_action_job.py --workflow_file="deploy.yml" --environment="staging"
