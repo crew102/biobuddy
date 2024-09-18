@@ -115,5 +115,6 @@ docker exec "$nginx_container" bash -c "export SERVER_NAME=\"$SERVER_NAME\"; chm
 # For dev after running sudo su to change to root user:
 echo "cd /home/biobuddy" >> ~/.bashrc
 echo 'alias appimg="export APP_IMAGE=$(docker images --format \"{{.Repository}}:{{.Tag}}\" | grep bb-app)"' >> ~/.bashrc
+echo 'alias portainer="appimg && docker compose restart portainer"' >> ~/.bashrc
 
 echo -e "\n\nSTARTUP DONE\n\n"

@@ -14,9 +14,10 @@ ENV R_LIBS_USER="/home/biobuddy/renv/lib"
 ENV RETICULATE_PYTHON="/home/biobuddy/.local/share/r-miniconda/envs/r-reticulate/bin/python"
 
 # Debian deps
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
   libmagick++-dev cron nano htop libz-dev libharfbuzz-dev libfribidi-dev \
-  libgit2-dev cmake libcurl4-openssl-dev
+  libgit2-dev cmake libcurl4-openssl-dev \
+  && rm -rf /var/lib/apt/lists/*
 
 # R deps
 RUN R -e "install.packages('renv', repos = c(CRAN = 'https://cloud.r-project.org'))"
