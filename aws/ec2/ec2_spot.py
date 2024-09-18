@@ -5,7 +5,11 @@ from aws_cdk import (
     Stack,
     aws_ec2 as ec2,
     aws_iam as iam,
-    aws_s3 as s3
+    aws_s3 as s3,
+    aws_lambda as _lambda,
+    aws_events as events,
+    aws_events_targets as targets,
+    aws_secretsmanager as secretsmanager
 )
 from constructs import Construct
 from cdk_ec2_spot_simple import SpotInstance
@@ -136,3 +140,36 @@ class EC2spot(Stack):
             allocation_id=allocation_id,
             instance_id=spot_instance.instance_id,
         )
+
+        # Reference the GitHub token secret
+        github_token_secret = secretsmanager.Secret.from_secret_name_v2(
+            self, "gh-pat-secret", "GITHUB_PAT"
+        )
+
+        # Define the Lambda function
+        lambda_function = _lambda.Function(
+            self, "spot-interruption-handler",
+            runtime=_lambda.Runtime.PYTHON_3_9,
+            handler="lambda_fun.trigger_redeployment",
+            code=_lambda.Code.from_asset(".",
+                exclude=["*", "!lambda_function.py"]
+            ),
+            environment={
+                'GITHUB_TOKEN_SECRET_ARN': github_token_secret.secret_arn
+            }
+        )
+
+        # Grant the Lambda function permission to read the GitHub token secret
+        github_token_secret.grant_read(lambda_function)
+
+        # Create the EventBridge rule
+        spot_interruption_rule = events.Rule(
+            self, "spot-interruption-rule",
+            event_pattern=events.EventPattern(
+                source=["aws.ec2"],
+                detail_type=["EC2 Spot Instance Interruption Warning"]
+            )
+        )
+
+        # Add the Lambda function as a target of the EventBridge rule
+        spot_interruption_rule.add_target(targets.LambdaFunction(lambda_function))
