@@ -16,6 +16,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+    - name: Echo inputs
+      run: |
+        echo ${{ inputs.deps_sha }}
+
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
@@ -23,7 +28,6 @@ jobs:
 
     - name: Checkout
       run: |
-        echo ${{ inputs.deps_sha }}
         git checkout ${{ inputs.deps_sha }}
 
     - name: Set up Docker Buildx

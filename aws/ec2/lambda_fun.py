@@ -1,11 +1,12 @@
+import json
 import os
+import urllib.request
 
-import requests
 import boto3
 from botocore.exceptions import ClientError
 
 
-def trigger_redeployment():
+def trigger_redeployment(event, lambda_context):
     # Get the secret ARN from environment variable
     secret_arn = os.environ["GITHUB_TOKEN_SECRET_ARN"]
     secret_name = secret_arn.split(":")[-1]
@@ -28,19 +29,28 @@ def trigger_redeployment():
     else:
         secret = get_secret_value_response["SecretBinary"]
 
-    url = f"https://api.github.com/repos/crew102/biobuddy/actions/workflows/deploy.yml/dispatches"
+    url = "https://api.github.com/repos/crew102/biobuddy/actions/workflows/deploy.yml/dispatches"
     headers = {
         "Accept": "application/vnd.github.v3+json",
         "Authorization": f"Bearer {secret}",
     }
-    data = {
+    data = json.dumps({
         "ref": "main",
         "inputs": {"app_sha": "latest-prod", "environment": "prod"}
-    }
+    }).encode("utf-8")
 
-    response = requests.post(url, json=data, headers=headers)
+    req = urllib.request.Request(url, data=data, headers=headers, method="POST")
+
+    try:
+        with urllib.request.urlopen(req) as response:
+            response_body = response.read().decode("utf-8")
+            status_code = response.getcode()
+            response_json = json.loads(response_body)
+    except urllib.error.HTTPError as e:
+        print(e)
+        raise e
 
     return {
-        'statusCode': response.status_code,
-        'body': response.json()
+        "statusCode": status_code,
+        "body": response_json
     }

@@ -151,9 +151,7 @@ class EC2spot(Stack):
             self, "spot-interruption-handler",
             runtime=_lambda.Runtime.PYTHON_3_9,
             handler="lambda_fun.trigger_redeployment",
-            code=_lambda.Code.from_asset(".",
-                exclude=["*", "!lambda_function.py"]
-            ),
+            code=_lambda.Code.from_asset("ec2"),
             environment={
                 'GITHUB_TOKEN_SECRET_ARN': github_token_secret.secret_arn
             }

@@ -25,7 +25,7 @@ local-deploy: local-app-build
 
 # Deploy stacks (either from local or from GH action)
 # Reminder: You would want a fresh bb-app image in the GH CR and also code
-# pushed to GH before triggering these locally:
+# pushed to GH before triggering these locally
 ################################################################################
 _aws-deploy:
 	. .venv/bin/activate; cd aws; cdk destroy --force $(ENV_NAME); cdk deploy $(ENV_NAME) -e --require-approval never
@@ -36,8 +36,8 @@ aws-stage:
 aws-prod:
 	$(MAKE) _aws-deploy ENV_NAME=ec2-spot-prod
 
-# GH actions. Note that the targets shown above are used for deployment-related
-# tasks below.
+# GH actions.
+# Note that the targets shown above are used for deployment-related tasks below
 ################################################################################
 gh-deps-build:
 	.venv/bin/python aws/trigger_gh_action_job.py --workflow_file="build-deps-image.yml"

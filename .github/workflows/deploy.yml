@@ -20,6 +20,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Echo inputs
+      run: |
+        echo ${{ inputs.app_sha }}
+        echo ${{ inputs.environment }}
+
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
@@ -34,7 +39,6 @@ jobs:
 
     - name: Checkout
       run: |
-        echo ${{ inputs.app_sha }}
         if [ "${{ inputs.app_sha}}" == "latest-prod" ]; then
           SHA=$(git for-each-ref --sort=-taggerdate --format '%(objectname:short) %(refname:short)' refs/tags | awk '$2 ~ /^v[0-9]/ && $2 !~ /dev/ {print $1; exit}')
         else
@@ -75,6 +79,7 @@ jobs:
           make aws-stage
         else
           make aws-prod
+        fi
 
     - name: Maybe add tag
       run: |
