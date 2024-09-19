@@ -1,4 +1,4 @@
-name: Deploy app
+run-name: Deploy app to ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
