@@ -1,4 +1,4 @@
-run-name: Deploy app to ${{ inputs.environment }}
+run-name: Deploy app to ${{ inputs.environment }} using commit ${{ inputs.app_sha}}
 
 on:
   workflow_dispatch:
@@ -14,6 +14,9 @@ on:
         options:
         - staging
         - prod
+
+permissions:
+  contents: write
 
 jobs:
   deploy:
@@ -82,6 +85,8 @@ jobs:
         fi
 
     - name: Maybe add tag
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         if [ "${{ inputs.environment}}" == "prod" ]; then
           VERSION=$(head -n 1 version.txt)
