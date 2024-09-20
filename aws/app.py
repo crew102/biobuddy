@@ -15,4 +15,11 @@ EC2spot(
     allocation_id="eipalloc-036052c2719eb7748"
 )
 
+EC2spot(
+    app, "ec2-spot-prod-restart",
+    environment="prod",
+    restart=True,
+    allocation_id="eipalloc-036052c2719eb7748"
+)
+
 app.synth()

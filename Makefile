@@ -28,13 +28,16 @@ local-deploy: local-app-build
 # pushed to GH before triggering these locally
 ################################################################################
 _aws-deploy:
-	. .venv/bin/activate; cd aws; cdk destroy --force $(ENV_NAME); cdk deploy $(ENV_NAME) -e --require-approval never
+	. .venv/bin/activate; cd aws; cdk destroy --force $(STACK_ID); cdk deploy $(STACK_ID) -e --require-approval never
 
 aws-stage:
-	$(MAKE) _aws-deploy ENV_NAME=ec2-spot-staging
+	$(MAKE) _aws-deploy STACK_ID=ec2-spot-staging
 
 aws-prod:
-	$(MAKE) _aws-deploy ENV_NAME=ec2-spot-prod
+	$(MAKE) _aws-deploy STACK_ID=ec2-spot-prod
+
+aws-prod-restart:
+	$(MAKE) _aws-deploy STACK_ID=ec2-spot-prod-restart
 
 # GH actions.
 # Note that the targets shown above are used for deployment-related tasks below
@@ -57,11 +60,10 @@ gh-deploy-prod:
 open-sg:
 	.venv/bin/python aws/open_sg.py
 
-dprune:
-	docker system prune -a
-
-clean:
-	docker image prune
+# Remember to manually change 'source' in eventbridge rule to:
+# custom.ec2.simulation
+test-shutdown:
+	aws/simulate-ec2-shutdown.sh
 
 write-dir:
 	sudo chmod -R 777 /home/biobuddy/

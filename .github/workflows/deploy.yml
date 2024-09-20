@@ -80,6 +80,8 @@ jobs:
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
         if [ "${{ inputs.environment}}" == "staging" ]; then
           make aws-stage
+        elif [ "${{ inputs.app_sha}}" == "latest-prod" ]; then
+          make aws-prod-restart
         else
           make aws-prod
         fi

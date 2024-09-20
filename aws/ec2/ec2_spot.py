@@ -17,7 +17,8 @@ import boto3
 
 from deploy_utils import get_latest_commit_sha, get_secret
 
-INSTANCE_TYPE = "t3.large"
+DEFAULT_INSTANCE_TYPE = "t3.large"
+RESTART_INSTANCE_TYPE = "t3.medium"
 AMI_ID = "ami-04a81a99f5ec58529"
 EBS_VOLUME_SIZE = 20
 
@@ -27,8 +28,13 @@ LOCAL_IP = os.environ.get("LOCAL_IP")
 class EC2spot(Stack):
 
     def __init__(self, scope: Construct, id: str, environment: str,
-                 allocation_id: str, **kwargs) -> None:
+                 allocation_id: str, restart = False, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
+
+        if restart:
+            instance_type = RESTART_INSTANCE_TYPE
+        else:
+            instance_type = DEFAULT_INSTANCE_TYPE
 
         # Create a VPC with a public subnet
         vpc = ec2.Vpc(
@@ -119,7 +125,7 @@ class EC2spot(Stack):
         )
         spot_instance = SpotInstance(
             self, f"{environment}-app-spot",
-            instance_type=ec2.InstanceType(INSTANCE_TYPE),
+            instance_type=ec2.InstanceType(instance_type),
             machine_image=machine_image,
             vpc=vpc,
             key_name="pair-2",
@@ -141,23 +147,18 @@ class EC2spot(Stack):
             instance_id=spot_instance.instance_id,
         )
 
-        # Reference the GitHub token secret
-        github_token_secret = secretsmanager.Secret.from_secret_name_v2(
-            self, "gh-pat-secret", "GITHUB_PAT"
-        )
-
-        # Define the Lambda function
+        # Redeployment trigger functionality via EventBridge and Lambda
         lambda_function = _lambda.Function(
             self, "spot-interruption-handler",
             runtime=_lambda.Runtime.PYTHON_3_9,
             handler="lambda_fun.trigger_redeployment",
-            code=_lambda.Code.from_asset("ec2"),
-            environment={
-                'GITHUB_TOKEN_SECRET_ARN': github_token_secret.secret_arn
-            }
+            code=_lambda.Code.from_asset("ec2")
         )
 
         # Grant the Lambda function permission to read the GitHub token secret
+        github_token_secret = secretsmanager.Secret.from_secret_name_v2(
+            self, "gh-pat-secret", "GITHUB_PAT"
+        )
         github_token_secret.grant_read(lambda_function)
 
         # Create the EventBridge rule
@@ -168,6 +169,4 @@ class EC2spot(Stack):
                 detail_type=["EC2 Spot Instance Interruption Warning"]
             )
         )
-
-        # Add the Lambda function as a target of the EventBridge rule
         spot_interruption_rule.add_target(targets.LambdaFunction(lambda_function))
