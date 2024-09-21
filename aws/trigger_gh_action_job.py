@@ -1,6 +1,43 @@
 import argparse
+import os
 
-from deploy_utils import trigger_github_action
+import requests
+
+from deploy_utils import get_latest_commit_sha
+
+
+def _trigger_github_action(workflow_file="build-app-image.yml", app_sha=None,
+                           environment="staging"):
+    if app_sha is None:
+        app_sha = get_latest_commit_sha(check_remote=False)
+        print(f"\nUsing latest commit SHA as app_sha, which is {app_sha}\n")
+
+    url = f"https://api.github.com/repos/crew102/biobuddy/actions/workflows/{workflow_file}/dispatches"
+    headers = {
+        "Accept": "application/vnd.github.v3+json",
+        "Authorization": f"Bearer {os.environ.get('GITHUB_PAT')}",
+    }
+    if workflow_file=="build-app-image.yml":
+        print(
+            "\n\nReminder that we are using latest version of the deps image"
+            "for this app build\n\n"
+        )
+        data = {
+            "ref": "main",
+            "inputs": {"app_sha": app_sha, "deps_sha": "latest"}
+        }
+    else:
+        data = {
+            "ref": "main",
+            "inputs": {"app_sha": app_sha, "environment": environment}
+        }
+
+    response = requests.post(url, json=data, headers=headers)
+    if response.status_code == 204:
+        print("GitHub Action triggered successfully.")
+    else:
+        print(f"Failed to trigger GitHub Action: {response.status_code}")
+        raise RuntimeError(response.json())
 
 
 if __name__ == "__main__":
@@ -21,4 +58,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    trigger_github_action(args.workflow_file, args.app_sha, args.environment)
+    _trigger_github_action(args.workflow_file, args.app_sha, args.environment)

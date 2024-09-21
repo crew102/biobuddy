@@ -2,7 +2,6 @@ import os
 import subprocess
 import json
 
-import requests
 import boto3
 
 LOCAL_IP = os.environ.get("LOCAL_IP")
@@ -27,40 +26,6 @@ def get_latest_commit_sha(check_remote=True):
         capture_output=True, text=True
     )
     return result.stdout.strip()
-
-
-def trigger_github_action(workflow_file="build-app-image.yml", app_sha=None,
-                          environment="staging"):
-    if app_sha is None:
-        app_sha = get_latest_commit_sha(check_remote=False)
-        print(f"\nUsing latest commit SHA as app_sha, which is {app_sha}\n")
-
-    url = f"https://api.github.com/repos/crew102/biobuddy/actions/workflows/{workflow_file}/dispatches"
-    headers = {
-        "Accept": "application/vnd.github.v3+json",
-        "Authorization": f"Bearer {os.environ.get('GITHUB_PAT')}",
-    }
-    if workflow_file=="build-app-image.yml":
-        print(
-            "\n\nReminder that we are using latest version of the deps image"
-            "for this app build\n\n"
-        )
-        data = {
-            "ref": "main",
-            "inputs": {"app_sha": app_sha, "deps_sha": "latest"}
-        }
-    else:
-        data = {
-            "ref": "main",
-            "inputs": {"app_sha": app_sha, "environment": environment}
-        }
-
-    response = requests.post(url, json=data, headers=headers)
-    if response.status_code == 204:
-        print("GitHub Action triggered successfully.")
-    else:
-        print(f"Failed to trigger GitHub Action: {response.status_code}")
-        raise RuntimeError(response.json())
 
 
 def get_secret(secret_name):
