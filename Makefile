@@ -31,13 +31,16 @@ _aws-deploy:
 	. .venv/bin/activate; cd aws; cdk destroy --force $(STACK_ID); cdk deploy $(STACK_ID) -e --require-approval never
 
 aws-stage:
-	$(MAKE) _aws-deploy STACK_ID=ec2-spot-staging
+	$(MAKE) _aws-deploy STACK_ID=bb-app-staging
 
 aws-prod:
-	$(MAKE) _aws-deploy STACK_ID=ec2-spot-prod
+	$(MAKE) _aws-deploy STACK_ID=bb-app-prod
 
+# Never meant to be called locally. Only called via the "latest-prod" as app_sha
+# trigger in deploy.yml, which would have been triggered via lambda function
+# (via the _trigger_github_action() -> trigger_redeployment route()
 aws-prod-restart:
-	$(MAKE) _aws-deploy STACK_ID=ec2-spot-prod-restart
+	$(MAKE) _aws-deploy STACK_ID=bb-app-prod-restart
 
 # GH actions.
 # Note that the targets shown above are used for deployment-related tasks below

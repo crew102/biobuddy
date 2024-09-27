@@ -1,5 +1,6 @@
 import os
 import re
+import subprocess
 
 from aws_cdk import (
     Stack,
@@ -15,7 +16,8 @@ from constructs import Construct
 from cdk_ec2_spot_simple import SpotInstance
 import boto3
 
-from deploy_utils import get_latest_commit_sha, get_secret
+from deploy_utils import get_latest_commit_sha
+from shutdown.lambda_fun import get_secret
 
 DEFAULT_INSTANCE_TYPE = "t3.large"
 RESTART_INSTANCE_TYPE = "t3.medium"
@@ -25,7 +27,7 @@ EBS_VOLUME_SIZE = 20
 LOCAL_IP = os.environ.get("LOCAL_IP")
 
 
-class EC2spot(Stack):
+class BiobuddyStack(Stack):
 
     def __init__(self, scope: Construct, id: str, environment: str,
                  allocation_id: str, restart = False, **kwargs) -> None:
@@ -147,12 +149,25 @@ class EC2spot(Stack):
             instance_id=spot_instance.instance_id,
         )
 
+        # Create a Lambda layer with boto3
+        layer_dir = "shutdown/lambda-layer"
+        requirements_file = os.path.join(layer_dir, "requirements.txt")
+        subprocess.run([
+            "pip", "install", "-r", requirements_file, "-t", layer_dir
+        ])
+        lambda_layer = _lambda.LayerVersion(
+            self, "Boto3Layer",
+            code=_lambda.Code.from_asset(layer_dir),
+            compatible_runtimes=[_lambda.Runtime.PYTHON_3_9]
+        )
+
         # Redeployment trigger functionality via EventBridge and Lambda
         lambda_function = _lambda.Function(
             self, "spot-interruption-handler",
             runtime=_lambda.Runtime.PYTHON_3_9,
             handler="lambda_fun.trigger_redeployment",
-            code=_lambda.Code.from_asset("ec2")
+            code=_lambda.Code.from_asset("shutdown"),
+            layers=[lambda_layer]
         )
 
         # Grant the Lambda function permission to read the GitHub token secret

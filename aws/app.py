@@ -1,22 +1,21 @@
 import aws_cdk as cdk
-from ec2.ec2_spot import EC2spot
+
+from bbstack import BiobuddyStack
 
 app = cdk.App()
 
-EC2spot(
-    app, "ec2-spot-staging",
+BiobuddyStack(
+    app, "bb-app-staging",
     environment="staging",
     allocation_id="eipalloc-023ea7cfc4367442b"
 )
-
-EC2spot(
-    app, "ec2-spot-prod",
+BiobuddyStack(
+    app, "bb-app-prod",
     environment="prod",
     allocation_id="eipalloc-036052c2719eb7748"
 )
-
-EC2spot(
-    app, "ec2-spot-prod-restart",
+BiobuddyStack(
+    app, "bb-app-prod-restart",
     environment="prod",
     restart=True,
     allocation_id="eipalloc-036052c2719eb7748"
