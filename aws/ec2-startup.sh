@@ -102,13 +102,13 @@ if ! docker pull ghcr.io/crew102/bb-app:"$1"; then
   docker pull ghcr.io/crew102/bb-app:latest
 fi
 
+echo -e "RUNNING DOCKER-COMPOSE UP\n\n"
+docker compose up -d
+
 # For dev after running sudo su to change to root user:
 echo "cd /home/biobuddy" >> ~/.bashrc
 echo 'alias appimg="export APP_IMAGE=$(docker images --format \"{{.Repository}}:{{.Tag}}\" | grep bb-app)"' >> ~/.bashrc
 echo 'alias portainer="appimg && docker compose restart portainer"' >> ~/.bashrc
-
-echo -e "RUNNING DOCKER-COMPOSE UP\n\n"
-docker compose up -d
 
 echo -e "ONE-TIME INSTALL OF SSL CERT\n\n"
 # Not terribly proud of this. Dipping into the nginx container and installing
