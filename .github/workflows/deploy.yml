@@ -60,23 +60,25 @@ jobs:
         . .venv/bin/activate
         python3 -m pip install -r aws/requirements.txt
 
-    - name: Install NVM
+    - name: Install NVM and Node.js
       run: |
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
-        export NVM_DIR="$HOME/.nvm"
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        export NVM_DIR="$HOME/.config/nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
         nvm install 16
+        nvm use 16
 
     - name: Install AWS CDK
       run: |
-        export NVM_DIR="$HOME/.nvm"
+        export NVM_DIR="$HOME/.config/nvm"
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
         npm install -g aws-cdk
         cdk --version
 
     - name: Deploy app
       run: |
-        export NVM_DIR="$HOME/.nvm"
+        export NVM_DIR="$HOME/.config/nvm"
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
         if [ "${{ inputs.environment}}" == "staging" ]; then
           make aws-stage
