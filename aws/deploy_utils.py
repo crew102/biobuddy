@@ -1,8 +1,5 @@
 import os
 import subprocess
-import json
-
-import boto3
 
 LOCAL_IP = os.environ.get("LOCAL_IP")
 
@@ -26,11 +23,3 @@ def get_latest_commit_sha(check_remote=True):
         capture_output=True, text=True
     )
     return result.stdout.strip()
-
-
-def get_secret(secret_name):
-    client = boto3.client("secretsmanager")
-    response = client.get_secret_value(SecretId=secret_name)
-    ss = response["SecretString"]
-    a_dict = json.loads(ss)
-    return a_dict[secret_name]

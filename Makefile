@@ -63,10 +63,12 @@ gh-deploy-prod:
 open-sg:
 	.venv/bin/python aws/open_sg.py
 
-# Remember to manually change 'source' in eventbridge rule to:
-# custom.ec2.simulation
 test-shutdown:
-	aws/simulate-ec2-shutdown.sh
+	.venv/bin/python aws/shutdown/update_event_rule --switch_to="custom.ec2.simulation"
+	aws/shutdown/simulate-ec2-shutdown.sh
+
+reset-event-rule:
+	.venv/bin/python aws/shutdown/update_event_rule --switch_to="aws.ec2"
 
 write-dir:
 	sudo chmod -R 777 /home/biobuddy/

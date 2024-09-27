@@ -7,3 +7,5 @@ __pycache__
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+shutdown/lambda-layer/*
+!shutdown/lambda-layer/requirements.txt
