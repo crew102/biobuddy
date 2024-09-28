@@ -156,7 +156,7 @@ class BiobuddyStack(Stack):
             "pip", "install", "-r", requirements_file, "-t", layer_dir
         ])
         lambda_layer = _lambda.LayerVersion(
-            self, "Boto3Layer",
+            self, "lambda-layer",
             code=_lambda.Code.from_asset(layer_dir),
             compatible_runtimes=[_lambda.Runtime.PYTHON_3_9]
         )

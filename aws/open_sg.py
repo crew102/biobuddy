@@ -14,7 +14,7 @@ def main():
 
     bb_sec_groups = [
         sg for sg in response["SecurityGroups"]
-        if re.search("ec2-spot", sg["GroupName"])
+        if re.search("bb-app", sg["GroupName"])
     ]
 
     ip = os.environ.get("LOCAL_IP")
