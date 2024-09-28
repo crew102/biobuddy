@@ -74,13 +74,13 @@ sidebar <- argonDashSidebar(
     id = "sidebar-menu",
     argonSidebarItem(
       tabName = "showcase_tab",
-      icon = argonIcon(name = "tv-2", color = "info"),
+      icon =  HTML('<i class="fa-solid fa-suitcase"></i>'),
       "Long-stays"
     ),
     argonSidebarItem(
       tabName = "customize_tab",
-      icon = argonIcon(name = "planet", color = "warning"),
-      "All pups"
+      icon = HTML('<i class="fa-solid fa-pen-to-square"></i>'),
+      "All pups & customize"
     )
   )
 )

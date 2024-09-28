@@ -243,6 +243,7 @@ execute_and_log_daily_update <- function() {
   on.exit({
     try(unlink(RAW_DIR, force = TRUE, recursive = TRUE))
     try(unlink(CROPPED_DIR, force = TRUE, recursive = TRUE))
+    try(unlink("db/.dog-head-detector.dat", force = TRUE))
   })
 
   dprint(paste("IS_FIRST_DAY is", IS_FIRST_DAY))

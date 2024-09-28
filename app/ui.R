@@ -27,7 +27,7 @@ dog_card <- function(name, profile_url, headshot_url, breed, card_b) {
             class = "text-center mt-5 pt-5",
             tags$a(
               href = profile_url,
-              decode_html(name)
+              name
             ),
             tags$div(
               class = "h5 font-weight-300",

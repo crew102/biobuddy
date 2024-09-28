@@ -10,7 +10,8 @@ clean_raw_bios <- function(bios) {
 }
 
 clean_pet_name <- function(name) {
-  gsub("[0-9]+ ", "", name)
+  x <- gsub("[0-9]+ ", "", name)
+  decode_html_apply(x)
 }
 
 # Tweaked version of one of bsicons's functions
@@ -34,4 +35,8 @@ decode_html <- function(encoded_string) {
   wrapped_string <- paste0("<div>", encoded_string, "</div>")
   parsed_html <- xml2::read_html(wrapped_string)
   xml2::xml_text(parsed_html)
+}
+
+decode_html_apply <- function(encoded_strings) {
+  vapply(encoded_strings, decode_html, FUN.VALUE = character(1))
 }
