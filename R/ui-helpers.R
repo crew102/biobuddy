@@ -29,3 +29,9 @@ info_icon <- function(id, input_txt, tooltip_text) {
       </span>
   '))
 }
+
+decode_html <- function(encoded_string) {
+  wrapped_string <- paste0("<div>", encoded_string, "</div>")
+  parsed_html <- xml2::read_html(wrapped_string)
+  xml2::xml_text(parsed_html)
+}
