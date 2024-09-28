@@ -257,7 +257,8 @@ execute_and_log_daily_update <- function() {
   status_df <- tibble(
     daily_update_time = NOW_FORMATTED,
     est_update_time = EST_TIME,
-    status = status
+    status = status,
+    home_dir = as.character(Sys.getenv()['HOME'])
   )
 
   dprint("Sending exit status email")
