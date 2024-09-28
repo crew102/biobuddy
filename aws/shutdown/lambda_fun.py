@@ -25,8 +25,6 @@ def trigger_redeployment(event, lambda_context):
         "inputs": {"app_sha": "latest-prod", "environment": "prod"}
     })
     data = data.encode()
-    # Trying to have no python package deps in my lambda function, hence use of
-    # urllib instead of requests:
     req = urllib.request.Request(url, data=data, headers=headers, method="POST")
 
     try:

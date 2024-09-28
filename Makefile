@@ -38,7 +38,7 @@ aws-prod:
 
 # Never meant to be called locally. Only called via the "latest-prod" as app_sha
 # trigger in deploy.yml, which would have been triggered via lambda function
-# (via the _trigger_github_action() -> trigger_redeployment route()
+# (via the _trigger_github_action() -> trigger_redeployment route)
 aws-prod-restart:
 	$(MAKE) _aws-deploy STACK_ID=bb-app-prod-restart
 
@@ -64,7 +64,7 @@ open-sg:
 	.venv/bin/python aws/open_sg.py
 
 test-shutdown:
-	.venv/bin/python aws/shutdown/update_event_rule --switch_to="custom.ec2.simulation"
+	.venv/bin/python aws/shutdown/update_event_rule.py --switch_to="custom.ec2.simulation"
 	aws/shutdown/simulate-ec2-shutdown.sh
 
 reset-event-rule:

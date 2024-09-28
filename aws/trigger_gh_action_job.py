@@ -19,7 +19,7 @@ def _trigger_github_action(workflow_file="build-app-image.yml", app_sha=None,
     }
     if workflow_file=="build-app-image.yml":
         print(
-            "\n\nReminder that we are using latest version of the deps image"
+            "\n\nReminder that we are using latest version of the deps image "
             "for this app build\n\n"
         )
         data = {
