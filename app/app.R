@@ -14,6 +14,7 @@ library(magrittr)
 library(polished)
 library(readr)
 library(jsonlite)
+library(shinylogs)
 
 devtools::load_all()
 
@@ -177,6 +178,8 @@ server <- function(input, output, session) {
   } else {
     user_email <- tolower(user$email)
   }
+
+  track_usage(storage_mode = store_custom(FUN = store_logs))
 
   dog_df <- rewrites %>% filter(tolower(organization_email) == user_email)
 
@@ -381,7 +384,7 @@ server <- function(input, output, session) {
             <p>{shiny::includeMarkdown(customize_rewrite_txt)}</p>
           </div>
         </div>
-    '))
+      '))
     })
 
     removeModal()

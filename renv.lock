@@ -71,6 +71,23 @@
       ],
       "Hash": "5ea2700d21e038ace58269ecdbeb9ec0"
     },
+    "RcppCCTZ": {
+      "Package": "RcppCCTZ",
+      "Version": "0.2.12",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "Rcpp"
+      ],
+      "Hash": "c856433d58f138d8ade2303ad846405a"
+    },
+    "RcppDate": {
+      "Package": "RcppDate",
+      "Version": "0.0.3",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "08cc427d6fe7a63e604cfa11aad31006"
+    },
     "RcppTOML": {
       "Package": "RcppTOML",
       "Version": "0.2.2",
@@ -380,6 +397,17 @@
         "R"
       ],
       "Hash": "ce88d13c0b10fe88a37d9c59dba2d7f9"
+    },
+    "data.table": {
+      "Package": "data.table",
+      "Version": "1.16.0",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "methods"
+      ],
+      "Hash": "fb24e05d4a91d8b1c7ff8e284bde834a"
     },
     "desc": {
       "Package": "desc",
@@ -978,6 +1006,21 @@
         "utils"
       ],
       "Hash": "fec5f52652d60615fdb3957b3d74324a"
+    },
+    "nanotime": {
+      "Package": "nanotime",
+      "Version": "0.3.10",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "Rcpp",
+        "RcppCCTZ",
+        "RcppDate",
+        "bit64",
+        "methods",
+        "zoo"
+      ],
+      "Hash": "4ef0843c2aab077999ab5a33cd635e16"
     },
     "openssl": {
       "Package": "openssl",
@@ -1603,6 +1646,23 @@
       ],
       "Hash": "802e4786b353a4bb27116957558548d5"
     },
+    "shinylogs": {
+      "Package": "shinylogs",
+      "Version": "0.2.1",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "anytime",
+        "bit64",
+        "data.table",
+        "digest",
+        "htmltools",
+        "jsonlite",
+        "nanotime",
+        "shiny"
+      ],
+      "Hash": "a2425d913d852b5401628405d3767965"
+    },
     "sourcetools": {
       "Package": "sourcetools",
       "Version": "0.1.7-1",
@@ -2009,6 +2069,21 @@
       "Source": "Repository",
       "Repository": "RSPM",
       "Hash": "d98c94dacb7e0efcf83b0a133a705504"
+    },
+    "zoo": {
+      "Package": "zoo",
+      "Version": "1.8-12",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "grDevices",
+        "graphics",
+        "lattice",
+        "stats",
+        "utils"
+      ],
+      "Hash": "5c715954112b45499fb1dadc6ee6ee3e"
     }
   }
 }
