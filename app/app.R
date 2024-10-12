@@ -153,8 +153,9 @@ account_tab <- argonTabItem(
 
 ui <- argonDashPage(
   useShinyjs(),
-  sidebar = sidebar,
+  sidebar = custom_navbar,
   body = argonDashBody(
+    shinylogs::use_tracking(),
     use_bs_tooltip(),
     tags$head(includeCSS("www/biobuddy.css")),
     tags$head(includeScript("www/biobuddy.js")),

@@ -209,6 +209,47 @@ argonDashSidebar <- function(..., dropdownMenus = NULL, id, brand_url = NULL,
   ))
 }
 
+# Used in lieu of the sidebar for now
+custom_navbar <- HTML('
+  <nav class="navbar navbar-top navbar-expand-md navbar-dark" id="navbar-main">
+    <div class="container-fluid">
+      <ul class="navbar-nav align-items-center d-flex">
+        <li class="nav-item dropdown">
+          <a class="nav-link pr-0" aria-expanded="false" aria-haspopup="true"
+          data-toggle="dropdown" href="#" role="button" id="dropdown_button">
+            <div class="media align-items-center">
+              <span class="avatar avatar-sm rounded-circle">
+              <img src="bars.svg">
+              </span>
+              <div class="media-body ml-2 d-none d-lg-block">
+                <span class="mb-0 text-sm font-weight-bold"></span>
+              </div>
+            </div>
+          </a>
+          <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-left" id="my_dropdown">
+            <div class="dropdown-header noti-title">
+              <h6 class="text-overflow m-0">Bios</h6>
+            </div>
+            <a class="dropdown-item action-button" target="_blank" id="tab-showcase_tab"
+              href="#shiny-tab-showcase_tab" data-toggle="tab" data-value="showcase_tab"
+              onclick="toggle_dropdown()">
+            <i class="fa-solid fa-suitcase" aria-hidden="true"></i>
+            <span>Long-stays</span>
+            </a>
+            <a class="dropdown-item action-button" target="_blank" id="tab-customize_tab"
+              href="#shiny-tab-customize_tab" data-toggle="tab" data-value="customize_tab"
+              onclick="toggle_dropdown()">
+            <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+            <span>Customize</span>
+            </a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+')
+
+
 argonSidebarItem <- function (..., tabName = NULL, icon = NULL) {
   shiny::tags$a(
     # adding action-button class so shiny will respond on the server side
