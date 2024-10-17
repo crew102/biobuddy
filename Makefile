@@ -7,7 +7,8 @@ py-venv-install:
 	. .venv/bin/activate
 	# Will pull in aws/requirements.txt as well, so all reqs will be available
 	# on local:
-	python3 -m pip install -r requirements.txt
+	pip install -r requirements.txt
+	pip install ipython
 
 # Local dev targets
 ################################################################################
