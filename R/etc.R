@@ -44,6 +44,21 @@ get_env <- function() {
   }
 }
 
+get_url <- function() {
+  if (is_local()) {
+    return("http://127.0.0.1:3838")
+  }
+  if (get_env() == "staging") {
+    "biobuddydev.com"
+  } else {
+    "biobuddyai.com"
+  }
+}
+
+get_version <- function() {
+  readLines(here::here("version.txt"))
+}
+
 dprint <- function(x, ...) {
   cat("\n")
   cat(x, ...)

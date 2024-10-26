@@ -43,21 +43,6 @@ gen_showcase_tab <- function(dog_df) {
     with(p, dog_card(name, url, headshot_url, breeds_primary, card_b))
   })
   showcase_tab <- argonTabItem("showcase_tab", showcase_tab_ui)
-  showcase_tab <- tagAppendChildren(
-    showcase_tab,
-    tags$br(),
-    tags$div(
-      style = "display: flex; justify-content: flex-end;",
-      actionButton("view_more", "More")
-    ),
-
-    actionButton(
-      "sign_out",
-      "Sign Out",
-      icon = icon("sign-out-alt"),
-      class = "pull-left"
-    )
-  )
 }
 
 sidebar <- argonDashSidebar(
@@ -67,8 +52,7 @@ sidebar <- argonDashSidebar(
   size = "md",
   side = "left",
   id = "my_sidebar",
-  # TODO: Replace with landing page
-  brand_url = "http://www.google.com",
+  brand_url = get_url(),
   brand_logo = "bb-logo.svg",
   argonSidebarHeader(title = "Bios"),
   argonSidebarMenu(
@@ -145,11 +129,6 @@ gen_customize_tab <- function(dog_df) {
   )
 
 }
-
-account_tab <- argonTabItem(
-  tabName = "account_tab",
-  tags$div()
-)
 
 ui <- argonDashPage(
   useShinyjs(),
@@ -415,6 +394,6 @@ sign_in_page_ui = sign_in_ui_default(
 )
 
 shinyApp(
-  secure_ui(ui, sign_in_page_ui = sign_in_page_ui),
+  secure_ui(ui, sign_in_page_ui = sign_in_page_ui, custom_admin_button_ui = NULL),
   secure_server(server)
 )
