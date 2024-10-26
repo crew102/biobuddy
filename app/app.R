@@ -153,7 +153,7 @@ account_tab <- argonTabItem(
 
 ui <- argonDashPage(
   useShinyjs(),
-  sidebar = custom_navbar,
+  sidebar = sidebar,
   body = argonDashBody(
     shinylogs::use_tracking(),
     use_bs_tooltip(),

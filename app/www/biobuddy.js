@@ -17,7 +17,3 @@ function setTabToCustomize() {
 function collapseSidebar() {
   document.querySelectorAll('.navbar-toggler')[0].click();
 }
-
-function toggle_dropdown() {
-  $('#dropdown_button').click();
-}

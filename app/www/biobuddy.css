@@ -256,30 +256,3 @@
 .card-profile-image img {
   width: 180px;
 }
-
-/* Hamburger icon on left for dropdown */
-.avatar img {
-  border-radius: 0% !important;
-  background-color: transparent !important;
-}
-
-.avatar.avatar-sm.rounded-circle {
-    background-color: transparent !important;
-
-}
-
-@media not all and (min-resolution: 0.001dpcm) {
-  @supports (-webkit-appearance: none) {
-    .navbar-toggler:focus, .dropdown-menu:focus {
-      outline: none !important;
-    }
-  }
-}
-@media not all and (min-resolution: 0.001dpcm) {
-  @supports (-webkit-appearance: none) {
-    .dropdown-menu {
-      box-shadow: none !important;
-      border: none !important;
-    }
-  }
-}
