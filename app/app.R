@@ -220,9 +220,9 @@ server <- function(input, output, session) {
 
   output$out_img <- renderUI({
     chosen_dog() %$%
-      img(
-        src = headshot_url,
-        class = "rounded-circle"
+      tags$a(
+        href = url,
+        tags$img(src = headshot_url, class = "rounded-circle")
       )
   })
 

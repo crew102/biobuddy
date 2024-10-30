@@ -11,9 +11,9 @@ dog_card <- function(name, profile_url, headshot_url, breed, card_b) {
         tags$div(
           class = "col",
           tags$div(class = "card-profile-image",
-            img(
-              src = headshot_url,
-              class = "rounded-circle"
+            tags$a(
+              href = profile_url,
+              tags$img(src = headshot_url, class = "rounded-circle")
             )
           )
         )
@@ -24,11 +24,8 @@ dog_card <- function(name, profile_url, headshot_url, breed, card_b) {
         tags$div(
           class = "col mt-5",
           tags$div(
-            class = "text-center mt-5 pt-5",
-            tags$a(
-              href = profile_url,
-              name
-            ),
+            class = "text-center mt-5 pt-5", style = "color: #233dd2;",
+            name,
             tags$div(
               class = "h5 font-weight-300",
               breed
@@ -327,7 +324,6 @@ footer <- argonDashFooter(
   copyrights = "@biobuddy, 2024",
   src = "https://github.com/crew102/biobuddy/blob/main/LICENSE.md"
 )
-
 
 # https://developers.google.com/identity/branding-guidelines
 google_sign_in_button <- HTML('
