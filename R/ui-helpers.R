@@ -11,7 +11,9 @@ clean_raw_bios <- function(bios) {
 
 clean_pet_name <- function(name) {
   x <- gsub("[0-9]+ ", "", name)
-  decode_html_apply(x)
+  x <- gsub(" -.*", "", x)
+  decoded <- decode_html_apply(x)
+  str_to_title(decoded)
 }
 
 # Tweaked version of one of bsicons's functions
