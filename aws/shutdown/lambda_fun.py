@@ -27,16 +27,10 @@ def trigger_redeployment(event, lambda_context):
     data = data.encode()
     req = urllib.request.Request(url, data=data, headers=headers, method="POST")
 
-    try:
-        with urllib.request.urlopen(req) as response:
+    with urllib.request.urlopen(req) as response:
+        status_code = response.getcode()
+        if status_code == 204:
+            print("GitHub Action triggered successfully.")
+        else:
             response_body = response.read().decode("utf-8")
-            status_code = response.getcode()
-            response_json = json.loads(response_body)
-    except urllib.error.HTTPError as e:
-        print(f"HTTPError: {e}")
-        raise e
-
-    return {
-        "statusCode": status_code,
-        "body": response_json
-    }
+            raise RuntimeError(f"Failed to trigger GitHub Action: {response_body}")

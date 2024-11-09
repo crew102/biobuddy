@@ -3,7 +3,12 @@
 # Reminder that you have to update the rule in event bridge after each time
 # you redeploy the stack if you want to run the custom.ec2.simulation job
 
-INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" --query "Reservations[*].Instances[*].InstanceId" --output text)
+INSTANCE_ID=$(
+  aws ec2 describe-instances \
+  --filters "Name=instance-state-name,Values=running" \
+  --query "Reservations[*].Instances[*].InstanceId" \
+  --output text
+)
 REGION=$(aws configure get region)
 ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 
