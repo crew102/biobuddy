@@ -49,9 +49,9 @@ get_url <- function() {
     return("http://127.0.0.1:3838")
   }
   if (get_env() == "staging") {
-    "biobuddydev.com"
+    "https://biobuddydev.com"
   } else {
-    "biobuddyai.com"
+    "https://biobuddyai.com"
   }
 }
 
