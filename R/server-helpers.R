@@ -1,10 +1,10 @@
 store_logs <- function(logs) {
   sid <- unlist(logs$session)
-  sid <- sesh[["sessionid"]]
-  user <- sesh[["user"]]
+  sid <- logs$session[["sessionid"]]
+  user <- logs$session[["user"]]
   path <- paste0("logs/", user, "-", sid, ".json")
   if (is_local()) {
-    write_json(path, logs)
+    write_json(logs, here::here(path))
   } else {
     write_s3_file(
       obj = logs,
