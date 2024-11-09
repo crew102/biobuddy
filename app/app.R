@@ -187,25 +187,6 @@ server <- function(input, output, session) {
     shinyjs::show("customize_tab")
   })
 
-  # Temp, for dev purposes:
-  observeEvent(input$sign_out, {
-
-    tryCatch({
-
-      sign_out_from_shiny(session)
-      session$reload()
-
-    }, error = function(err) {
-
-      msg <- "unable to sign out"
-      warning(msg)
-      warning(conditionMessage(err))
-
-      invisible(NULL)
-    })
-
-  })
-
   chosen_dog <- reactive({
     # Not terribly clever, but choosing to just clear the customized card
     # whenever new dog is chosen.
