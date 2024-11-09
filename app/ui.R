@@ -82,17 +82,17 @@ inner_body <- function(id, raw_bio,
         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
            role="button">Rewrites</a>
         <div class="dropdown-menu">
-          <a class="dropdown-item" href="#tabs-icons-text-1-{id}-{tab_num}" data-toggle="tab">
-            <i style="margin-right: 0.5rem!important;" class="fa-solid fa-clipboard-question"></i>
-            Interview
+          <a class="dropdown-item" href="#tabs-icons-text-3-{id}-{tab_num}" data-toggle="tab">
+            <i class="ni ni-calendar-grid-58 mr-2"></i>
+            Sectioned
           </a>
           <a class="dropdown-item" href="#tabs-icons-text-2-{id}-{tab_num}" data-toggle="tab">
             <i style="margin-right: 0.5rem!important;" class="fa fa-paw"></i>
             Pup perspective
           </a>
-          <a class="dropdown-item" href="#tabs-icons-text-3-{id}-{tab_num}" data-toggle="tab">
-            <i class="ni ni-calendar-grid-58 mr-2"></i>
-            Sectioned
+          <a class="dropdown-item" href="#tabs-icons-text-1-{id}-{tab_num}" data-toggle="tab">
+            <i style="margin-right: 0.5rem!important;" class="fa-solid fa-clipboard-question"></i>
+            Interview
           </a>
         </div>
       </li>
