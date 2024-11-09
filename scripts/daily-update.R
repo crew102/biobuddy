@@ -44,9 +44,6 @@ if (IS_FIRST_DAY) {
 # So log ordering isn't confusing, in cases where we set logger to info level
 Sys.sleep(3)
 
-# To start from scratch:
-# py$delete_s3_directory(BUCKET, "db")
-
 fetch_all_pf_data <- function() {
   organization <- read_s3_file(ORG_FILE, read_csv)
 

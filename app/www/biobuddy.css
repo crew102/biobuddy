@@ -256,3 +256,7 @@
 .card-profile-image img {
   width: 180px;
 }
+
+.copyright.text-center {
+  text-align: left !important;
+}
