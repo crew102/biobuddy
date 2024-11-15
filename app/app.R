@@ -71,6 +71,7 @@ sidebar <- argonDashSidebar(
 )
 
 gen_customize_tab <- function(dog_df) {
+  dog_df <- dog_df %>% arrange(name)
   first_dog <- dog_df %>% slice(1)
 
   argonTabItem(
