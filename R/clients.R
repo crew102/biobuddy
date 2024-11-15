@@ -112,8 +112,18 @@ fetch_pf_pages <- function(token,
       on.exit(closepb(pb))
       for (i in 2:to_pull_pages) {
         query$page <- i
-        another_res <- fetch_one_pf_page(token, query)
-        suppressWarnings(out_animals[i] <- another_res)
+        tryCatch({
+          another_res <- fetch_one_pf_page(token, query)
+          suppressWarnings(out_animals[i] <- another_res)
+        }, error = function(e) {
+          if (grepl("HTTP 500", e$message)) {
+            Sys.sleep(10)
+            another_res <- fetch_one_pf_page(token, query)
+            suppressWarnings(out_animals[i] <- another_res)
+          } else {
+            stop(e)
+          }
+        })
         setpb(pb, i)
       }
     }
@@ -207,7 +217,7 @@ fetch_all_orgs <- function(token) {
     rename_all(~gsub("address_|social_media_", "", .))
 }
 
-one_org_request <- function(id) {
+one_org_request <- function(id, token) {
   response <- GET(
     glue("https://api.petfinder.com/v2/organizations/{id}"),
     auth_pf_headers(token)
@@ -222,7 +232,7 @@ one_org_request <- function(id) {
 }
 
 fetch_some_orgs <- function(token, organizations) {
-  out <- lapply(organizations, one_org_request)
+  out <- lapply(organizations, function(x) one_org_request(x, token))
   do.call(rbind, out)
 }
 
