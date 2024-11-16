@@ -1,5 +1,10 @@
 ## PetFinder API
 
+USER_AGENT <- paste0(
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ",
+  "KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
+)
+
 auth_pf <- function() {
   token <- content(
     POST(
@@ -241,7 +246,7 @@ fetch_some_orgs <- function(token, organizations) {
 # Sequential
 
 fetch_one_pf_bio <- function(url) {
-  one_full_page <- GET(url)
+  one_full_page <- GET(url, add_headers("user-agent" = USER_AGENT))
   if (http_error(one_full_page)) {
     try(return(http_status(one_full_page)$reason))
   }
@@ -261,8 +266,11 @@ fetch_pf_bios <- function(urls) {
 
 parallel_fetch_pf_bios <- function(urls) {
   # Download
-  reqs <- lapply(urls, httr2::request)
-  resps <- httr2::req_perform_parallel(reqs, on_error = "continue")
+  reqs <- lapply(
+    urls, function(x)
+      httr2::request(x) %>% httr2::req_headers("user-agent" = USER_AGENT)
+  )
+  resps <- httr2::req_perform_sequential(reqs, on_error = "continue")
   # Parse (not in parallel)
   sapply(resps, function(x) {
     try({
