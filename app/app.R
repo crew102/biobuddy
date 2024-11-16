@@ -160,7 +160,12 @@ server <- function(input, output, session) {
 
   track_usage(storage_mode = store_custom(FUN = store_logs))
 
-  dog_df <- rewrites %>% filter(tolower(organization_email) == user_email)
+  dog_df <- rewrites %>%
+    filter(tolower(organization_email) == user_email) %>%
+    # TEMP. Move this to daily script
+    group_by(name) %>%
+    slice(1) %>%
+    ungroup()
 
   output$showcase_tab <- renderUI(gen_showcase_tab(dog_df))
   output$customize_tab <- renderUI(gen_customize_tab(dog_df))
