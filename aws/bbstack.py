@@ -19,7 +19,7 @@ import boto3
 from deploy_utils import get_latest_commit_sha
 from shutdown.lambda_fun import get_secret
 
-DEFAULT_INSTANCE_TYPE = "t3.large"
+DEFAULT_INSTANCE_TYPE = "t3.medium"
 RESTART_INSTANCE_TYPE = "t3.medium"
 AMI_ID = "ami-04a81a99f5ec58529"
 EBS_VOLUME_SIZE = 20
