@@ -1,5 +1,4 @@
 store_logs <- function(logs) {
-  sid <- unlist(logs$session)
   sid <- logs$session[["sessionid"]]
   user <- logs$session[["user"]]
   path <- paste0("logs/", user, "-", sid, ".json")
