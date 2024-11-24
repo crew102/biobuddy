@@ -109,6 +109,7 @@ docker compose up -d
 echo "cd /home/biobuddy" >> ~/.bashrc
 echo 'alias appimg="export APP_IMAGE=$(docker images --format \"{{.Repository}}:{{.Tag}}\" | grep bb-app)"' >> ~/.bashrc
 echo 'alias portainer="appimg && docker compose restart portainer"' >> ~/.bashrc
+echo 'alias prodtodev=cp -R /home/biobuddy/ /home/rstudio/ && chmod -R a+rwx  /home/rstudio/biobuddy' >> ~/.bashrc
 
 echo -e "ONE-TIME INSTALL OF SSL CERT\n\n"
 # Not terribly proud of this. Dipping into the nginx container and installing
