@@ -41,7 +41,7 @@ aws-prod:
 # trigger in deploy.yml, which would have been triggered via lambda function
 # (via the _trigger_github_action() -> trigger_redeployment route)
 aws-prod-restart:
-	$(MAKE) _aws-deploy STACK_ID=bb-app-prod-restart
+	. .venv/bin/activate; cd aws; cdk destroy --force bb-app-prod; cdk destroy --force bb-app-prod-restart; cdk deploy bb-app-prod-restart -e --require-approval never
 
 # GH actions.
 # Note that the targets shown above are used for deployment-related tasks below
