@@ -76,7 +76,3 @@ write-dir:
 
 cat-log:
 	sudo cat /var/log/cloud-init-output.log
-
-# Kinda doubt I'll have directories named after any other of my targets except
-# maybe these:
-.PHONY: dprune clean
