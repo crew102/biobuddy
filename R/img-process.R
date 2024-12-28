@@ -53,6 +53,11 @@ head_aware_crop_circle <- function(original_img_path, cr, cropped_path) {
     head_cropped,
     to = cropped_path
   )
+
+  # avoid r cache exhaustion
+  gc()
+  # try(magick::image_destroy(head_cropped))
+
 }
 
 crop_headshots <- function(detector, raw_paths, cropped_paths) {
