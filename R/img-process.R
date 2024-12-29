@@ -1,6 +1,6 @@
 # THIS OVERWRITES THE FILE
   maybe_resize_image <- function(local_path,
-                                 resize_if_greater = ifelse(is_local(), 100000, 400000)
+                                 resize_if_greater = ifelse(is_local(), 100000, 200000)
                                  ) {
   img <- magick::image_read(local_path)
   info <- magick::image_info(img)
@@ -9,6 +9,8 @@
     resized <- magick::image_resize(img, "700x")
     magick::image_write(resized, local_path)
   }
+  # avoid R cache exhaustion
+  gc()
 }
 
 zero_if_negative <- function(x) {
@@ -53,11 +55,6 @@ head_aware_crop_circle <- function(original_img_path, cr, cropped_path) {
     head_cropped,
     to = cropped_path
   )
-
-  # avoid r cache exhaustion
-  gc()
-  # try(magick::image_destroy(head_cropped))
-
 }
 
 crop_headshots <- function(detector, raw_paths, cropped_paths) {
