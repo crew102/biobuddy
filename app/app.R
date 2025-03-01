@@ -151,9 +151,9 @@ server <- function(input, output, session) {
   user <- session$userData$user()
   if (user$is_admin) {
     # user_email <- "doberman@dru.org"
-    # user_email <- "general@humanesocietyhoco.org"
+    user_email <- "general@humanesocietyhoco.org"
     # user_email <- "pawliferescuegroup@gmail.com"
-    user_email <- "media@ahsppz.org"
+    # user_email <- "media@ahsppz.org"
   } else {
     user_email <- tolower(user$email)
   }
