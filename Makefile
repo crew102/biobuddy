@@ -4,11 +4,8 @@
 ################################################################################
 py-venv-install:
 	python3 -m venv .venv
-	. .venv/bin/activate
-	# Will pull in aws/requirements.txt as well, so all reqs will be available
-	# on local:
-	pip install -r requirements.txt
-	pip install ipython
+	.venv/bin/pip install -r requirements.txt
+	.venv/bin/pip install ipython
 
 # Local dev targets
 ################################################################################
@@ -36,7 +33,6 @@ aws-stage:
 
 aws-prod:
 	$(MAKE) _aws-deploy STACK_ID=bb-app-prod
-
 
 # Helper:
 _destroy-prod-stacks:
