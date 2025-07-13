@@ -16,7 +16,7 @@ from constructs import Construct
 from cdk_ec2_spot_simple import SpotInstance
 import boto3
 
-from deploy_utils import get_latest_commit_sha
+from deploy_utils import get_latest_commit_sha, get_local_ip
 from shutdown.lambda_fun import get_secret
 
 DEFAULT_INSTANCE_TYPE = "t3.large"
@@ -24,7 +24,7 @@ RESTART_INSTANCE_TYPE = "t3.medium"
 AMI_ID = "ami-04a81a99f5ec58529"
 EBS_VOLUME_SIZE = 20
 
-LOCAL_IP = os.environ.get("LOCAL_IP")
+LOCAL_IP = get_local_ip()
 
 
 class BiobuddyStack(Stack):

@@ -1,9 +1,10 @@
 """Opens up ports to dev services, needed for cases where GH Action triggered
 deployment and local IP address wasn't available at infra build time."""
-import os
 import re
 
 import boto3
+
+from aws.deploy_utils import get_local_ip
 
 
 def main():
@@ -17,7 +18,7 @@ def main():
         if re.search("bb-app", sg["GroupName"])
     ]
 
-    ip = os.environ.get("LOCAL_IP")
+    ip = get_local_ip()
     ports = [22, 9443, 8787, 3838]
     for port in ports:
         for sg in bb_sec_groups:
