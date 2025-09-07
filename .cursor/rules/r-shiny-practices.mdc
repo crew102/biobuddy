@@ -1,0 +1,34 @@
+---
+description: R and Shiny development best practices for BioBuddy project
+alwaysApply: false
+---
+When working with R and Shiny code in the BioBuddy project:
+
+## Code Style
+
+- Use consistent indentation (2 spaces)
+- Follow tidyverse style conventions
+- Use meaningful variable and function names
+- Add comments for complex logic
+
+## Shiny Best Practices
+
+- Use reactive expressions efficiently
+- Implement proper error handling
+- Follow modular design patterns
+- Use `observeEvent()` for side effects
+- Use `reactive()` for computed values
+
+## BioBuddy Specific
+
+- Maintain consistency with existing UI components
+- Use the Argon Design System color palette
+- Follow the established authentication patterns
+- Ensure proper S3 integration for data operations
+- Use the existing helper functions in R/ directory
+
+## Dependencies
+
+- Use renv for package management
+- Only add necessary dependencies
+- Document any new package requirements

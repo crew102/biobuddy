@@ -1,0 +1,44 @@
+---
+description: Enforce Markdown formatting with blank lines before lists and after headers
+globs: ["**/*.md"]
+alwaysApply: true
+---
+
+When editing or creating markdown files (`.md`), always follow these formatting conventions:
+
+## Headers and Lists
+
+- Always include a blank line after any header (##, ###, ####, etc.)
+- Always include a blank line before any list (ordered or unordered)
+- This ensures consistent spacing and readability
+
+## Example Formatting:
+```markdown
+### Section Header
+
+- List item 1
+- List item 2
+- List item 3
+
+### Another Section
+
+1. Ordered item 1
+2. Ordered item 2
+```
+
+## File Structure Documentation
+
+When documenting code:
+
+- Use concise descriptions
+- Focus on essential functionality
+- Avoid verbose explanations
+- Use consistent bullet point formatting
+- Keep descriptions brief but informative
+
+## General Markdown Guidelines
+
+- Use proper markdown syntax
+- Ensure consistent formatting throughout the document
+- Maintain clean, scannable structure
+- Use appropriate heading hierarchy

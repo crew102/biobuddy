@@ -1,0 +1,39 @@
+---
+description: Frontend development practices for BioBuddy JavaScript and CSS
+globs: ["app/www/**/*.js", "app/www/**/*.css", "**/*.js", "**/*.css"]
+alwaysApply: true
+---
+
+When working with JavaScript and CSS in the BioBuddy project:
+
+## JavaScript Best Practices
+
+- Use modern JavaScript features (ES6+)
+- Implement proper error handling
+- Use meaningful function and variable names
+- Add comments for complex logic
+- Follow existing code patterns
+
+## CSS Styling
+
+- Use the Argon Design System color palette
+- Primary color: `#5e72e4`
+- Success color: `#2dce89`
+- Maintain consistent spacing and typography
+- Use Bootstrap classes when available
+- Follow existing naming conventions
+
+## BioBuddy Specific
+
+- Integrate with Shiny reactive system when needed
+- Use Font Awesome icons consistently
+- Maintain responsive design principles
+- Follow the established UI/UX patterns
+- Test across different browsers
+
+## Performance
+
+- Minimize DOM manipulations
+- Use efficient selectors
+- Optimize CSS for performance
+- Avoid blocking operations
