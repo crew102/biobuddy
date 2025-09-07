@@ -351,7 +351,7 @@ argonDashPage <- function(title = NULL, description = NULL, author = NULL,
 }
 
 footer <- argonDashFooter(
-  copyrights = "@biobuddy, 2024",
+  copyrights = "@biobuddy, 2025",
   src = "https://github.com/crew102/biobuddy/blob/main/LICENSE.md"
 )
 
