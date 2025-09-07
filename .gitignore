@@ -21,3 +21,4 @@ temp-dir-jpg/
 .dog-head-detector.dat
 temp
 .Renviron
+*.DS_Store
