@@ -260,3 +260,71 @@
 .copyright.text-center {
   text-align: left !important;
 }
+
+/* Copy button styling */
+.copy-btn {
+  transition: all 0.3s ease;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #5e72e4;
+  color: #5e72e4;
+  background-color: transparent;
+  box-shadow: 0 2px 4px rgba(94, 114, 228, 0.1);
+}
+
+.copy-btn:hover {
+  background-color: #5e72e4;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(94, 114, 228, 0.2);
+}
+
+.copy-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(94, 114, 228, 0.1);
+}
+
+.copy-btn i {
+  margin-right: 0.25rem;
+}
+
+/* Success state */
+.copy-btn.btn-success {
+  background-color: #2dce89;
+  border-color: #2dce89;
+  color: white;
+}
+
+.copy-btn.btn-success:hover {
+  background-color: #26a96c;
+  border-color: #24a065;
+}
+
+/* Error state */
+.copy-btn.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+}
+
+.copy-btn.btn-danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+/* Tab header styling */
+.tab-pane .d-flex {
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.tab-pane h6 {
+  font-weight: 600;
+  color: #6c757d;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}

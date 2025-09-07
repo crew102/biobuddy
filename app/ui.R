@@ -105,18 +105,48 @@ inner_body <- function(id, raw_bio,
         <div class="tab-content" id="{id}-{tab_num}-tcont" {style}>
           <div class="tab-pane fade show active" id="tabs-icons-text-0-{id}-{tab_num}"
                role="tabpanel" biotype="raw_bio">
+            <div class="mb-3">
+              <h6 class="mb-0 text-muted">Original Bio</h6>
+            </div>
             <p>{raw_bio}</p>
           </div>
           <div class="tab-pane fade" id="tabs-icons-text-1-{id}-{tab_num}"
                 role="tabpanel" biotype="interview_rw">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="mb-0 text-muted">Interview Style</h6>
+              <button class="btn btn-sm btn-outline-primary copy-btn" 
+                      onclick="copyToClipboard(\'{id}-{tab_num}-interview\')" 
+                      title="Copy to clipboard">
+                <i class="fa-regular fa-copy"></i> Copy
+              </button>
+            </div>
+            <div id="{id}-{tab_num}-interview" style="display: none;">{interview_rw}</div>
             {shiny::includeMarkdown(interview_rw)}
           </div>
           <div class="tab-pane fade" id="tabs-icons-text-2-{id}-{tab_num}"
                 role="tabpanel" biotype="pupper_rw">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="mb-0 text-muted">Pup Perspective</h6>
+              <button class="btn btn-sm btn-outline-primary copy-btn" 
+                      onclick="copyToClipboard(\'{id}-{tab_num}-pupper\')" 
+                      title="Copy to clipboard">
+                <i class="fa-regular fa-copy"></i> Copy
+              </button>
+            </div>
+            <div id="{id}-{tab_num}-pupper" style="display: none;">{pupper_rw}</div>
             {shiny::includeMarkdown(pupper_rw)}
           </div>
           <div class="tab-pane fade" id="tabs-icons-text-3-{id}-{tab_num}"
                 role="tabpanel" biotype="sectioned_rw">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="mb-0 text-muted">Sectioned Bio</h6>
+              <button class="btn btn-sm btn-outline-primary copy-btn" 
+                      onclick="copyToClipboard(\'{id}-{tab_num}-sectioned\')" 
+                      title="Copy to clipboard">
+                <i class="fa-regular fa-copy"></i> Copy
+              </button>
+            </div>
+            <div id="{id}-{tab_num}-sectioned" style="display: none;">{sectioned_rw}</div>
             {shiny::includeMarkdown(sectioned_rw)}
           </div>
         </div>
