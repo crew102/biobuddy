@@ -45,13 +45,13 @@ if (IS_FIRST_DAY) {
 Sys.sleep(3)
 
 fetch_all_pf_data <- function() {
-  organization <- read_s3_file(ORG_FILE, read_csv)
+  orgs <- read_s3_file(ORG_FILE, read_csv)
 
   # PF DOWNLOAD
   token <- auth_pf()
   dprint("Downloading pages from PetFinder")
   some_pups <- fetch_pf_pages(
-    token, organization = organization$id,
+    token, organization = orgs$id,
     sort = "-recent", pages = NULL
   )
   todays_pups <- some_pups$animals
@@ -64,7 +64,7 @@ fetch_all_pf_data <- function() {
   todays_pups$name <- clean_pet_name(todays_pups$name)
 
   # We need org name and email for filtering down to relevant bios in the app
-  o <- organization %>% select(id, name, email) %>%
+  o <- orgs %>% select(id, name, email) %>%
     rename(organization_name = name, organization_email = email)
   todays_pups %>%
     left_join(o, by = c(organization_id = "id"))

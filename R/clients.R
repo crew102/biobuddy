@@ -192,7 +192,7 @@ one_orgs_request <- function(token, query) {
 fetch_all_orgs <- function(token) {
 
   query <- list(limit = 100, page = 1)
-  one_res <- one_org_request(token = token, query = query)
+  one_res <- one_orgs_request(token = token, query = query)
 
   to_pull_pages <- one_res$pagination$total_pages
 
