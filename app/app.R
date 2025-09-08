@@ -45,30 +45,56 @@ gen_showcase_tab <- function(dog_df) {
   showcase_tab <- argonTabItem("showcase_tab", showcase_tab_ui)
 }
 
-sidebar <- argonDashSidebar(
-  vertical = TRUE,
-  skin = "light",
-  background = "white",
-  size = "md",
-  side = "left",
-  id = "my_sidebar",
-  brand_url = get_url(),
-  brand_logo = "bb-logo.svg",
-  argonSidebarHeader(title = "Bios"),
-  argonSidebarMenu(
-    id = "sidebar-menu",
-    argonSidebarItem(
-      tabName = "showcase_tab",
-      icon =  HTML('<i class="fa-solid fa-suitcase"></i>'),
-      "Long-stays"
-    ),
-    argonSidebarItem(
-      tabName = "customize_tab",
-      icon = HTML('<i class="fa-solid fa-pen-to-square"></i>'),
-      "All pups & customize"
-    )
-  )
-)
+# Create navbar with dropdown menu using string interpolation pattern
+navbar <- HTML(glue('
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center mr-4" href="{get_url()}" target="_blank">
+        <img src="bb-logo.svg" height="32" class="mr-2" alt="BioBuddy">
+        BioBuddy
+      </a>
+
+      <!-- Dropdown placed inline -->
+      <ul class="navbar-nav mr-auto d-none d-lg-flex">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="biosDropdown" role="button"
+             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Bios
+          </a>
+          <div class="dropdown-menu shadow" aria-labelledby="biosDropdown" style="min-width: 280px;">
+            <a class="dropdown-item flex-column align-items-start action-button" id="tab-showcase_tab"
+               href="#" data-value="showcase_tab" style="white-space: normal;">
+              <span class="font-weight-bold text-primary" style="font-size: .9rem;">Long-stays</span><br/>
+              <small class="text-muted">See the five pups that have waited the longest for a home</small>
+            </a>
+            <a class="dropdown-item flex-column align-items-start action-button" id="tab-customize_tab"
+               href="#" data-value="customize_tab" style="white-space: normal;">
+              <span class="font-weight-bold text-primary" style="font-size: .9rem;">All pups & customize</span><br/>
+              <small class="text-muted">Browse every pup and tailor a bio to your needs</small>
+            </a>
+          </div>
+        </li>
+      </ul>
+
+      <!-- Mobile toggle remains -->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <!-- Mobile-only nav items -->
+        <ul class="navbar-nav d-lg-none mt-2">
+          <li class="nav-item">
+            <a class="nav-link action-button" id="tab-showcase_tab_mobile" href="#" data-value="showcase_tab" data-toggle="collapse" data-target="#navbarNav"><i class="fa-solid fa-paw mr-2"></i>Long-stays</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link action-button" id="tab-customize_tab_mobile" href="#" data-value="customize_tab" data-toggle="collapse" data-target="#navbarNav"><i class="fa-solid fa-list mr-2"></i>All pups & customize</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+'))
 
 gen_customize_tab <- function(dog_df) {
   dog_df <- dog_df %>% arrange(name)
@@ -133,14 +159,17 @@ gen_customize_tab <- function(dog_df) {
 
 ui <- argonDashPage(
   useShinyjs(),
-  sidebar = sidebar,
+  navbar = navbar,
   body = argonDashBody(
     shinylogs::use_tracking(),
     use_bs_tooltip(),
     tags$head(includeCSS("www/biobuddy.css")),
     tags$head(includeScript("www/biobuddy.js")),
     tags$head(includeScript("https://kit.fontawesome.com/42822e2abc.js")),
-    argonTabItems(uiOutput("showcase_tab"), shinyjs::hidden(uiOutput("customize_tab")))
+    tags$div(
+      class = "container-fluid mt-4",
+      argonTabItems(uiOutput("showcase_tab"), shinyjs::hidden(uiOutput("customize_tab")))
+    )
   ),
   footer = footer
 )
@@ -176,15 +205,23 @@ server <- function(input, output, session) {
   behaviors <- split(behaviors, behaviors$group_name)
   behaviors <- lapply(behaviors, function(x) x$behavior)
 
+  # Handle dropdown menu selections
   observeEvent(input$`tab-showcase_tab`, {
     shinyjs::hide("customize_tab")
     shinyjs::show("showcase_tab")
-    runjs("collapseSidebar()")
   })
   observeEvent(input$`tab-customize_tab`, {
     shinyjs::hide("showcase_tab")
     shinyjs::show("customize_tab")
-    runjs("collapseSidebar()")
+  })
+  # Mobile nav handlers
+  observeEvent(input$`tab-showcase_tab_mobile`, {
+    shinyjs::hide("customize_tab")
+    shinyjs::show("showcase_tab")
+  })
+  observeEvent(input$`tab-customize_tab_mobile`, {
+    shinyjs::hide("showcase_tab")
+    shinyjs::show("customize_tab")
   })
 
   observeEvent(input$view_more, {

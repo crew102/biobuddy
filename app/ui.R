@@ -1,9 +1,7 @@
 # Source code pulled from argonR with some minor changes
 dog_card <- function(name, profile_url, headshot_url, breed, card_b) {
 
-  tags$div(
-    tags$br(),
-    tags$br(),
+  tags$div(class="dog-card-wrapper",
     tags$div(
       class = "card card-profile shadow px-4",
       # image
@@ -62,12 +60,36 @@ inner_body <- function(id, raw_bio,
 
   if (customize) {
     cust <-
-      '<div style="display:flex">
+      '<div class="mt-2" style="display:flex">
           <a href="#" id="show" class="customize customize-pill badge badge-pill
           badge-default action-button" onclick="setBioType()">Customize</a>
       </div>'
+    copy_btn_interview <- ''
+    copy_btn_pupper <- ''
+    copy_btn_sectioned <- ''
   } else {
     cust <- ''
+    copy_btn_interview <- glue('
+      <button class="btn btn-sm btn-outline-primary copy-btn"
+              onclick="copyToClipboard(\'{id}-{tab_num}-interview\')"
+              title="Copy to clipboard">
+        <i class="fa-regular fa-copy"></i> Copy
+      </button>
+    ')
+    copy_btn_pupper <- glue('
+      <button class="btn btn-sm btn-outline-primary copy-btn"
+              onclick="copyToClipboard(\'{id}-{tab_num}-pupper\')"
+              title="Copy to clipboard">
+        <i class="fa-regular fa-copy"></i> Copy
+      </button>
+    ')
+    copy_btn_sectioned <- glue('
+      <button class="btn btn-sm btn-outline-primary copy-btn"
+              onclick="copyToClipboard(\'{id}-{tab_num}-sectioned\')"
+              title="Copy to clipboard">
+        <i class="fa-regular fa-copy"></i> Copy
+      </button>
+    ')
   }
 
   HTML(glue('
@@ -101,51 +123,42 @@ inner_body <- function(id, raw_bio,
 
     <div class="card shadow">
       <div class="card-body">
-          {cust}
         <div class="tab-content" id="{id}-{tab_num}-tcont" {style}>
           <div class="tab-pane fade show active" id="tabs-icons-text-0-{id}-{tab_num}"
                role="tabpanel" biotype="raw_bio">
-            <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-4 border-bottom">
               <h6 class="mb-0 text-muted">Original Bio</h6>
             </div>
+            {cust}
             <p>{raw_bio}</p>
           </div>
           <div class="tab-pane fade" id="tabs-icons-text-1-{id}-{tab_num}"
                 role="tabpanel" biotype="interview_rw">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-4 border-bottom">
               <h6 class="mb-0 text-muted">Interview Style</h6>
-              <button class="btn btn-sm btn-outline-primary copy-btn" 
-                      onclick="copyToClipboard(\'{id}-{tab_num}-interview\')" 
-                      title="Copy to clipboard">
-                <i class="fa-regular fa-copy"></i> Copy
-              </button>
+              {copy_btn_interview}
             </div>
+            {cust}
             <div id="{id}-{tab_num}-interview" style="display: none;">{interview_rw}</div>
             {shiny::includeMarkdown(interview_rw)}
           </div>
           <div class="tab-pane fade" id="tabs-icons-text-2-{id}-{tab_num}"
                 role="tabpanel" biotype="pupper_rw">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-4 border-bottom">
               <h6 class="mb-0 text-muted">Pup Perspective</h6>
-              <button class="btn btn-sm btn-outline-primary copy-btn" 
-                      onclick="copyToClipboard(\'{id}-{tab_num}-pupper\')" 
-                      title="Copy to clipboard">
-                <i class="fa-regular fa-copy"></i> Copy
-              </button>
+              {copy_btn_pupper}
             </div>
+            {cust}
             <div id="{id}-{tab_num}-pupper" style="display: none;">{pupper_rw}</div>
             {shiny::includeMarkdown(pupper_rw)}
           </div>
           <div class="tab-pane fade" id="tabs-icons-text-3-{id}-{tab_num}"
                 role="tabpanel" biotype="sectioned_rw">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-4 border-bottom">
               <h6 class="mb-0 text-muted">Sectioned Bio</h6>
-              <button class="btn btn-sm btn-outline-primary copy-btn" 
-                      onclick="copyToClipboard(\'{id}-{tab_num}-sectioned\')" 
-                      title="Copy to clipboard">
-                <i class="fa-regular fa-copy"></i> Copy
-              </button>
+              {copy_btn_sectioned}
             </div>
+            {cust}
             <div id="{id}-{tab_num}-sectioned" style="display: none;">{sectioned_rw}</div>
             {shiny::includeMarkdown(sectioned_rw)}
           </div>

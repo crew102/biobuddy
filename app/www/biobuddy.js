@@ -9,13 +9,11 @@ function tooltipsOn() {
 }
 
 function setTabToCustomize() {
-  document.getElementById('tab-customize_tab').classList.add('active', 'show');
-  document.getElementById('tab-showcase_tab').classList.remove('active', 'show');
-}
-
-// Temp solution to programmatically hiding sidebar
-function collapseSidebar() {
-  document.querySelectorAll('.navbar-toggler')[0].click();
+  // Trigger the dropdown selection for customize tab
+  const customizeDropdown = document.querySelector('[data-value="customize_tab"]');
+  if (customizeDropdown) {
+    customizeDropdown.click();
+  }
 }
 
 // Copy to clipboard functionality
