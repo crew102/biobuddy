@@ -439,3 +439,7 @@
 .dog-card-wrapper + .dog-card-wrapper{
   margin-top:3rem; /* two spaces for subsequent */
 }
+
+#shiny-tab-customize_tab {
+  margin-top: -1.5rem !important;
+}
