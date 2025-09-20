@@ -125,7 +125,7 @@ def make_imgs_readable(bucket_name):
                 "Effect": "Allow",
                 "Principal": "*",
                 "Action": "s3:GetObject",
-                "Resource": f"arn:aws:s3:::{bucket_name}/db/img/*",
+                "Resource": f"arn:aws:s3:::{bucket_name}/app/db/img/*",
             }
         ],
     }

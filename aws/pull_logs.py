@@ -40,7 +40,7 @@ def get_log_events(log_group_name, log_stream_name):
 
 
 def _save_logs_to_file(log_group_name, log_stream_name, events):
-    os.makedirs("logs", exist_ok=True)
+    os.makedirs("app/logs", exist_ok=True)
     safe_log_stream_name = log_stream_name.replace("/", "_")
     file_path = os.path.join("logs", f"{safe_log_stream_name}.log")
     with open(file_path, "w", encoding="utf-8") as f:

@@ -1,7 +1,7 @@
 store_logs <- function(logs) {
   sid <- logs$session[["sessionid"]]
   user <- logs$session[["user"]]
-  path <- paste0("logs/", user, "-", sid, ".json")
+  path <- paste0("app/logs/", user, "-", sid, ".json")
   if (is_local()) {
     write_json(logs, here::here(path))
   } else {

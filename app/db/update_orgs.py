@@ -2,8 +2,8 @@ import os
 
 import inst.python.s3 as s3
 
-FILE = "db/orgs.csv"
-BACKUP = "db/orgs-back.csv"
+FILE = "app/db/orgs.csv"
+BACKUP = "app/db/orgs-back.csv"
 
 bucket = s3.get_catchall_bucket_name()
 

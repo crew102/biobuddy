@@ -10,18 +10,18 @@ library(jsonlite)
 devtools::load_all()
 
 # Manually managed file with orgs that are participating
-ORG_FILE <- "db/orgs.csv"
+ORG_FILE <- "app/db/orgs.csv"
 
-BASE_IMG_DIR <- "db/img"
+BASE_IMG_DIR <- "app/db/img"
 RAW_DIR <- file.path(BASE_IMG_DIR, "raw")
 CROPPED_DIR <- file.path(BASE_IMG_DIR, "cropped")
-REWRITES_FILE <- "db/rewrites.csv"
-SEEN_ON_FILE <- "db/seen-on.csv"
-EXIT_STATUS_FILE <- "db/run-exit-status.csv"
+REWRITES_FILE <- "app/db/rewrites.csv"
+SEEN_ON_FILE <- "app/db/seen-on.csv"
+EXIT_STATUS_FILE <- "app/db/run-exit-status.csv"
 try(unlink(RAW_DIR, force = TRUE, recursive = TRUE))
 try(unlink(CROPPED_DIR, force = TRUE, recursive = TRUE))
 
-files_in_db <- py$list_files_in_s3(BUCKET, "db")
+files_in_db <- py$list_files_in_s3(BUCKET, "app/db")
 IS_FIRST_DAY <- !(REWRITES_FILE %in% files_in_db)
 time_to_char <- function(x) {
   format(x, "%Y-%m-%dT%H:%M:%S+0000", tz = "utc", usetz = FALSE)
@@ -115,7 +115,7 @@ download_and_crop_imgs <- function(path_df) {
   dev_null <- sapply(path_df$raw_path, maybe_resize_image)
 
   # Crop raw image using head detector
-  dat_path <- file.path("db", ".dog-head-detector.dat")
+  dat_path <- file.path("app/db", ".dog-head-detector.dat")
   py$download_file_from_s3(
     BUCKET,
     remote_path = "models/dog-head-detector.dat",
@@ -240,7 +240,7 @@ execute_and_log_daily_update <- function() {
   on.exit({
     try(unlink(RAW_DIR, force = TRUE, recursive = TRUE))
     try(unlink(CROPPED_DIR, force = TRUE, recursive = TRUE))
-    try(unlink("db/.dog-head-detector.dat", force = TRUE))
+    try(unlink("app/db/.dog-head-detector.dat", force = TRUE))
   })
 
   dprint(paste("IS_FIRST_DAY is", IS_FIRST_DAY))
@@ -263,7 +263,7 @@ execute_and_log_daily_update <- function() {
   send_email(subject = "Daily update exit status", body = status)
 
   dprint("Uploading exit status file")
-  files_in_db <- py$list_files_in_s3(BUCKET, "db")
+  files_in_db <- py$list_files_in_s3(BUCKET, "app/db")
   if (IS_FIRST_DAY || !(EXIT_STATUS_FILE %in% files_in_db)) {
     write_s3_file(status_df, write_csv, EXIT_STATUS_FILE)
   } else {

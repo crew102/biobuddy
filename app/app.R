@@ -127,7 +127,7 @@ ui <- argon_dash_page(
 )
 
 server <- function(input, output, session) {
-  rewrites <- read_s3_file(file = "db/rewrites.csv", read_csv)
+  rewrites <- read_s3_file(file = "app/db/rewrites.csv", read_csv)
 
   user <- session$userData$user()
 
