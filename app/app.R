@@ -76,6 +76,9 @@ navbar <- HTML(glue('
         </li>
       </ul>
 
+      <!-- Admin organization selector will be inserted here -->
+      <div id="admin-org-selector"></div>
+
       <!-- Mobile toggle remains -->
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
               aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -178,26 +181,77 @@ server <- function(input, output, session) {
   rewrites <- read_s3_file(file = "db/rewrites.csv", read_csv)
 
   user <- session$userData$user()
+
+  # Get all available organizations for admin dropdown
+  available_orgs <- rewrites %>%
+    distinct(organization_email) %>%
+    arrange(organization_email) %>%
+    pull(organization_email)
+
+  # Set initial user_email based on admin status
   if (user$is_admin) {
-    # user_email <- "doberman@dru.org"
-    user_email <- "general@humanesocietyhoco.org"
-    # user_email <- "pawliferescuegroup@gmail.com"
-    # user_email <- "media@ahsppz.org"
+    # Default to first organization for admin
+    user_email <- reactive({
+      if (is.null(input$admin_org_select) || input$admin_org_select == "") {
+        available_orgs[1]
+      } else {
+        input$admin_org_select
+      }
+    })
   } else {
-    user_email <- tolower(user$email)
+    user_email <- reactive(tolower(user$email))
   }
 
   track_usage(storage_mode = store_custom(FUN = store_logs))
 
-  dog_df <- rewrites %>%
-    filter(tolower(organization_email) == user_email) %>%
-    # TEMP. Move this to daily script
-    group_by(name) %>%
-    slice(1) %>%
-    ungroup()
+  # Show/hide admin organization selector and populate options
+  observe({
+    if (user$is_admin) {
+      option_tag <- paste0(
+        "<option value=\"", available_orgs, "\">", available_orgs, "</option>",
+        collapse = ""
+      )
+      # Insert the admin dropdown HTML
+      admin_html <- HTML(glue('
+        <div class="d-flex align-items-center">
+          <div class="navbar-text mr-3">
+            <small class="text-muted">Viewing as:</small>
+          </div>
+          <div class="navbar-text">
+            <select id="admin_org_select" class="form-control
+                form-control-sm" style="min-width: 200px;">
+              <option value="">Select Organization...</option>
+              {option_tag}
+            </select>
+          </div>
+        </div>
+      '))
 
-  output$showcase_tab <- renderUI(gen_showcase_tab(dog_df))
-  output$customize_tab <- renderUI(gen_customize_tab(dog_df))
+      shinyjs::html("admin-org-selector", admin_html)
+
+      # Update the select input choices
+      updateSelectInput(
+        session,
+        "admin_org_select",
+        choices = c("", available_orgs),
+        selected = ""
+      )
+    } else {
+      shinyjs::html("admin-org-selector", "")
+    }
+  })
+
+  dog_df <- reactive({
+    rewrites %>%
+      filter(tolower(organization_email) == tolower(user_email())) %>%
+      # TEMP. Move this to daily script
+      group_by(name) %>%
+      slice(1) %>%
+      ungroup()
+  })
+
+  output$showcase_tab <- renderUI(gen_showcase_tab(dog_df()))
+  output$customize_tab <- renderUI(gen_customize_tab(dog_df()))
 
   # TODO: Save final result as rds instead of csv, for faster loading
   behaviors <- read_csv(here("app/data/endearing-behaviors.csv"))
@@ -236,7 +290,7 @@ server <- function(input, output, session) {
     output$customize_rewrite_card <- renderUI({
       shiny::tags$div()
     })
-    dog_df %>%
+    dog_df() %>%
       filter(name == input$in_dog_name)
   })
 
