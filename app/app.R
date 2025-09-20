@@ -19,6 +19,7 @@ library(shinylogs)
 devtools::load_all()
 
 source(here("app/ui.R"))
+source(here("app/ui-helpers.R"))
 
 polished_config(
   app_name = paste0("biobuddy-", get_env()),
@@ -46,58 +47,6 @@ gen_showcase_tab <- function(dog_df) {
 }
 
 # Create navbar with dropdown menu using string interpolation pattern
-navbar <- HTML(glue('
-  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-    <div class="container-fluid">
-      <a class="navbar-brand d-flex align-items-center mr-4" href="{get_url()}" target="_blank">
-        <img src="bb-logo.svg" height="32" class="mr-2" alt="BioBuddy">
-        BioBuddy
-      </a>
-
-      <!-- Dropdown placed inline -->
-      <ul class="navbar-nav mr-auto d-none d-lg-flex">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="biosDropdown" role="button"
-             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Bios
-          </a>
-          <div class="dropdown-menu shadow" aria-labelledby="biosDropdown" style="min-width: 280px;">
-            <a class="dropdown-item flex-column align-items-start action-button" id="tab-showcase_tab"
-               href="#" data-value="showcase_tab" style="white-space: normal;">
-              <span class="font-weight-bold text-primary" style="font-size: .9rem;">Long-stays</span><br/>
-              <small class="text-muted">See the five pups that have waited the longest for a home</small>
-            </a>
-            <a class="dropdown-item flex-column align-items-start action-button" id="tab-customize_tab"
-               href="#" data-value="customize_tab" style="white-space: normal;">
-              <span class="font-weight-bold text-primary" style="font-size: .9rem;">All pups & customize</span><br/>
-              <small class="text-muted">Browse every pup and tailor a bio to your needs</small>
-            </a>
-          </div>
-        </li>
-      </ul>
-
-      <!-- Admin organization selector will be inserted here -->
-      <div id="admin-org-selector"></div>
-
-      <!-- Mobile toggle remains -->
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <!-- Mobile-only nav items -->
-        <ul class="navbar-nav d-lg-none mt-2">
-          <li class="nav-item">
-            <a class="nav-link action-button" id="tab-showcase_tab_mobile" href="#" data-value="showcase_tab" data-toggle="collapse" data-target="#navbarNav"><i class="fa-solid fa-paw mr-2"></i>Long-stays</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link action-button" id="tab-customize_tab_mobile" href="#" data-value="customize_tab" data-toggle="collapse" data-target="#navbarNav"><i class="fa-solid fa-list mr-2"></i>All pups & customize</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-'))
 
 gen_customize_tab <- function(dog_df) {
   dog_df <- dog_df %>% arrange(name)
@@ -160,7 +109,7 @@ gen_customize_tab <- function(dog_df) {
 
 }
 
-ui <- argonDashPage(
+ui <- argon_dash_page(
   useShinyjs(),
   navbar = navbar,
   body = argonDashBody(
@@ -218,8 +167,8 @@ server <- function(input, output, session) {
             <small class="text-muted">Viewing as:</small>
           </div>
           <div class="navbar-text">
-            <select id="admin_org_select" class="form-control
-                form-control-sm" style="min-width: 200px;">
+            <select id="admin_org_select" class="form-control form-control-sm"
+                    style="min-width: 200px;">
               <option value="">Select Organization...</option>
               {option_tag}
             </select>
@@ -366,8 +315,8 @@ server <- function(input, output, session) {
           label = info_icon(
             "arbit_input_info",
             "Additional instructions",
-            "Convey additional instructions just like you would to a human, e.g.,
-            'Make the first sentence grab the reader's attention'"
+            "Convey additional instructions just like you would to a human,
+            e.g., 'Make the first sentence grab the reader's attention'"
           ),
           value = "",
           placeholder = "Write it in Spanish"
@@ -377,12 +326,13 @@ server <- function(input, output, session) {
       tags$div(
         style = "display: flex;",
         HTML('
-          <button type="button" class="btn btn-outline-default btn-sm" data-dismiss="modal"
-            data-bs-dismiss="modal">
+          <button type="button" class="btn btn-outline-default btn-sm"
+                  data-dismiss="modal" data-bs-dismiss="modal">
             Dismiss
           </button>
           <button id="run_cust" type="button" class="btn action-button customize">
-            <i class="fa-regular fa-pen-to-square" role="presentation" aria-label="pencil icon"></i>
+            <i class="fa-regular fa-pen-to-square" role="presentation"
+               aria-label="pencil icon"></i>
             Write it
           </button>
         ')
@@ -436,7 +386,7 @@ server <- function(input, output, session) {
         <br>
         <div class="card shadow">
           <div class="card-body">
-            <h4 class="card-title">Customized version</h5>
+            <h4 class="card-title">Customized version</h4>
             <p>{shiny::includeMarkdown(customize_rewrite_txt)}</p>
           </div>
         </div>

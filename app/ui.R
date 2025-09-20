@@ -1,7 +1,78 @@
+navbar <- HTML(glue('
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center mr-4"
+         href="{get_url()}" target="_blank">
+        <img src="bb-logo.svg" height="32" class="mr-2" alt="BioBuddy">
+        BioBuddy
+      </a>
+
+      <!-- Dropdown placed inline -->
+      <ul class="navbar-nav mr-auto d-none d-lg-flex">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="biosDropdown"
+             role="button" data-toggle="dropdown" aria-haspopup="true"
+             aria-expanded="false">
+            Bios
+          </a>
+          <div class="dropdown-menu shadow" aria-labelledby="biosDropdown"
+               style="min-width: 280px;">
+            <a class="dropdown-item flex-column align-items-start action-button"
+               id="tab-showcase_tab" href="#" data-value="showcase_tab"
+               style="white-space: normal;">
+              <span class="font-weight-bold text-primary"
+                    style="font-size: .9rem;">Long-stays</span><br/>
+              <small class="text-muted">See the five pups that have waited the
+                longest for a home</small>
+            </a>
+            <a class="dropdown-item flex-column align-items-start action-button"
+               id="tab-customize_tab" href="#" data-value="customize_tab"
+               style="white-space: normal;">
+              <span class="font-weight-bold text-primary"
+                    style="font-size: .9rem;">All pups & customize</span><br/>
+              <small class="text-muted">Browse every pup and tailor a bio to
+                your needs</small>
+            </a>
+          </div>
+        </li>
+      </ul>
+
+      <!-- Admin organization selector will be inserted here -->
+      <div id="admin-org-selector"></div>
+
+      <!-- Mobile toggle remains -->
+      <button class="navbar-toggler" type="button" data-toggle="collapse"
+              data-target="#navbarNav" aria-controls="navbarNav"
+              aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <!-- Mobile-only nav items -->
+        <ul class="navbar-nav d-lg-none mt-2">
+          <li class="nav-item">
+            <a class="nav-link action-button" id="tab-showcase_tab_mobile"
+               href="#" data-value="showcase_tab" data-toggle="collapse"
+               data-target="#navbarNav">
+              <i class="fa-solid fa-paw mr-2"></i>Long-stays
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link action-button" id="tab-customize_tab_mobile"
+               href="#" data-value="customize_tab" data-toggle="collapse"
+               data-target="#navbarNav">
+              <i class="fa-solid fa-list mr-2"></i>All pups & customize
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+'))
+
 # Source code pulled from argonR with some minor changes
 dog_card <- function(name, profile_url, headshot_url, breed, card_b) {
 
-  tags$div(class="dog-card-wrapper",
+  tags$div(class = "dog-card-wrapper",
     tags$div(
       class = "card card-profile shadow px-4",
       # image
@@ -55,20 +126,22 @@ inner_body <- function(id, raw_bio,
   if (limit_growth) {
     style <- 'style="overflow-y: scroll; height:auto; max-height: 50vh;"'
   } else {
-    style <- ''
+    style <- ""
   }
 
   if (customize) {
     cust <-
       '<div class="mt-2" style="display:flex">
-          <a href="#" id="show" class="customize customize-pill badge badge-pill
-          badge-default action-button" onclick="setBioType()">Customize</a>
+          <a href="#" id="show" class="customize customize-pill badge
+          badge-pill badge-default action-button" onclick="setBioType()">
+            Customize
+          </a>
       </div>'
-    copy_btn_interview <- ''
-    copy_btn_pupper <- ''
-    copy_btn_sectioned <- ''
+    copy_btn_interview <- ""
+    copy_btn_pupper <- ""
+    copy_btn_sectioned <- ""
   } else {
-    cust <- ''
+    cust <- ""
     copy_btn_interview <- glue('
       <button class="btn btn-sm btn-outline-primary copy-btn"
               onclick="copyToClipboard(\'{id}-{tab_num}-interview\')"
@@ -104,16 +177,20 @@ inner_body <- function(id, raw_bio,
         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
            role="button">Rewrites</a>
         <div class="dropdown-menu">
-          <a class="dropdown-item" href="#tabs-icons-text-3-{id}-{tab_num}" data-toggle="tab">
+          <a class="dropdown-item" href="#tabs-icons-text-3-{id}-{tab_num}"
+             data-toggle="tab">
             <i class="ni ni-calendar-grid-58 mr-2"></i>
             Sectioned
           </a>
-          <a class="dropdown-item" href="#tabs-icons-text-2-{id}-{tab_num}" data-toggle="tab">
+          <a class="dropdown-item" href="#tabs-icons-text-2-{id}-{tab_num}"
+             data-toggle="tab">
             <i style="margin-right: 0.5rem!important;" class="fa fa-paw"></i>
             Pup perspective
           </a>
-          <a class="dropdown-item" href="#tabs-icons-text-1-{id}-{tab_num}" data-toggle="tab">
-            <i style="margin-right: 0.5rem!important;" class="fa-solid fa-clipboard-question"></i>
+          <a class="dropdown-item" href="#tabs-icons-text-1-{id}-{tab_num}"
+             data-toggle="tab">
+            <i style="margin-right: 0.5rem!important;"
+               class="fa-solid fa-clipboard-question"></i>
             Interview
           </a>
         </div>
@@ -124,42 +201,53 @@ inner_body <- function(id, raw_bio,
     <div class="card shadow">
       <div class="card-body">
         <div class="tab-content" id="{id}-{tab_num}-tcont" {style}>
-          <div class="tab-pane fade show active" id="tabs-icons-text-0-{id}-{tab_num}"
+          <div class="tab-pane fade show active"
+               id="tabs-icons-text-0-{id}-{tab_num}"
                role="tabpanel" biotype="raw_bio">
-            <div class="d-flex justify-content-between align-items-center mb-3 pb-4 border-bottom">
+            <div class="d-flex justify-content-between align-items-center
+                 mb-3 pb-4 border-bottom">
               <h6 class="mb-0 text-muted">Original Bio</h6>
             </div>
             {cust}
             <p>{raw_bio}</p>
           </div>
           <div class="tab-pane fade" id="tabs-icons-text-1-{id}-{tab_num}"
-                role="tabpanel" biotype="interview_rw">
-            <div class="d-flex justify-content-between align-items-center mb-3 pb-4 border-bottom">
+               role="tabpanel" biotype="interview_rw">
+            <div class="d-flex justify-content-between align-items-center
+                 mb-3 pb-4 border-bottom">
               <h6 class="mb-0 text-muted">Interview Style</h6>
               {copy_btn_interview}
             </div>
             {cust}
-            <div id="{id}-{tab_num}-interview" style="display: none;">{interview_rw}</div>
+            <div id="{id}-{tab_num}-interview" style="display: none;">
+              {interview_rw}
+            </div>
             {shiny::includeMarkdown(interview_rw)}
           </div>
           <div class="tab-pane fade" id="tabs-icons-text-2-{id}-{tab_num}"
-                role="tabpanel" biotype="pupper_rw">
-            <div class="d-flex justify-content-between align-items-center mb-3 pb-4 border-bottom">
+               role="tabpanel" biotype="pupper_rw">
+            <div class="d-flex justify-content-between align-items-center
+                 mb-3 pb-4 border-bottom">
               <h6 class="mb-0 text-muted">Pup Perspective</h6>
               {copy_btn_pupper}
             </div>
             {cust}
-            <div id="{id}-{tab_num}-pupper" style="display: none;">{pupper_rw}</div>
+            <div id="{id}-{tab_num}-pupper" style="display: none;">
+              {pupper_rw}
+            </div>
             {shiny::includeMarkdown(pupper_rw)}
           </div>
           <div class="tab-pane fade" id="tabs-icons-text-3-{id}-{tab_num}"
-                role="tabpanel" biotype="sectioned_rw">
-            <div class="d-flex justify-content-between align-items-center mb-3 pb-4 border-bottom">
+               role="tabpanel" biotype="sectioned_rw">
+            <div class="d-flex justify-content-between align-items-center
+                 mb-3 pb-4 border-bottom">
               <h6 class="mb-0 text-muted">Sectioned Bio</h6>
               {copy_btn_sectioned}
             </div>
             {cust}
-            <div id="{id}-{tab_num}-sectioned" style="display: none;">{sectioned_rw}</div>
+            <div id="{id}-{tab_num}-sectioned" style="display: none;">
+              {sectioned_rw}
+            </div>
             {shiny::includeMarkdown(sectioned_rw)}
           </div>
         </div>
@@ -170,7 +258,7 @@ inner_body <- function(id, raw_bio,
 
 # Almost verbatim from argonDash, with a bugfix: "collapse navbar-collapse my--4"
 # to "collapse navbar-collapse my-4" and positioning of logo to be non-flex
-argonDashSidebar <- function(..., dropdownMenus = NULL, id, brand_url = NULL,
+argon_dash_sidebar <- function(..., dropdownMenus = NULL, id, brand_url = NULL,
     brand_logo = NULL, vertical = TRUE, side = c("left", "right"),
     size = c("s", "md", "lg"), skin = c("light", "dark"), background = "white") {
   side <- match.arg(side)
@@ -249,7 +337,7 @@ argonDashSidebar <- function(..., dropdownMenus = NULL, id, brand_url = NULL,
   ))
 }
 
-argonSidebarItem <- function (..., tabName = NULL, icon = NULL) {
+argon_sidebar_item <- function (..., tabName = NULL, icon = NULL) {
   shiny::tags$a(
     # adding action-button class so shiny will respond on the server side
     class = "nav-link mt-1 mb-1 mx-2 shadow action-button",
@@ -260,7 +348,7 @@ argonSidebarItem <- function (..., tabName = NULL, icon = NULL) {
   )
 }
 
-argonSidebarMenu <- function(id, ...) {
+argon_sidebar_menu <- function(id, ...) {
   shiny::tags$div(
     class = "nav-wrapper my-4",
     shiny::tags$div(
@@ -273,7 +361,7 @@ argonSidebarMenu <- function(id, ...) {
 }
 
 # Taken from argonDash with Waiter dependency added
-addDeps <- function(x) {
+add_deps <- function(x) {
   dashboardDeps <- list(
     # argonDash custom js
     htmltools::htmlDependency(
@@ -325,11 +413,11 @@ addDeps <- function(x) {
   argonDash:::appendDependencies(x, dashboardDeps)
 }
 
-# Same as argonDash, except I need to redefine it here so that addDeps uses
+# Same as argonDash, except I need to redefine it here so that add_deps uses
 # my version
-argonDashPage <- function(title = NULL, description = NULL, author = NULL,
-                          navbar = NULL, sidebar = NULL, header = NULL,
-                          body = NULL, footer = NULL){
+argon_dash_page <- function(title = NULL, description = NULL, author = NULL,
+                            navbar = NULL, sidebar = NULL, header = NULL,
+                            body = NULL, footer = NULL) {
 
   shiny::tags$html(
     # Head
@@ -344,7 +432,7 @@ argonDashPage <- function(title = NULL, description = NULL, author = NULL,
       shiny::tags$title(title)
     ),
     # Body
-    addDeps(
+    add_deps(
       shiny::tags$body(
         sidebar,
         shiny::tags$div(
@@ -375,11 +463,19 @@ google_sign_in_button <- HTML('
       <div class="gsi-material-button-state"></div>
       <div class="gsi-material-button-content-wrapper">
         <div class="gsi-material-button-icon">
-          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: block;">
-            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
-            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
-            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
-            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+               viewBox="0 0 48 48" xmlns:xlink="http://www.w3.org/1999/xlink"
+               style="display: block;">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9
+                 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43
+                 13.72 17.74 9.5 24 9.5z"></path>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58
+                 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92
+                 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15
+                 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51
+                 42.62 14.62 48 24 48z"></path>
             <path fill="none" d="M0 0h48v48H0z"></path>
           </svg>
         </div>
