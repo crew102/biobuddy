@@ -91,3 +91,14 @@ R package dependency management using renv:
 - `DESCRIPTION` - R package metadata, dependencies, and project information
 - `renv.lock` - Locked R package versions for reproducible builds across environments
 - `Makefile` - Build automation and common development tasks
+
+## Documentation
+
+Comprehensive API and component docs live under `docs/`:
+
+- R functions: `docs/r/`
+- Shiny app components: `docs/app/ui.md`
+- Python utilities: `docs/python/`
+- JavaScript helpers: `docs/js/`
+
+Start here: `docs/README.md`
