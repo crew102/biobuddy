@@ -16,7 +16,6 @@ COPY NAMESPACE DESCRIPTION biobuddy.Rproj renv.lock requirements.txt ./
 COPY aws/requirements.txt aws/requirements.txt
 COPY app app
 COPY R R
-COPY db db
 COPY inst inst
 COPY scripts scripts
 

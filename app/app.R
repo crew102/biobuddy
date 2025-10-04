@@ -19,7 +19,6 @@ library(shinylogs)
 devtools::load_all()
 
 source(here("app/ui.R"))
-source(here("app/ui-helpers.R"))
 
 polished_config(
   app_name = paste0("biobuddy-", get_env()),
@@ -128,6 +127,10 @@ ui <- argon_dash_page(
 
 server <- function(input, output, session) {
   rewrites <- read_s3_file(file = "app/db/rewrites.csv", read_csv)
+
+  # Hack to deal with fact that I changed the location of these image files
+  rewrites <- rewrites %>%
+    mutate(headshot_url = gsub("amazonaws.com/db/", "amazonaws.com/app/db/", headshot_url))
 
   user <- session$userData$user()
 
