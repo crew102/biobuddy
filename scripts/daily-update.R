@@ -57,14 +57,14 @@ fetch_all_pf_data <- function() {
   todays_pups <- some_pups$animals
 
   # For now we download all bios, regardless of whether we've seen pet in past
-  # "raw" bios and names
   dprint("Fetching bios")
   raw_bios <- parallel_fetch_pf_bios(todays_pups$url)
   todays_pups$raw_bio <- clean_raw_bios(raw_bios)
   todays_pups$name <- clean_pet_name(todays_pups$name)
 
   # We need org name and email for filtering down to relevant bios in the app
-  o <- orgs %>% select(id, name, email) %>%
+  o <- orgs %>%
+    select(id, name, email) %>%
     rename(organization_name = name, organization_email = email)
   todays_pups %>%
     left_join(o, by = c(organization_id = "id"))

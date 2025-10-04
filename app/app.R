@@ -299,7 +299,7 @@ server <- function(input, output, session) {
         ),
         pickerInput(
           inputId = "end_beh",
-          label =  info_icon(
+          label = info_icon(
             "beh_info",
             "Endearing behaviors",
             "Does your dog exhibit any of these behaviors?

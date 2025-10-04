@@ -12,6 +12,6 @@ proxy:
   - id: bb-app
     container-image: ${APP_IMAGE}
     container-network: biobuddy_bb-net
-    # This is needed for local development, b/c we don't get auth to secrets
-    # locally in Docker like we do when we run on EC2.
+    # This is needed for local development, b/c we don't get access to secrets
+    # like we do when we run on EC2.
     container-env-file: /opt/shinyproxy/env.txt

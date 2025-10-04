@@ -9,16 +9,16 @@ services:
       - "8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      # We go straight from shinyproxy image, hence have to map in our config
+      # We use unedited shinyproxy image, hence have to map in our config
       # at runtime
       - ./services/shiny-proxy/application.yml:/opt/shinyproxy/application.yml
       # This injection is needed for local development, where I'm testing out
-      # shiny proxy in docker stack
+      # shinyproxy in docker stack
       - ./.Renviron:/opt/shinyproxy/env.txt
     user: root
     environment:
       # APP_IMAGE is defined in ec2-startup.sh based on git commit SHA. Locally
-      # it's defined as ghcr.io/crew102/bb-app:latest in .bashrc
+      # it's defined as ghcr.io/crew102/bb-app:latest in .zshrc.
       APP_IMAGE: "${APP_IMAGE}"
 
   nginx:
@@ -27,13 +27,14 @@ services:
     networks:
       - bb-net
     ports:
+      # I have unencrypted version set up (port 80) for local dev
       - "80:80"
       - "443:443"
     volumes:
       - ./services/nginx/logs:/nginx/logs
       - ./services/nginx/landing:/www/landing
       # This file is manipulated in ec2-startup.sh to reflect the environment
-      # (host) that should be used, hence have to map into container.
+      # (host) that should be used, hence we have to map it into the container.
       - ./services/nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - shiny-proxy
