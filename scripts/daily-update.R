@@ -209,7 +209,15 @@ execute_daily_update <- function() {
 
   if (!IS_FIRST_DAY && nrow(todo_rewrites) > 0) {
     dprint("Not first day and > 0 bios rewritten, binding rewrite df")
-    todo_rewrites <- todo_rewrites %>% bind_rows(EXISTING_REWRITES)
+    # Filter existing rewrites to only include dogs that are still in todays_pups
+    todays_pup_ids <- todays_pups$id
+    filtered_existing_rewrites <- EXISTING_REWRITES %>%
+      filter(id %in% todays_pup_ids)
+    dprint(paste(
+      "Filtered existing rewrites from", nrow(EXISTING_REWRITES),
+      "to", nrow(filtered_existing_rewrites), "entries"
+    ))
+    todo_rewrites <- todo_rewrites %>% bind_rows(filtered_existing_rewrites)
   } else if (!IS_FIRST_DAY && nrow(todo_rewrites) == 0) {
     status <- "Not first day, photos detectible, but no available bios to rewrite"
     dprint(status)
