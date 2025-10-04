@@ -12,6 +12,7 @@ COPY aws/requirements.txt aws/requirements.txt
 ENV R_LIBS_USER="/home/biobuddy/renv/lib"
 # Reminder that you use biobuddy/.venv venv instead of this env when working locally
 ENV RETICULATE_PYTHON="/home/biobuddy/.local/share/r-miniconda/envs/r-reticulate/bin/python"
+ENV CONDA_PLUGINS_AUTO_ACCEPT_TOS=true
 
 # Debian deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
