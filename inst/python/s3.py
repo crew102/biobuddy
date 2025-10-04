@@ -48,14 +48,14 @@ def download_dir_from_s3(bucket_name, remote_dir, local_dir):
         logger.info(f"No files found in {remote_dir}")
 
 
-def upload_dir_to_s3(bucket_name, remote_dir, local_dir):                        
-    for root, dirs, files in os.walk(local_dir):                                  
-        for file in files:                                                        
-            local_path = os.path.join(root, file)                                 
-            relative_path = os.path.relpath(local_path, local_dir)                
-            s3_key = os.path.join(remote_dir, relative_path).replace("\\", "/")  
-                                                                                  
-            S3_CLIENT.upload_file(local_path, bucket_name, s3_key)                
+def upload_dir_to_s3(bucket_name, remote_dir, local_dir):
+    for root, dirs, files in os.walk(local_dir):
+        for file in files:
+            local_path = os.path.join(root, file)
+            relative_path = os.path.relpath(local_path, local_dir)
+            s3_key = os.path.join(remote_dir, relative_path).replace("\\", "/")
+
+            S3_CLIENT.upload_file(local_path, bucket_name, s3_key)
             logger.info(f"Uploaded {local_path} to s3://{bucket_name}/{s3_key}")
 
 

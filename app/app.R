@@ -36,7 +36,9 @@ options(shiny.port = 3838, shiny.host = "0.0.0.0")
 
 gen_showcase_tab <- function(dog_df) {
   # showcase tab
-  long_stays <- dog_df %>% filter(is_oldest_five) %>% slice(1:5)
+  long_stays <- dog_df %>%
+    filter(is_oldest_five) %>%
+    slice(1:5)
   showcase_tab_ui <- lapply(long_stays$id, function(x) {
     p <- long_stays %>% filter(id == x)
     card_b <- with(p, inner_body(id, raw_bio, interview_rw, pupper_rw, sectioned_rw))
@@ -207,7 +209,9 @@ server <- function(input, output, session) {
 
   # TODO: Save final result as rds instead of csv, for faster loading
   behaviors <- read_csv(here("app/data/endearing-behaviors.csv"))
-  behaviors <- behaviors %>% filter(level > 1) %>% arrange(group_name, desc(level))
+  behaviors <- behaviors %>%
+    filter(level > 1) %>%
+    arrange(group_name, desc(level))
   behaviors <- split(behaviors, behaviors$group_name)
   behaviors <- lapply(behaviors, function(x) x$behavior)
 
@@ -403,7 +407,7 @@ server <- function(input, output, session) {
 
 }
 
-sign_in_page_ui = sign_in_ui_default(
+sign_in_page_ui <- sign_in_ui_default(
   sign_in_module = sign_in_module_2_ui_bb("sign_in"),
   color = "#5e72e4",
   company_name = "BioBuddy",
