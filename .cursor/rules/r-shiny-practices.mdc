@@ -1,15 +1,148 @@
 ---
-description: R and Shiny development best practices for BioBuddy project
-alwaysApply: false
+alwaysApply: true
 ---
 When working with R and Shiny code in the BioBuddy project:
 
 ## Code Style
 
-- Use consistent indentation (2 spaces)
-- Follow tidyverse style conventions
-- Use meaningful variable and function names
-- Add comments for complex logic
+When writing or editing R code, follow these tidyverse formatting guidelines:
+
+### General Formatting
+- Use spaces around operators: `x <- 1`, `y == 2`, `z > 3`
+- Use spaces after commas: `c(1, 2, 3)`
+- Use spaces around `=` in function calls: `mean(x = data$value)`
+- Place spaces around `:` in sequences: `1:10`
+- Use spaces around `%>%` pipe operator: `data %>% filter(x > 5)`
+- Use two spaces for indents
+
+### Line Length and Breaking
+- Keep lines under 88 characters when possible
+- Break long lines at natural points (operators, commas)
+- Indent continuation lines with 2 spaces
+- Align function arguments vertically when breaking across lines
+
+### Function Definitions
+```r
+# Good
+my_function <- function(x, y, z = NULL) {
+  if (is.null(z)) {
+    return(x + y)
+  }
+  x + y + z
+}
+
+# Bad
+my_function<-function(x,y,z=NULL){
+if(is.null(z)){return(x+y)}
+x+y+z}
+```
+
+### Assignment
+- Use `<-` for assignment, not `=`
+- Use `=` only for function arguments
+- Place assignment operator with spaces: `x <- 5`
+
+### Function Calls
+- Break long function calls across multiple lines
+- Align arguments vertically
+- Use named arguments for clarity
+
+```r
+# Good
+result <- some_function(
+  argument1 = value1,
+  argument2 = value2,
+  argument3 = value3
+)
+
+# Bad
+result <- some_function(argument1=value1,argument2=value2,argument3=value3)
+```
+
+### Pipe Operations
+- Use `%>%` for piping
+- Place pipe at end of line, not beginning
+- Indent piped operations with 2 spaces
+
+```r
+# Good
+data %>%
+  filter(condition) %>%
+  mutate(new_var = old_var * 2) %>%
+  select(new_var, other_var)
+
+# Bad
+data %>% filter(condition) %>% mutate(new_var = old_var * 2) %>% select(new_var, other_var)
+```
+
+### Control Structures
+- Use spaces around `if`, `for`, `while`
+- Place `{` on same line as control structure
+- Place `}` on its own line
+- Indent body with 2 spaces
+
+```r
+# Good
+if (condition) {
+  do_something()
+} else {
+  do_something_else()
+}
+
+# Bad
+if(condition){do_something()}else{do_something_else()}
+```
+
+### Comments
+- Use `#` for comments
+- Place space after `#`
+- Use full sentences for comments
+- Comment complex logic, not obvious code
+
+### Naming Conventions
+- Use snake_case for variables and functions: `my_variable`, `my_function`
+- Use descriptive names: `user_age` not `ua`
+- Avoid dots in function names (use underscores instead)
+
+### Package Loading
+- Load packages at top of script
+- Use `library()` not `require()`
+- Group related packages together
+
+### Data Manipulation
+- Use tidyverse functions: `dplyr`, `tidyr`, `readr`
+- Prefer `filter()` over `subset()`
+- Use `mutate()` for creating new variables
+- Use `select()` for choosing columns
+
+### Error Handling
+- Use `stopifnot()` for input validation
+- Provide informative error messages
+- Use `tryCatch()` for error handling when needed
+
+### File Organization
+- Use consistent file naming: `snake_case.R`
+- Organize code in logical sections
+- Use roxygen2 for function documentation
+
+## Additional Guidelines
+
+### When editing R files:
+1. Always format code according to these guidelines
+2. Use meaningful variable names
+3. Add comments for complex logic
+4. Follow the tidyverse philosophy of clear, readable code
+5. Use appropriate tidyverse packages for data manipulation
+
+### Code Review Checklist:
+- [ ] Proper spacing around operators
+- [ ] Consistent indentation (2 spaces)
+- [ ] Line length under 80 characters
+- [ ] Snake_case naming convention
+- [ ] Proper use of `<-` vs `=`
+- [ ] Clear, descriptive variable names
+- [ ] Appropriate comments
+- [ ] Tidyverse functions where applicable
 
 ## Shiny Best Practices
 
