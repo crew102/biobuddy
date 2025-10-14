@@ -385,9 +385,8 @@ server <- function(input, output, session) {
     )
     prompt_df$content[2] <- bio_to_rewrite
 
-    out <- generic_openai_request(prompt_df)
     # TODO: handle case where out is a string (error from API) and not response
-    customize_rewrite_txt <- out$choices[[1]]$message$content
+    customize_rewrite_txt <- generic_openai_request(prompt_df)
     output$customize_rewrite_card <- renderUI({
       HTML(glue('
         <br>

@@ -1,5 +1,3 @@
-## PetFinder API
-
 USER_AGENT <- paste0(
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ",
   "KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
@@ -281,63 +279,3 @@ parallel_fetch_pf_bios <- function(urls) {
     })
   })
 }
-
-## OpenAI
-
-parallel_request_rewrites <- function(prompt_df, raw_bios,
-                                      model = "gpt-4o-mini") {
-  reqs <- lapply(raw_bios, function(x) {
-    prompt_df[nrow(prompt_df), "content"] <- x
-    payload <- list(model = model, messages = prompt_df)
-    httr2::request("https://api.openai.com/v1/chat/completions") %>%
-      httr2::req_headers(
-        Authorization = paste0("Bearer ", get_secret("OPENAI_API_KEY"))
-      ) %>%
-      httr2::req_body_json(payload)
-  })
-
-  resps <- httr2::req_perform_parallel(reqs, on_error = "continue")
-
-  vapply(resps, function(x) {
-    if (httr2::resp_is_error(x)) return(httr2::resp_status_desc(x))
-    out <- httr2::resp_body_json(x)
-    out$choices[[1]]$message$content
-  }, character(1))
-}
-
-generic_openai_request <- function(prompt_df, model = "gpt-4o-mini") {
-  payload <- list(model = model, messages = prompt_df)
-  req <- httr2::request("https://api.openai.com/v1/chat/completions") %>%
-    httr2::req_headers(
-      Authorization = paste0("Bearer ", get_secret("OPENAI_API_KEY"))
-    ) %>%
-    httr2::req_body_json(payload)
-
-  resp <- httr2::req_perform(req)
-  if (httr2::resp_is_error(resp)) return(httr2::resp_status_desc(resp))
-  httr2::resp_body_json(resp)
-}
-
-## Gmail
-
-send_email <- function(subject, body, to = "chriscrewbaker@gmail.com") {
-  token_fi <- "gmailr-token.rds"
-  on.exit(try(unlink(token_fi)))
-  key <- "GMAILR_KEY"
-  from <- "pfanalytics787@gmail.com"
-  val <- get_secret(key)
-  Sys.setenv(GMAILR_KEY = val)
-  py$download_file_from_s3(BUCKET, token_fi, token_fi)
-  gmailr::gm_auth(token = gmailr::gm_token_read(path = token_fi, key = key))
-  print(gmailr::gm_profile())
-
-  email <-
-    gmailr::gm_mime() |>
-    gmailr::gm_to(to) |>
-    gmailr::gm_from(from) |>
-    gmailr::gm_subject(subject) |>
-    gmailr::gm_text_body(body)
-
-  gmailr::gm_send_message(email)
-}
-
