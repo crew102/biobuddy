@@ -1,0 +1,97 @@
+---
+alwaysApply: true
+---
+
+# R Environment Configuration for BioBuddy
+
+When working with R code in the BioBuddy project, ALWAYS use the project's renv environment located in the `.renv` directory.
+
+## Environment Activation
+
+### For Terminal Commands
+- Always activate the renv environment before running R commands
+- Use: `source("renv/activate.R")` or `renv::activate()`
+- Verify environment is active with: `renv::status()`
+
+### For R Code Execution
+- Ensure all R code runs within the project's renv environment
+- The environment should be automatically activated when opening R files
+- If not activated, manually run: `renv::activate()`
+
+## Package Management
+
+### Installing Packages
+- Use `renv::install("package_name")` instead of `install.packages()`
+- This ensures packages are installed to the project library
+- Update lockfile with: `renv::snapshot()`
+
+### Loading Packages
+- Use `library(package_name)` as normal
+- Packages will be loaded from the project's renv library
+- Check available packages with: `renv::status()`
+
+## Environment Verification
+
+### Before Running R Code
+1. Check if renv is active: `renv::status()`
+2. Verify project library path points to `.renv/library/`
+3. Confirm all required packages are available
+
+### Common Commands
+```r
+# Activate environment
+renv::activate()
+
+# Check status
+renv::status()
+
+# Install package
+renv::install("package_name")
+
+# Update lockfile
+renv::snapshot()
+
+# Restore from lockfile
+renv::restore()
+```
+
+## Terminal Integration
+
+### R Console
+- Start R with: `R --vanilla`
+- Then run: `renv::activate()`
+
+### R Scripts
+- Always include `renv::activate()` at the top of scripts
+- Or source the activation script: `source("renv/activate.R")`
+
+## Troubleshooting
+
+### Environment Not Active
+- Run: `renv::activate()`
+- Check: `renv::status()`
+- Restart R session if needed
+
+### Missing Packages
+- Install with: `renv::install("package_name")`
+- Restore from lockfile: `renv::restore()`
+
+### Lockfile Issues
+- Update lockfile: `renv::snapshot()`
+- Check for conflicts: `renv::status()`
+
+## Project Structure
+
+The BioBuddy project uses renv with:
+- Project library: `.renv/library/`
+- Lockfile: `renv.lock`
+- Settings: `renv/settings.json`
+- Activation script: `renv/activate.R`
+
+## Important Notes
+
+- NEVER use system R packages when working on BioBuddy
+- ALWAYS ensure renv environment is active before running R code
+- Use `renv::install()` for all package installations
+- Keep the lockfile updated with `renv::snapshot()`
+- The environment should be automatically activated when opening the project
