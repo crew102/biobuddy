@@ -10,8 +10,8 @@ parallel_request_rewrites <- function(prompt_df, raw_bios,
         role = prompt_df$role[i],
         content = prompt_df$content[i]
       )
-    })
 
+    })
     payload <- list(
       model = model,
       input = input_messages
@@ -100,7 +100,6 @@ extract_response_text <- function(result) {
     return(result$choices[[1]]$message$content)
   }
 
-  # Return NULL if no text found
   NULL
 }
 

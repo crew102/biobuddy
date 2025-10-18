@@ -1,0 +1,92 @@
+{
+    // R Language Server Configuration
+    "r.lsp.diagnostics": {
+        "line_length_linter": false,
+        "indent_linter": false,
+        "commented_code_linter": true
+    },
+    // R Editor Settings
+    "[r]": {
+        "editor.rulers": [
+            88
+        ],
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit"
+        }
+    },
+    // R Markdown Settings
+    "[rmd]": {
+        "editor.rulers": [
+            88
+        ],
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.formatOnSave": true
+    },
+    // JavaScript/CSS Settings for Shiny
+    "[javascript]": {
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.formatOnSave": true
+    },
+    "[css]": {
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.formatOnSave": true
+    },
+    // R Terminal Configuration
+    "r.rterm.option": [
+        "--vanilla"
+    ],
+    "r.rterm.mac": "/usr/local/bin/R",
+    "r.rterm.linux": "/usr/bin/R",
+    "r.alwaysUseActiveTerminal": true,
+    "r.bracketedPaste": true,
+    "r.sessionWatcher": true,
+    // Environment Variables
+    "terminal.integrated.env.osx": {
+        "R_PROFILE_USER": "${workspaceFolder}/.Rprofile"
+    },
+    "terminal.integrated.env.linux": {
+        "R_PROFILE_USER": "${workspaceFolder}/.Rprofile"
+    },
+    // File Associations
+    "files.associations": {
+        "*.R": "r",
+        "*.r": "r",
+        "*.Rmd": "rmd",
+        "*.rmd": "rmd"
+    },
+    // Exclude Files from Explorer
+    "files.exclude": {
+        "**/renv/library": true,
+        "**/renv/staging": true,
+        "**/.Rhistory": true,
+        "**/.RData": true,
+        "**/.Ruserdata": true,
+        "**/cdk.out": true,
+        "**/.ruff_cache": true,
+        "**/man": true,
+        "**/__pycache__": true,
+    },
+    // Search Exclusions
+    "search.exclude": {
+        "**/renv/library": true,
+        "**/renv/staging": true,
+        "**/cdk.out": true,
+        "**/logs": true,
+        "**/node_modules": true
+    },
+    // Git Settings
+    "git.ignoreLimitWarning": true,
+    // Editor Settings
+    "editor.trimAutoWhitespace": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    // R Extension Settings
+    "r.plot.useHttpgd": true,
+    "r.rtermSendDelay": 0,
+}

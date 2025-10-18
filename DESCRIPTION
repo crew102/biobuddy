@@ -8,7 +8,7 @@ Description: BioBuddy pet adoption bio writer
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Suggests:
     hippie,
     styler
