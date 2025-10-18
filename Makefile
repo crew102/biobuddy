@@ -12,7 +12,7 @@ py-venv-install:
 # Build and deploy app locally
 ################################################################################
 local-deps-build:
-	Rscript scripts/lockfile-write.R
+	Rscript dev/lockfile-write.R
 	docker build -t ghcr.io/crew102/bb-deps:latest .
 
 local-app-build:

@@ -25,8 +25,8 @@ COPY aws/conf/rstudio-bindings.json /home/rstudio/.config/rstudio/keybindings/rs
 
 # Cron job for daily update
 RUN touch /var/log/cron.log
-RUN chmod +x scripts/daily-update.sh
-COPY scripts/daily-update.crontab /etc/crontab
+RUN chmod +x app/daily-update/daily-update.sh
+COPY app/daily-update/daily-update.crontab /etc/crontab
 
 # Install any dependencies that aren't already installed
 RUN R -e "options(renv.consent = TRUE); renv::restore(library = 'renv/lib')"

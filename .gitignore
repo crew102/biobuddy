@@ -7,7 +7,6 @@ notes.md
 .idea
 man
 .Rapp.history
-dev/
 _dev.R
 app/www/.bio-images/
 TODO.md
@@ -22,3 +21,4 @@ temp-dir-jpg/
 temp
 .Renviron
 *.DS_Store
+transcribe

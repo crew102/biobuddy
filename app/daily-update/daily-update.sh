@@ -8,4 +8,4 @@ export RETICULATE_PYTHON="/home/biobuddy/.local/share/r-miniconda/envs/r-reticul
 
 echo "Running daily job"
 cd /home/biobuddy
-/usr/local/bin/Rscript scripts/daily-update.R
+/usr/local/bin/Rscript app/daily-update/daily-update.R
