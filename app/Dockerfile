@@ -17,7 +17,6 @@ COPY aws/requirements.txt aws/requirements.txt
 COPY app app
 COPY R R
 COPY inst inst
-COPY scripts scripts
 
 # Preferences
 COPY aws/conf/rstudio-prefs.json /home/rstudio/.config/rstudio/rstudio-prefs.json
