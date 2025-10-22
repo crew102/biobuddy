@@ -71,6 +71,7 @@
         "**/.ruff_cache": true,
         "**/man": true,
         "**/__pycache__": true,
+        "**/.venv": true,
     },
     // Search Exclusions
     "search.exclude": {

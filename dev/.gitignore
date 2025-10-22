@@ -1,3 +1,7 @@
 *
 !lockfile-write.R
 !.gitignore
+!prompt-dev/
+!prompt-dev/**
+prompt-dev/senior-long-stays/photos
+.DS_Store

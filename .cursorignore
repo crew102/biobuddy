@@ -7,7 +7,9 @@ notes.md
 .idea
 man
 .Rapp.history
-dev/
+*.png
+*.mp3
+*.pdf
 _dev.R
 app/www/.bio-images/
 TODO.md
@@ -30,3 +32,5 @@ renv/python/
 renv/sandbox/
 renv/staging/
 transcribe
+services/nginx/landing/vendor/**
+blog/**/*.js
