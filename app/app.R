@@ -296,8 +296,8 @@ server <- function(input, output, session) {
         ),
         pickerInput(
           inputId = "humor_input",
-          label = "Humour",
-          choices = c("No change", "Less humour", "Drier", "More sarcastic"),
+          label = "Humor",
+          choices = c("No change", "Less humor", "Drier", "More sarcastic"),
           selected = "No change",
           width = "fit"
         ),
@@ -350,8 +350,6 @@ server <- function(input, output, session) {
 
   observeEvent(input$run_cust, {
 
-    bio_to_rewrite <- chosen_dog() %>% pull(one_of(input$biotype))
-
     w <- Waiter$new(
       id = "settings_modal",
       html = tagList(spin_three_bounce()),
@@ -360,16 +358,10 @@ server <- function(input, output, session) {
     )
     w$show()
 
-    # Create prompt input to send to API
-    prompt_file <- here(glue("app/prompts/customize.json"))
-    prompt_df <- read_json(prompt_file, TRUE)
-    null_if_nada <- function(input) {
-      if (input == "" || input == "No change") NULL else input
-    }
     changes <- c(
       "* Length:" = input$length_input,
       "* Emotional tone:" = input$emotive_input,
-      "* Humour:" = input$humor_input,
+      "* Humor:" = input$humor_input,
       "* Incorporate that the dog exhibits these endearing behaviors:" = input$end_beh,
       "* Additional instructions:" = input$arbit_input
     )
@@ -378,15 +370,24 @@ server <- function(input, output, session) {
     # TODO: logic to have different prompt if no change indicated
     changes_2 <- paste(names(changes_2), changes_2)
     changes_2 <- paste0(changes_2, collapse = "\n")
-    prompt_df$content[1] <- paste(
-      prompt_df$content[1],
+
+    prompt <- read_file(here("app/prompts/customize.md"))
+    prompt <- paste(
+      prompt,
       "However, I would like you to make the following changes:\n",
       changes_2
     )
-    prompt_df$content[2] <- bio_to_rewrite
+
+    bio_to_rewrite <- chosen_dog() %>% pull(one_of(input$biotype))
+    print(bio_to_rewrite)
+    print(prompt)
 
     # TODO: handle case where out is a string (error from API) and not response
-    customize_rewrite_txt <- generic_openai_request(prompt_df)
+    customize_rewrite_txt <- make_openai_responses_roundtrip(
+      input_user = bio_to_rewrite,
+      input_developer = prompt,
+      model = "gpt-4.1-2025-04-14"
+    )
     output$customize_rewrite_card <- renderUI({
       HTML(glue('
         <br>

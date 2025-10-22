@@ -3,6 +3,7 @@
 
 ## usethis namespace: start
 #' @import httr
+#' @import httr2
 #' @import dplyr
 #' @import tidyr
 #' @import lubridate
