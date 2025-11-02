@@ -15,7 +15,7 @@ some_pups <- fetch_pf_pages(
 )
 animals <- some_pups$animals
 
-raw_bios <- parallel_fetch_pf_bios(animals$url)
+raw_bios <- fetch_pf_bios(animals$url)
 raw_cleaned <- clean_raw_bios(raw_bios)
 animals$raw_bio <- raw_cleaned
 

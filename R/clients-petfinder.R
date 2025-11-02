@@ -241,35 +241,14 @@ fetch_some_orgs <- function(token, organizations) {
 
 ## Scraping PF outside of API (needed for full bios)
 
-# Sequential
-
-fetch_one_pf_bio <- function(url) {
-  one_full_page <- GET(url, add_headers("user-agent" = USER_AGENT))
-  if (http_error(one_full_page)) {
-    try(return(http_status(one_full_page)$reason))
-  }
-  cnt <- content(one_full_page)
-  bio <- xml_find_all(cnt, "//div[@data-test='Pet_Story_Section']")
-  xml_text(bio)
-}
-
 fetch_pf_bios <- function(urls) {
-  pbsapply(urls, function(x) {
-    bio <- fetch_one_pf_bio(x)
-    if (is.null(bio) || length(bio) == 0) NA else bio
-  }, USE.NAMES = FALSE)
-}
-
-# Parallel
-
-parallel_fetch_pf_bios <- function(urls) {
   # Download
   reqs <- lapply(
     urls, function(x)
       httr2::request(x) %>% httr2::req_headers("user-agent" = USER_AGENT)
   )
   resps <- httr2::req_perform_sequential(reqs, on_error = "continue")
-  # Parse (not in parallel)
+  # Parse
   sapply(resps, function(x) {
     try({
       bod <- httr2::resp_body_html(resp = x)

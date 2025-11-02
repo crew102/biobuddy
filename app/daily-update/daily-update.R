@@ -58,7 +58,7 @@ fetch_all_pf_data <- function() {
 
   # For now we download all bios, regardless of whether we've seen pet in past
   dprint("Fetching bios")
-  raw_bios <- parallel_fetch_pf_bios(todays_pups$url)
+  raw_bios <- fetch_pf_bios(todays_pups$url)
   todays_pups$raw_bio <- clean_raw_bios(raw_bios)
   todays_pups$name <- clean_pet_name(todays_pups$name)
 
