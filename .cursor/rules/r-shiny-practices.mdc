@@ -159,6 +159,7 @@ if(condition){do_something()}else{do_something_else()}
 - Follow the established authentication patterns
 - Ensure proper S3 integration for data operations
 - Use the existing helper functions in R/ directory
+- For functions that are "internal" to the R file that they are defined, always start the function name with a period. This is similar to the convention used in Python of naming internal functions with a leading underscore (_)
 
 ## Dependencies
 

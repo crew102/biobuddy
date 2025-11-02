@@ -383,11 +383,13 @@ server <- function(input, output, session) {
     print(prompt)
 
     # TODO: handle case where out is a string (error from API) and not response
-    customize_rewrite_txt <- make_openai_responses_roundtrip(
+    results <- call_openai_responses(
       input_user = bio_to_rewrite,
       input_developer = prompt,
       model = "gpt-4.1-2025-04-14"
     )
+    customize_rewrite_txt <- extract_openai_responses_text(results)
+    customize_rewrite_txt <- customize_rewrite_txt[[1]]
     output$customize_rewrite_card <- renderUI({
       HTML(glue('
         <br>
