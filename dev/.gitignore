@@ -5,3 +5,5 @@
 !prompt-dev/**
 prompt-dev/senior-long-stays/photos
 .DS_Store
+!pf-db-download/
+!pf-db-download/**
