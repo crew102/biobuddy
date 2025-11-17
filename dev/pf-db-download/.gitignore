@@ -1,4 +1,5 @@
-raw-bios
-raw-responses
-*.csv
-*.rds
+data/raw-bios
+data/raw-responses
+data/*.csv
+data/*.rds
+data/pet-images

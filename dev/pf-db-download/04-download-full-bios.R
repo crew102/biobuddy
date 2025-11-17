@@ -10,7 +10,7 @@ devtools::load_all()
 
 pf_base <- "https://www.petfinder.com"
 
-pet_data <- read_rds(here("dev/pf-db-download/pet-df-deduped.rds"))
+pet_data <- read_rds(here("dev/pf-db-download/data/pet-df-deduped.rds"))
 
 good_desc <- pet_data %>%
   filter(!is.na(description), nchar(description) >= 20) %>%
@@ -22,7 +22,7 @@ org_ids <- good_desc %>%
 
 org_ids <- sample(org_ids, length(org_ids), replace = F)
 
-output_dir <- here("dev/pf-db-download/raw-bios")
+output_dir <- here("dev/pf-db-download/data/raw-bios")
 
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)

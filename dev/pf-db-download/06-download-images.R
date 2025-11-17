@@ -6,7 +6,7 @@ library(tools)
 
 devtools::load_all()
 
-pet_data <- read_rds(here("dev/pf-db-download/final-df.rds"))
+pet_data <- read_rds(here("dev/pf-db-download/data/final-df.rds"))
 
 # Filter for dogs with images
 dogs_with_images <- pet_data %>%
@@ -19,7 +19,7 @@ dogs_with_images <- pet_data %>%
 
 cat("Found", nrow(dogs_with_images), "dogs with images to download\n")
 
-output_base_dir <- here("dev/pf-db-download/pet-images")
+output_base_dir <- here("dev/pf-db-download/data/pet-images")
 
 if (!dir.exists(output_base_dir)) {
   dir.create(output_base_dir, recursive = TRUE)
@@ -205,4 +205,4 @@ cat("Total processed:", total, "\n")
 
 # du -h ~/Documents/git-repos/biobuddy/dev/pf-db-download/ | sort -hr
 # du -h -d 1 ~/Documents/git-repos/biobuddy/dev/pf-db-download/ | sort -hr
-# du -sh /Users/cbaker/Documents/git-repos/biobuddy/dev/pf-db-download/pet-images
+# du -sh /Users/cbaker/Documents/git-repos/biobuddy/dev/pf-db-download/data/pet-images

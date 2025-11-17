@@ -67,9 +67,10 @@ process_raw_pf_responses <- function(output_dir) {
 }
 
 
-OUTPUT_DIR <- here("dev/pf-db-download/raw-responses")
+OUTPUT_DIR <- here("dev/pf-db-download/data/raw-responses")
 proc_responses <- process_raw_pf_responses(OUTPUT_DIR)
 
+orgs <- read_csv(here("dev/pf-db-download/data/all-orgs-distinct-nov-2025.csv"))
 
 pet_df <- orgs %>%
   select(id, name, email, state, city, postcode, website) %>%
@@ -102,5 +103,5 @@ pdf_df_deduped <- pet_df %>%
   ungroup()
 
 pdf_df_deduped %>%
-  write_rds(here("dev/pf-db-download/pet-df-deduped.rds"))
+  write_rds(here("dev/pf-db-download/data/pet-df-deduped.rds"))
 

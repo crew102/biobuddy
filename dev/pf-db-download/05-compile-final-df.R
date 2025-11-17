@@ -7,8 +7,8 @@ library(ggplot2)
 
 devtools::load_all()
 
-pet_data <- read_rds(here("dev/pf-db-download/pet-df-deduped.rds"))
-output_dir <- here("dev/pf-db-download/raw-bios")
+pet_data <- read_rds(here("dev/pf-db-download/data/pet-df-deduped.rds"))
+output_dir <- here("dev/pf-db-download/data/raw-bios")
 bio_files <- list.files(output_dir, pattern = "-bios\\.rds$", full.names = TRUE)
 
 all_bios <- bio_files %>%
@@ -26,4 +26,4 @@ pet_data <- pet_data %>%
   mutate(tags = lapply(tags, function(x) trimws(as.character(x)))) %>%
   mutate(bio_text = gsub("^Meet.{0,30}\n    \n    \n        ", "\n", bio_text))
 
-write_rds(pet_data, here("dev/pf-db-download/final-df.rds"))
+write_rds(pet_data, here("dev/pf-db-download/data/final-df.rds"))

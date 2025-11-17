@@ -11,7 +11,7 @@ all_orgs <- fetch_all_orgs(token)
 all_orgs <- all_orgs %>% sample_n(nrow(.))
 
 all_orgs %>%
-  write_csv(here("dev/pf-db-download/all-orgs-raw-nov-2025.csv"))
+  write_csv(here("dev/pf-db-download/data/all-orgs-raw-nov-2025.csv"))
 all_orgs %>%
   distinct() %>%
-  write_csv(here("dev/pf-db-download/all-orgs-distinct-nov-2025.csv"))
+  write_csv(here("dev/pf-db-download/data/all-orgs-distinct-nov-2025.csv"))

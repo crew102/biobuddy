@@ -6,14 +6,14 @@ library(jsonlite)
 devtools::load_all()
 
 CHUNK_SIZE <- 100
-OUTPUT_DIR <- here("dev/pf-db-download/raw-responses")
+OUTPUT_DIR <- here("dev/pf-db-download/data/raw-responses")
 BASE_FILENAME <- "raw-chunk"
 
 if (!dir.exists(OUTPUT_DIR)) {
   dir.create(OUTPUT_DIR, recursive = TRUE)
 }
 
-orgs <- read_csv(here("dev/pf-db-download/all-orgs-distinct-nov-2025.csv"))
+orgs <- read_csv(here("dev/pf-db-download/data/all-orgs-distinct-nov-2025.csv"))
 
 token <- auth_pf()
 
