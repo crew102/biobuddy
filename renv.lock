@@ -50,6 +50,60 @@
       ],
       "Hash": "5122bb14d8736372411f955e1b16bc8a"
     },
+    "R.cache": {
+      "Package": "R.cache",
+      "Version": "0.17.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "R.methodsS3",
+        "R.oo",
+        "R.utils",
+        "digest",
+        "utils"
+      ],
+      "Hash": "115af52efb5dae7e2a0774e0828fae8f"
+    },
+    "R.methodsS3": {
+      "Package": "R.methodsS3",
+      "Version": "1.8.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "utils"
+      ],
+      "Hash": "278c286fd6e9e75d0c2e8f731ea445c8"
+    },
+    "R.oo": {
+      "Package": "R.oo",
+      "Version": "1.27.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "R.methodsS3",
+        "methods",
+        "utils"
+      ],
+      "Hash": "a94afc14a90a68dd5043ceb9c089853b"
+    },
+    "R.utils": {
+      "Package": "R.utils",
+      "Version": "2.13.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "R.methodsS3",
+        "R.oo",
+        "methods",
+        "tools",
+        "utils"
+      ],
+      "Hash": "d32373d88da809f8974d5307481862b0"
+    },
     "R6": {
       "Package": "R6",
       "Version": "2.6.1",
@@ -218,6 +272,23 @@
       ],
       "Hash": "4f572fbc586294afff277db583b9060f"
     },
+    "bookdown": {
+      "Package": "bookdown",
+      "Version": "0.45",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "htmltools",
+        "jquerylib",
+        "knitr",
+        "rmarkdown",
+        "tinytex",
+        "xfun",
+        "yaml"
+      ],
+      "Hash": "8728f73fb85a8183243b9ebe6882d647"
+    },
     "brew": {
       "Package": "brew",
       "Version": "1.0-10",
@@ -364,19 +435,6 @@
       ],
       "Hash": "09fd631e607a236f8cc7f9604db32cb8"
     },
-    "cropcircles": {
-      "Package": "cropcircles",
-      "Version": "0.2.4",
-      "Source": "Repository",
-      "Repository": "RSPM",
-      "Requirements": [
-        "R",
-        "glue",
-        "magick",
-        "purrr"
-      ],
-      "Hash": "b8c99af635a5d03a20153ede17cc51ec"
-    },
     "crosstalk": {
       "Package": "crosstalk",
       "Version": "1.2.1",
@@ -483,6 +541,37 @@
         "utils"
       ],
       "Hash": "33698c4b3127fc9f506654607fb73676"
+    },
+    "distill": {
+      "Package": "distill",
+      "Version": "1.6",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "base64enc",
+        "bookdown",
+        "digest",
+        "downlit",
+        "htmltools",
+        "jsonlite",
+        "knitr",
+        "lubridate",
+        "mime",
+        "openssl",
+        "png",
+        "rmarkdown",
+        "rprojroot",
+        "rstudioapi",
+        "stats",
+        "stringr",
+        "tools",
+        "utils",
+        "whisker",
+        "xfun",
+        "xml2",
+        "yaml"
+      ],
+      "Hash": "7c4fcd4e0cf2992fd7a7832e0d83cb7a"
     },
     "downlit": {
       "Package": "downlit",
@@ -954,19 +1043,6 @@
         "timechange"
       ],
       "Hash": "be38bc740fc51783a78edb5a157e4104"
-    },
-    "magick": {
-      "Package": "magick",
-      "Version": "2.8.7",
-      "Source": "Repository",
-      "Repository": "RSPM",
-      "Requirements": [
-        "R",
-        "Rcpp",
-        "curl",
-        "magrittr"
-      ],
-      "Hash": "e95f99b8d7c2ae43603d62fb9b669f07"
     },
     "magrittr": {
       "Package": "magrittr",
@@ -1709,6 +1785,25 @@
         "vctrs"
       ],
       "Hash": "960e2ae9e09656611e0b8214ad543207"
+    },
+    "styler": {
+      "Package": "styler",
+      "Version": "1.11.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "R.cache",
+        "cli",
+        "magrittr",
+        "purrr",
+        "rlang",
+        "rprojroot",
+        "tools",
+        "vctrs",
+        "withr"
+      ],
+      "Hash": "4501792643745cc369f2c5439b3bd3e7"
     },
     "sys": {
       "Package": "sys",
