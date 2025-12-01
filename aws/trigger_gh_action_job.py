@@ -17,20 +17,24 @@ def _trigger_github_action(workflow_file="build-app-image.yml", app_sha=None,
         "Accept": "application/vnd.github.v3+json",
         "Authorization": f"Bearer {os.environ.get('GITHUB_PAT')}",
     }
-    if workflow_file=="build-app-image.yml":
+    data = {"ref": "main"}
+
+    if workflow_file == "build-app-image.yml":
         print(
             "\n\nReminder that we are using latest version of the deps image "
             "for this app build\n\n"
         )
-        data = {
-            "ref": "main",
-            "inputs": {"app_sha": app_sha, "deps_sha": "latest"}
-        }
+        data["inputs"] = {"app_sha": app_sha, "deps_sha": "latest"}
+    elif workflow_file == "build-deps-image.yml":
+        data["inputs"] = {"deps_sha": app_sha}
+    elif workflow_file == "deploy.yml":
+        if environment is None:
+            raise ValueError(
+                "An environment (staging|prod) must be provided for deploy.yml"
+            )
+        data["inputs"] = {"app_sha": app_sha, "environment": environment}
     else:
-        data = {
-            "ref": "main",
-            "inputs": {"app_sha": app_sha, "environment": environment}
-        }
+        data["inputs"] = {"app_sha": app_sha}
 
     response = requests.post(url, json=data, headers=headers)
     if response.status_code == 204:

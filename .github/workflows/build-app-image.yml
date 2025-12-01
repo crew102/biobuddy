@@ -47,7 +47,8 @@ jobs:
 
     - name: Set version and git sha envvars
       run: |
-        LATEST_DEP_SHA=$(git for-each-ref --sort=-taggerdate --format="%(objectname:short)" refs/tags/deps-built-*)
+        # Get the most recent deps-built-* tag SHA (single line only)
+        LATEST_DEP_SHA=$(git for-each-ref --count=1 --sort=-taggerdate --format="%(objectname:short)" "refs/tags/deps-built-*")
         [ ${{ inputs.deps_sha }} == 'latest' ] && DEPS_SHA=$LATEST_DEP_SHA || DEPS_SHA=${{ inputs.deps_sha }}
         echo "DEPS_SHA=$DEPS_SHA" >> $GITHUB_ENV
         echo "$DEPS_SHA"
